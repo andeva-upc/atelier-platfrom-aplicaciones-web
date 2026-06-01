@@ -1,0 +1,6 @@
+@atelier_platform_aplicaciones_web_HostAddress = http://localhost:5003
+
+GET {{atelier_platform_aplicaciones_web_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
