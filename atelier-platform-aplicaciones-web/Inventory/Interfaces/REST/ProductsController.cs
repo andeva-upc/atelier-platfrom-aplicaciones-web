@@ -25,7 +25,12 @@ public class ProductsController(IProductCommandService productCommandService) : 
         
         if (!result.IsSuccess)
         {
-            return BadRequest(result.ErrorMessage);
+            return BadRequest(result.Message);
+        }
+
+        if (result.Value == null)
+        {
+            return BadRequest("Product could not be created.");
         }
 
         var productResource = ProductResourceFromEntityAssembler.ToResourceFromEntity(result.Value);

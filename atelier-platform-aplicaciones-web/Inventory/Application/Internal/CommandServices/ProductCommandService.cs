@@ -44,7 +44,7 @@ public class ProductCommandService : IProductCommandService
         }
         catch (Exception ex)
         {
-            return Result<Product>.Failure("inventory.error.unexpected", "An unexpected error occurred while creating the product: " + ex.Message);
+            return Result<Product>.Failure(atelier_platform_aplicaciones_web.Inventory.Domain.Model.InventoryError.UnexpectedError, "An unexpected error occurred while creating the product: " + ex.Message);
         }
     }
 }
