@@ -1,6 +1,16 @@
 using atelier_platform_aplicaciones_web.Shared.Infrastructure.Interfaces.ASP.Configuration;
 using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EFC.Configuration;
 using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EFC.Repositories;
+using atelier_platform_aplicaciones_web.Shared.Domain.Repositories;
+using atelier_platform_aplicaciones_web.Shared.Domain.Events;
+using atelier_platform_aplicaciones_web.Shared.Domain.Model.Events;
+using atelier_platform_aplicaciones_web.Operations.Domain.Repositories;
+using atelier_platform_aplicaciones_web.Operations.Infrastructure.Persistence.EFC.Repositories;
+using atelier_platform_aplicaciones_web.Operations.Application.Services;
+using atelier_platform_aplicaciones_web.Operations.Application.Internal.CommandServices;
+using atelier_platform_aplicaciones_web.Operations.Application.Internal.QueryServices;
+using atelier_platform_aplicaciones_web.Operations.Interfaces.Events;
+using atelier_platform_aplicaciones_web.Resources;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Swashbuckle.AspNetCore.Annotations;
@@ -26,9 +36,9 @@ builder.Services.AddProblemDetails(options =>
     {
         if (context.ProblemDetails.Status is null or >= 500)
         {
-            // var localizer = context.HttpContext.RequestServices.GetRequiredService<IStringLocalizer<SharedResource>>();
-            // context.ProblemDetails.Title ??= localizer["UnexpectedServerError"].Value;
-            // context.ProblemDetails.Detail ??= localizer["UnexpectedErrorProcessingRequest"].Value;
+            var localizer = context.HttpContext.RequestServices.GetRequiredService<IStringLocalizer<SharedResource>>();
+            context.ProblemDetails.Title ??= localizer["UnexpectedServerError"].Value;
+            context.ProblemDetails.Detail ??= localizer["UnexpectedErrorProcessingRequest"].Value;
         }
     };
 });
@@ -58,6 +68,14 @@ builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>
 
 // 7. REGISTRO DE DEPENDENCIAS (Inyección de Dependencias)
 // Aquí registraremos los repositorios y servicios de Operations cuando los creemos
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+builder.Services.AddScoped<IWorkOrderRepository, WorkOrderRepository>();
+builder.Services.AddScoped<IWorkOrderCommandService, WorkOrderCommandService>();
+builder.Services.AddScoped<IWorkOrderQueryService, WorkOrderQueryService>();
+
+builder.Services.AddSingleton<IDomainEventPublisher, DomainEventPublisher>();
+builder.Services.AddScoped<IDomainEventHandler<PaymentProcessedEvent>, WorkOrderPaymentListener>();
 
 var app = builder.Build();
 
