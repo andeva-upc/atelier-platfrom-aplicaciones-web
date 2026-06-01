@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+    <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+    <resheader name="version"><value>2.0</value></resheader>
+    <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+    <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+    <data name="operations.error.workOrderStatus.invalidTransition"><value>Cannot transition WorkOrder</value></data>
+    <data name="operations.error.workOrder.alreadyExistsForAppointment"><value>A work order already exists for the scheduled appointment.</value></data>
+    <data name="operations.error.workOrder.notFound"><value>Work Order not found.</value></data>
+    <data name="operations.error.workOrder.cannotModifyClosedOrder"><value>Cannot modify a completed or paid work order.</value></data>
+    <data name="operations.error.workOrder.cannotDeleteCompletedTask"><value>Cannot delete a completed task. Reopen it first to make modifications.</value></data>
+    <data name="operations.error.workOrder.cannotDeletePaidOrder"><value>Cannot delete a paid work order.</value></data>
+    <data name="operations.error.workOrder.cannotReopenTaskOfPaidOrder"><value>Cannot reopen tasks belonging to a paid work order.</value></data>
+    <data name="operations.error.workOrder.pendingTasksExist"><value>Cannot complete the work order because there are still pending tasks.</value></data>
+    <data name="operations.error.workOrderTaskStatus.invalidTransition"><value>Cannot transition WorkOrderTask</value></data>
+    <data name="operations.error.task.notFound"><value>Task not found in the work order.</value></data>
+    <data name="operations.error.taskProduct.notFound"><value>Product/part assignment not found in this task.</value></data>
+    <data name="operations.error.task.cannotModifyCompletedTask"><value>Cannot modify a completed task. Reopen it first to make modifications.</value></data>
+    <data name="operations.error.quantity.required"><value>Product quantity is required.</value></data>
+    <data name="operations.error.quantity.mustBeGreaterThanZero"><value>Product quantity must be greater than zero.</value></data>
+    <data name="operations.error.taskDescription.required"><value>Task description is required and cannot be blank.</value></data>
+    <data name="operations.error.taskDescription.tooShort"><value>Task description is too short (minimum 10 characters).</value></data>
+    <data name="operations.error.taskDescription.tooLong"><value>Task description is too long (maximum 1000 characters).</value></data>
+    <data name="operations.error.diagnosticSummary.notBlank"><value>Diagnostic summary is required and cannot be blank.</value></data>
+    <data name="operations.error.diagnosticSummary.tooLong"><value>Diagnostic summary is too long (maximum 2000 characters).</value></data>
+    <data name="operations.error.mileage.required"><value>Mileage value is required.</value></data>
+    <data name="operations.error.mileage.cannotBeNegative"><value>Mileage cannot be negative.</value></data>
+    <data name="operations.error.money.required"><value>Price amount is required.</value></data>
+    <data name="operations.error.money.cannotBeNegative"><value>Price amount cannot be negative.</value></data>
+    <data name="operations.error.appointmentId.required"><value>Appointment ID is required.</value></data>
+    <data name="operations.error.resource.appointmentId.required"><value>Appointment ID is required.</value></data>
+    <data name="operations.error.resource.branchId.required"><value>Branch ID is required.</value></data>
+    <data name="operations.error.resource.vehicleId.required"><value>Vehicle ID is required.</value></data>
+    <data name="operations.error.resource.customerId.required"><value>Customer ID is required.</value></data>
+    <data name="operations.error.resource.internalNumber.required"><value>Internal control number is required.</value></data>
+    <data name="operations.error.resource.diagnosticSummary.required"><value>Diagnostic summary is required.</value></data>
+    <data name="operations.error.resource.diagnosticSummary.size"><value>Diagnostic summary must be between 5 and 2000 characters.</value></data>
+    <data name="operations.error.resource.mileageIn.required"><value>Mileage in is required.</value></data>
+    <data name="operations.error.resource.serviceId.required"><value>Service ID is required.</value></data>
+    <data name="operations.error.resource.assignedMechanicId.required"><value>Assigned mechanic ID is required.</value></data>
+    <data name="operations.error.resource.description.required"><value>Task description is required.</value></data>
+    <data name="operations.error.resource.description.size"><value>Task description must be between 5 and 1000 characters.</value></data>
+    <data name="operations.error.resource.laborPrice.required"><value>Labor price is required.</value></data>
+    <data name="operations.error.resource.productId.required"><value>Product ID is required.</value></data>
+    <data name="operations.error.resource.quantity.required"><value>Product quantity is required.</value></data>
+    <data name="operations.error.resource.quantity.invalid"><value>Product quantity must be at least 1.</value></data>
+    <data name="operations.error.resource.unitPrice.required"><value>Unit price is required.</value></data>
+    <data name="errors.found"><value>Errors Found:</value></data>
+    <data name="shared.error.branchId.required"><value>Branch ID is required.</value></data>
+    <data name="shared.error.customerId.required"><value>Customer ID is required.</value></data>
+    <data name="shared.error.vehicleId.required"><value>Vehicle ID is required.</value></data>
+</root>
