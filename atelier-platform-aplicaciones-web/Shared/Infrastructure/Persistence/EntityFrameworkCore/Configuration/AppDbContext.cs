@@ -5,6 +5,8 @@ using atelier_platform_aplicaciones_web.IAM.Infrastructure.Persistence.EntityFra
 using atelier_platform_aplicaciones_web.Core.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
 using atelier_platform_aplicaciones_web.Billing.Domain.Model.Aggregates;
 using atelier_platform_aplicaciones_web.Billing.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
+using atelier_platform_aplicaciones_web.Inventory.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
+using atelier_platform_aplicaciones_web.Inventory.Domain.Model.Aggregates;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -17,6 +19,7 @@ public class AppDbContext(DbContextOptions options, AuditableEntityInterceptor a
 {
     public DbSet<Quote> Quotes { get; set; }
     public DbSet<Voucher> Vouchers { get; set; }
+    public DbSet<Product> Products { get; set; }
 
     /// <inheritdoc />
     protected override void OnConfiguring(DbContextOptionsBuilder builder)
@@ -43,6 +46,9 @@ public class AppDbContext(DbContextOptions options, AuditableEntityInterceptor a
         
         // Apply Billing Context Configuration
         builder.ApplyBillingConfiguration();
+        
+        // Apply Inventory Context Configuration
+        builder.ApplyInventoryConfiguration();
         
         builder.UseSnakeCaseNamingConvention();
         
