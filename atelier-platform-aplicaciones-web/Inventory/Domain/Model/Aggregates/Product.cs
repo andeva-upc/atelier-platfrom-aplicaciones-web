@@ -45,5 +45,7 @@ public partial class Product : IHasDomainEvents
         CurrentSellingPrice = salePrice;
         MinimumStock = minimumStock;
         CurrentStock = new InventoryQuantity(0);
+
+        RegisterEvent(new atelier_platform_aplicaciones_web.Inventory.Domain.Model.Events.ProductCreatedEvent(Id, BranchId.Value));
     }
 }
