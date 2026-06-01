@@ -9,6 +9,11 @@ using atelier_platform_aplicaciones_web.Operations.Application.QueryServices;
 using atelier_platform_aplicaciones_web.Operations.Application.Internal.CommandServices;
 using atelier_platform_aplicaciones_web.Operations.Application.Internal.QueryServices;
 
+using atelier_platform_aplicaciones_web.Inventory.Domain.Repositories;
+using atelier_platform_aplicaciones_web.Inventory.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
+using atelier_platform_aplicaciones_web.Inventory.Application.CommandServices;
+using atelier_platform_aplicaciones_web.Inventory.Application.Internal.CommandServices;
+
 using atelier_platform_aplicaciones_web.Core.Domain.Repositories;
 using atelier_platform_aplicaciones_web.Core.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 
@@ -138,6 +143,10 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IWorkOrderRepository, WorkOrderRepository>();
 builder.Services.AddScoped<IWorkOrderCommandService, WorkOrderCommandService>();
 builder.Services.AddScoped<IWorkOrderQueryService, WorkOrderQueryService>();
+
+// Inventory Dependencies
+builder.Services.AddScoped<IProductRepository, ProductRepositoryAdapter>();
+builder.Services.AddScoped<IProductCommandService, ProductCommandService>();
 
 // IAM Dependencies
 builder.Services.AddScoped<IUserRepository, UserRepository>();
