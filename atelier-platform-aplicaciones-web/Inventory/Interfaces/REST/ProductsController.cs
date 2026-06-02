@@ -14,7 +14,9 @@ namespace atelier_platform_aplicaciones_web.Inventory.Interfaces.REST;
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Inventory Products")]
 [Authorize]
-public class ProductsController(IProductCommandService productCommandService) : ControllerBase
+public class ProductsController(
+    IProductCommandService productCommandService,
+    atelier_platform_aplicaciones_web.Inventory.Application.QueryServices.IProductQueryService _productQueryService) : ControllerBase
 {
     [HttpPost]
     [SwaggerOperation(Summary = "Create a new Product")]
@@ -34,7 +36,22 @@ public class ProductsController(IProductCommandService productCommandService) : 
         }
 
         var productResource = ProductResourceFromEntityAssembler.ToResourceFromEntity(result.Value);
-        // Returns 201 Created. The URL will be added properly when we implement GetProductById
-        return Created(string.Empty, productResource);
+        return CreatedAtAction(nameof(GetProductById), new { id = result.Value.Id }, productResource);
+    }
+
+    [HttpGet("{id}")]
+    [SwaggerOperation(Summary = "Get a Product by ID")]
+    public async Task<ActionResult> GetProductById(System.Guid id)
+    {
+        var query = new atelier_platform_aplicaciones_web.Inventory.Domain.Model.Queries.GetProductByIdQuery(id);
+        var product = await _productQueryService.Handle(query);
+        
+        if (product == null)
+        {
+            return NotFound();
+        }
+
+        var productResource = ProductDetailsResourceFromEntityAssembler.ToResourceFromEntity(product);
+        return Ok(productResource);
     }
 }
