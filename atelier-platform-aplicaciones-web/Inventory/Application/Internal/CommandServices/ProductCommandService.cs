@@ -47,4 +47,34 @@ public class ProductCommandService : IProductCommandService
             return Result<Product>.Failure(atelier_platform_aplicaciones_web.Inventory.Domain.Model.InventoryError.UnexpectedError, "An unexpected error occurred while creating the product: " + ex.Message);
         }
     }
+
+    public async Task<Result<Product>> Handle(UpdateProductCommand command, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var product = await _productRepository.FindByIdAsync(command.ProductId, cancellationToken);
+            if (product == null)
+            {
+                return Result<Product>.Failure(atelier_platform_aplicaciones_web.Inventory.Domain.Model.InventoryError.NotFound, "Product not found.");
+            }
+
+            product.UpdateInformation(
+                new ProductCategory(command.Category),
+                new ProductName(command.Name),
+                new Sku(command.Sku),
+                command.Description,
+                new Money(command.SalePrice),
+                command.MinimumStock
+            );
+
+            _productRepository.Update(product);
+            await _unitOfWork.CompleteAsync(cancellationToken);
+
+            return Result<Product>.Success(product);
+        }
+        catch (Exception ex)
+        {
+            return Result<Product>.Failure(atelier_platform_aplicaciones_web.Inventory.Domain.Model.InventoryError.UnexpectedError, "An unexpected error occurred while updating the product: " + ex.Message);
+        }
+    }
 }

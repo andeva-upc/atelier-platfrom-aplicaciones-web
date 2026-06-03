@@ -48,4 +48,14 @@ public partial class Product : IHasDomainEvents
 
         RegisterEvent(new atelier_platform_aplicaciones_web.Inventory.Domain.Model.Events.ProductCreatedEvent(Id, BranchId.Value));
     }
+
+    public void UpdateInformation(ProductCategory category, ProductName name, Sku sku, string description, Money salePrice, int minimumStock)
+    {
+        Category = category;
+        Name = name;
+        Sku = sku;
+        Description = description;
+        CurrentSellingPrice = salePrice;
+        MinimumStock = minimumStock;
+    }
 }
