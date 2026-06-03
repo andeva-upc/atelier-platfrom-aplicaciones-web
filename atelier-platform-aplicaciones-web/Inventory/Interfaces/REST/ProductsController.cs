@@ -37,4 +37,29 @@ public class ProductsController(IProductCommandService productCommandService) : 
         // Returns 201 Created. The URL will be added properly when we implement GetProductById
         return Created(string.Empty, productResource);
     }
+
+    [HttpPut("{id}")]
+    [SwaggerOperation(Summary = "Update a Product")]
+    public async Task<ActionResult> UpdateProduct(System.Guid id, [FromBody] UpdateProductResource resource)
+    {
+        var command = UpdateProductCommandFromResourceAssembler.ToCommandFromResource(id, resource);
+        var result = await productCommandService.Handle(command);
+
+        if (!result.IsSuccess)
+        {
+            if (result.Error != null && result.Error.Equals(atelier_platform_aplicaciones_web.Inventory.Domain.Model.InventoryError.NotFound))
+            {
+                return NotFound();
+            }
+            return BadRequest(result.Message);
+        }
+
+        if (result.Value == null)
+        {
+            return BadRequest("Product could not be updated.");
+        }
+
+        var productResource = ProductDetailsResourceFromEntityAssembler.ToResourceFromEntity(result.Value);
+        return Ok(productResource);
+    }
 }
