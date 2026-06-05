@@ -8,41 +8,41 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
 {
     public void Configure(EntityTypeBuilder<Product> builder)
     {
-        builder.ToTable("Products");
+        builder.ToTable("products");
         builder.HasKey(p => p.Id);
         
-        builder.Property(p => p.Id).IsRequired().ValueGeneratedNever();
+        builder.Property(p => p.Id).IsRequired().ValueGeneratedNever().HasColumnName("id");
 
         builder.OwnsOne(p => p.BranchId, b =>
         {
-            b.Property(b => b.Value).HasColumnName("BranchId").IsRequired();
+            b.Property(b => b.Value).HasColumnName("branch_id").IsRequired();
         });
 
         builder.OwnsOne(p => p.Category, c =>
         {
-            c.Property(c => c.Value).HasColumnName("Category").IsRequired();
+            c.Property(c => c.Value).HasColumnName("category").IsRequired();
         });
 
         builder.OwnsOne(p => p.Name, n =>
         {
-            n.Property(n => n.Name).HasColumnName("Name").IsRequired();
+            n.Property(n => n.Name).HasColumnName("name").IsRequired();
         });
 
         builder.OwnsOne(p => p.Sku, s =>
         {
-            s.Property(s => s.Value).HasColumnName("Sku").IsRequired();
+            s.Property(s => s.Value).HasColumnName("sku").IsRequired();
         });
 
-        builder.Property(p => p.Description).IsRequired();
+        builder.Property(p => p.Description).IsRequired().HasColumnName("description");
 
         builder.OwnsOne(p => p.CurrentSellingPrice, m =>
         {
-            m.Property(m => m.Amount).HasColumnName("CurrentSellingPrice").HasColumnType("decimal(18,2)").IsRequired();
+            m.Property(m => m.Amount).HasColumnName("current_selling_price").HasColumnType("decimal(18,2)").IsRequired();
         });
 
         builder.OwnsOne(p => p.CurrentStock, s =>
         {
-            s.Property(s => s.Value).HasColumnName("CurrentStock").IsRequired();
+            s.Property(s => s.Value).HasColumnName("current_stock").IsRequired();
         });
 
         builder.Property(p => p.MinimumStock)
