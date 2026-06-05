@@ -20,6 +20,9 @@ public partial class Product : IHasDomainEvents
     private readonly System.Collections.Generic.List<atelier_platform_aplicaciones_web.Shared.Domain.Model.Events.IEvent> _domainEvents = new();
     public System.Collections.Generic.IReadOnlyCollection<atelier_platform_aplicaciones_web.Shared.Domain.Model.Events.IEvent> DomainEvents => _domainEvents.AsReadOnly();
 
+    private readonly System.Collections.Generic.List<atelier_platform_aplicaciones_web.Inventory.Domain.Model.Entities.ProductBatch> _batches = new();
+    public System.Collections.Generic.IReadOnlyCollection<atelier_platform_aplicaciones_web.Inventory.Domain.Model.Entities.ProductBatch> Batches => _batches.AsReadOnly();
+
     protected void RegisterEvent(atelier_platform_aplicaciones_web.Shared.Domain.Model.Events.IEvent domainEvent) => _domainEvents.Add(domainEvent);
     public void ClearDomainEvents() => _domainEvents.Clear();
 
