@@ -1,3 +1,4 @@
+using System.Linq;
 using atelier_platform_aplicaciones_web.Inventory.Domain.Model.Aggregates;
 using atelier_platform_aplicaciones_web.Inventory.Interfaces.REST.Resources;
 
@@ -18,7 +19,8 @@ public static class ProductDetailsResourceFromEntityAssembler
             entity.Description,
             entity.CurrentSellingPrice.Amount,
             entity.MinimumStock,
-            entity.CurrentStock.Value
+            entity.CurrentStock.Value,
+            entity.Batches.Select(ProductBatchResourceFromEntityAssembler.ToResourceFromEntity)
         );
     }
 }

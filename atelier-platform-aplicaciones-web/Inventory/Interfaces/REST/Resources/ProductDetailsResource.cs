@@ -11,5 +11,6 @@ public record ProductDetailsResource(
     string Description,
     decimal SalePrice,
     int MinimumStock,
-    int CurrentStock
+    int CurrentStock,
+    System.Collections.Generic.IEnumerable<ProductBatchResource> Batches
 );
