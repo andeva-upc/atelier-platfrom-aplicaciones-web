@@ -1,8 +1,8 @@
-﻿using atelier_platform_aplicaciones_web.Operations.Application.Errors;
+using atelier_platform_aplicaciones_web.Shared.Domain.Model;
 using atelier_platform_aplicaciones_web.Operations.Domain.Model.Aggregates;
 using atelier_platform_aplicaciones_web.Operations.Interfaces.REST.Resources;
 using atelier_platform_aplicaciones_web.Shared.Application.Model;
-using atelier_platform_aplicaciones_web.Shared.Resources;
+using atelier_platform_aplicaciones_web.Operations.Resources;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 
@@ -12,19 +12,19 @@ public static class ActionResultFromWorkOrderCommandResultAssembler
 {
     // Mapea a 201 Created (usado en la creación)
     public static ActionResult ToCreatedAtActionResult(
-        Result<WorkOrder, WorkOrderError> result,
+        Result<WorkOrder, Error> result,
         ControllerBase controller,
-        IStringLocalizer<SharedResource> localizer,
+        IStringLocalizer<OperationsMessages> localizer,
         string getActionName) =>
         result switch
         {
-            Result<WorkOrder, WorkOrderError>.Success success =>
+            Result<WorkOrder, Error>.Success success =>
                 controller.CreatedAtAction(
                     getActionName, 
                     new { id = success.Value.Id },
                     WorkOrderResourceFromEntityAssembler.ToResourceFromEntity(success.Value)),
 
-            Result<WorkOrder, WorkOrderError>.Failure failure =>
+            Result<WorkOrder, Error>.Failure failure =>
                 MapFailureToActionResult(failure.Error, controller, localizer),
 
             _ => UnexpectedErrorResult(controller, localizer)
@@ -32,15 +32,15 @@ public static class ActionResultFromWorkOrderCommandResultAssembler
 
     // Mapea a 200 OK (usado en actualizaciones y modificaciones)
     public static ActionResult ToOkActionResult(
-        Result<WorkOrder, WorkOrderError> result,
+        Result<WorkOrder, Error> result,
         ControllerBase controller,
-        IStringLocalizer<SharedResource> localizer) =>
+        IStringLocalizer<OperationsMessages> localizer) =>
         result switch
         {
-            Result<WorkOrder, WorkOrderError>.Success success =>
+            Result<WorkOrder, Error>.Success success =>
                 controller.Ok(WorkOrderResourceFromEntityAssembler.ToResourceFromEntity(success.Value)),
 
-            Result<WorkOrder, WorkOrderError>.Failure failure =>
+            Result<WorkOrder, Error>.Failure failure =>
                 MapFailureToActionResult(failure.Error, controller, localizer),
 
             _ => UnexpectedErrorResult(controller, localizer)
@@ -48,15 +48,15 @@ public static class ActionResultFromWorkOrderCommandResultAssembler
 
     // Mapea a 204 No Content (usado en borrados)
     public static ActionResult ToNoContentActionResult(
-        Result<WorkOrder, WorkOrderError> result,
+        Result<WorkOrder, Error> result,
         ControllerBase controller,
-        IStringLocalizer<SharedResource> localizer) =>
+        IStringLocalizer<OperationsMessages> localizer) =>
         result switch
         {
-            Result<WorkOrder, WorkOrderError>.Success =>
+            Result<WorkOrder, Error>.Success =>
                 controller.NoContent(),
 
-            Result<WorkOrder, WorkOrderError>.Failure failure =>
+            Result<WorkOrder, Error>.Failure failure =>
                 MapFailureToActionResult(failure.Error, controller, localizer),
 
             _ => UnexpectedErrorResult(controller, localizer)
@@ -64,10 +64,10 @@ public static class ActionResultFromWorkOrderCommandResultAssembler
 
     // Mapea las fallas del dominio a códigos de estado HTTP
     private static ActionResult MapFailureToActionResult(
-        WorkOrderError error, 
+        Error error, 
         ControllerBase controller, 
-        IStringLocalizer<SharedResource> localizer) =>
-        error.Type switch
+        IStringLocalizer<OperationsMessages> localizer) =>
+        error.Message switch
         {
             "NotFound" =>
                 controller.Problem(
@@ -90,7 +90,7 @@ public static class ActionResultFromWorkOrderCommandResultAssembler
             _ => UnexpectedErrorResult(controller, localizer)
         };
 
-    private static ActionResult UnexpectedErrorResult(ControllerBase controller, IStringLocalizer<SharedResource> localizer) =>
+    private static ActionResult UnexpectedErrorResult(ControllerBase controller, IStringLocalizer<OperationsMessages> localizer) =>
         controller.Problem(
             title: localizer["UnexpectedServerError"].Value,
             detail: localizer["UnexpectedErrorProcessingRequest"].Value,
