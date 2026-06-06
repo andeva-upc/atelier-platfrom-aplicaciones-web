@@ -1,24 +1,21 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
-using atelier_platform_aplicaciones_web.Shared.Resources;
+using Microsoft.AspNetCore.Mvc;
 
 namespace atelier_platform_aplicaciones_web.Shared.Interfaces.Rest.ProblemDetails;
 
 public class ProblemDetailsFactory(
-    IStringLocalizer<SharedResource> localizer,
     Microsoft.AspNetCore.Mvc.Infrastructure.ProblemDetailsFactory aspNetCoreProblemDetailsFactory)
 {
     public IActionResult CreateProblemDetails(
         ControllerBase controller,
         int statusCode,
-        string errorCode,
+        string errorMessage,
         string title = "Bad Request") 
     {
         var problemDetails = aspNetCoreProblemDetailsFactory.CreateProblemDetails(
             controller.HttpContext,
             statusCode,
             title,
-            detail: localizer[errorCode].Value,
+            detail: errorMessage,
             instance: controller.HttpContext.Request.Path
         );
 
