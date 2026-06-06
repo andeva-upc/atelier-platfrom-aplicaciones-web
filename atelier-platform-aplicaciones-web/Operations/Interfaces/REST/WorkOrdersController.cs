@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
@@ -6,15 +6,16 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Swashbuckle.AspNetCore.Annotations;
-using atelier_platform_aplicaciones_web.Operations.Application.Errors;
-using atelier_platform_aplicaciones_web.Operations.Application.Services;
+
+using atelier_platform_aplicaciones_web.Operations.Application.CommandServices;
+using atelier_platform_aplicaciones_web.Operations.Application.QueryServices;
 using atelier_platform_aplicaciones_web.Operations.Domain.Model.Commands;
 using atelier_platform_aplicaciones_web.Operations.Domain.Model.Queries;
 using atelier_platform_aplicaciones_web.Operations.Domain.Model.ValueObjects;
 using atelier_platform_aplicaciones_web.Operations.Interfaces.REST.Resources;
 using atelier_platform_aplicaciones_web.Operations.Interfaces.REST.Transform;
 using atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects;
-using atelier_platform_aplicaciones_web.Shared.Resources;
+using atelier_platform_aplicaciones_web.Operations.Resources;
 
 namespace atelier_platform_aplicaciones_web.Operations.Interfaces.REST;
 
@@ -25,7 +26,7 @@ namespace atelier_platform_aplicaciones_web.Operations.Interfaces.REST;
 public class WorkOrdersController(
     IWorkOrderCommandService workOrderCommandService,
     IWorkOrderQueryService workOrderQueryService,
-    IStringLocalizer<SharedResource> localizer)
+    IStringLocalizer<OperationsMessages> localizer)
     : ControllerBase
 {
     [HttpPost]
