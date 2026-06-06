@@ -1,98 +1,98 @@
 using atelier_platform_aplicaciones_web.Shared.Domain.Model;
+using atelier_platform_aplicaciones_web.Operations.Domain.Model;
 using atelier_platform_aplicaciones_web.Operations.Domain.Model.Aggregates;
 using atelier_platform_aplicaciones_web.Operations.Interfaces.REST.Resources;
 using atelier_platform_aplicaciones_web.Shared.Application.Model;
 using atelier_platform_aplicaciones_web.Operations.Resources;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
+using System;
 
 namespace atelier_platform_aplicaciones_web.Operations.Interfaces.REST.Transform;
 
 public static class ActionResultFromWorkOrderCommandResultAssembler
 {
-    // Mapea a 201 Created (usado en la creación)
     public static ActionResult ToCreatedAtActionResult(
-        Result<WorkOrder, Error> result,
+        Result<WorkOrder> result,
         ControllerBase controller,
         IStringLocalizer<OperationsMessages> localizer,
-        string getActionName) =>
-        result switch
+        string getActionName)
+    {
+        if (result.IsSuccess)
         {
-            Result<WorkOrder, Error>.Success success =>
-                controller.CreatedAtAction(
-                    getActionName, 
-                    new { id = success.Value.Id },
-                    WorkOrderResourceFromEntityAssembler.ToResourceFromEntity(success.Value)),
+            return controller.CreatedAtAction(
+                getActionName, 
+                new { id = result.Value!.Id },
+                WorkOrderResourceFromEntityAssembler.ToResourceFromEntity(result.Value));
+        }
 
-            Result<WorkOrder, Error>.Failure failure =>
-                MapFailureToActionResult(failure.Error, controller, localizer),
+        return MapFailureToActionResult(result.Error, result.Message, controller, localizer);
+    }
 
-            _ => UnexpectedErrorResult(controller, localizer)
-        };
-
-    // Mapea a 200 OK (usado en actualizaciones y modificaciones)
     public static ActionResult ToOkActionResult(
-        Result<WorkOrder, Error> result,
+        Result<WorkOrder> result,
         ControllerBase controller,
-        IStringLocalizer<OperationsMessages> localizer) =>
-        result switch
+        IStringLocalizer<OperationsMessages> localizer)
+    {
+        if (result.IsSuccess)
         {
-            Result<WorkOrder, Error>.Success success =>
-                controller.Ok(WorkOrderResourceFromEntityAssembler.ToResourceFromEntity(success.Value)),
+            return controller.Ok(WorkOrderResourceFromEntityAssembler.ToResourceFromEntity(result.Value!));
+        }
 
-            Result<WorkOrder, Error>.Failure failure =>
-                MapFailureToActionResult(failure.Error, controller, localizer),
+        return MapFailureToActionResult(result.Error, result.Message, controller, localizer);
+    }
 
-            _ => UnexpectedErrorResult(controller, localizer)
-        };
-
-    // Mapea a 204 No Content (usado en borrados)
     public static ActionResult ToNoContentActionResult(
-        Result<WorkOrder, Error> result,
+        Result<WorkOrder> result,
         ControllerBase controller,
-        IStringLocalizer<OperationsMessages> localizer) =>
-        result switch
+        IStringLocalizer<OperationsMessages> localizer)
+    {
+        if (result.IsSuccess)
         {
-            Result<WorkOrder, Error>.Success =>
-                controller.NoContent(),
+            return controller.NoContent();
+        }
 
-            Result<WorkOrder, Error>.Failure failure =>
-                MapFailureToActionResult(failure.Error, controller, localizer),
+        return MapFailureToActionResult(result.Error, result.Message, controller, localizer);
+    }
 
-            _ => UnexpectedErrorResult(controller, localizer)
-        };
-
-    // Mapea las fallas del dominio a códigos de estado HTTP
     private static ActionResult MapFailureToActionResult(
-        Error error, 
+        Enum? error, 
+        string message,
         ControllerBase controller, 
-        IStringLocalizer<OperationsMessages> localizer) =>
-        error.Message switch
+        IStringLocalizer<OperationsMessages> localizer)
+    {
+        if (error is WorkOrderError workOrderError)
         {
-            "NotFound" =>
-                controller.Problem(
-                    statusCode: 404,
-                    title: "Not Found",
-                    detail: localizer[error.Code].Value,
-                    instance: controller.Request.Path),
-            "Duplicate" =>
-                controller.Problem(
-                    statusCode: 409,
-                    title: "Conflict",
-                    detail: localizer[error.Code].Value,
-                    instance: controller.Request.Path),
-            "InvalidState" =>
-                controller.Problem(
-                    statusCode: 400,
-                    title: "Bad Request",
-                    detail: localizer[error.Code].Value, // Aquí se inyectará la traducción específica
-                    instance: controller.Request.Path),
-            _ => UnexpectedErrorResult(controller, localizer)
-        };
+            return workOrderError switch
+            {
+                WorkOrderError.NotFound =>
+                    controller.Problem(
+                        statusCode: 404,
+                        title: "Not Found",
+                        detail: message,
+                        instance: controller.Request.Path),
+                WorkOrderError.Duplicate =>
+                    controller.Problem(
+                        statusCode: 409,
+                        title: "Conflict",
+                        detail: message,
+                        instance: controller.Request.Path),
+                WorkOrderError.InvalidState =>
+                    controller.Problem(
+                        statusCode: 400,
+                        title: "Bad Request",
+                        detail: message,
+                        instance: controller.Request.Path),
+                _ => UnexpectedErrorResult(controller, localizer)
+            };
+        }
+
+        return UnexpectedErrorResult(controller, localizer);
+    }
 
     private static ActionResult UnexpectedErrorResult(ControllerBase controller, IStringLocalizer<OperationsMessages> localizer) =>
         controller.Problem(
-            title: localizer["UnexpectedServerError"].Value,
-            detail: localizer["UnexpectedErrorProcessingRequest"].Value,
+            title: localizer["operations.error.unexpected"].Value,
+            detail: localizer["operations.error.unexpected"].Value,
             statusCode: 500);
 }
