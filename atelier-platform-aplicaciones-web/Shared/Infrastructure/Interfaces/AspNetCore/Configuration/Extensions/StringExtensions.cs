@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace atelier_platform_aplicaciones_web.Shared.Infrastructure.Interfaces.ASP.Configuration.Extensions;
+namespace atelier_platform_aplicaciones_web.Shared.Infrastructure.Interfaces.AspNetCore.Configuration.Extensions;
 
 
 /// <summary>

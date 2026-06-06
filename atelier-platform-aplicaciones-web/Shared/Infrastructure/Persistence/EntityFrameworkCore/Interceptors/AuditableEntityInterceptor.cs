@@ -1,8 +1,8 @@
-﻿using atelier_platform_aplicaciones_web.Shared.Domain.Model;
+using atelier_platform_aplicaciones_web.Shared.Domain.Model.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
-namespace atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EFC.Interceptors;
+namespace atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EntityFrameworkCore.Interceptors;
 
 /// <summary>
 ///     EF Core interceptor that automatically populates audit timestamps on any entity

@@ -1,4 +1,4 @@
-﻿namespace atelier_platform_aplicaciones_web.Shared.Domain.Model;
+namespace atelier_platform_aplicaciones_web.Shared.Domain.Model.Entities;
 
 /// <summary>
 ///     Marks an entity as carrying audit timestamps managed by the persistence layer.

@@ -1,12 +1,12 @@
-﻿using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EFC.Configuration.Extensions;
-using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EFC.Interceptors;
+﻿using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
+using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EntityFrameworkCore.Interceptors;
 using Microsoft.EntityFrameworkCore;
 
 using atelier_platform_aplicaciones_web.Operations.Domain.Model.Aggregates;
 using atelier_platform_aplicaciones_web.Operations.Domain.Model.ValueObjects;
 using atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects;
 
-namespace atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EFC.Configuration;
+namespace atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EntityFrameworkCore.Configuration;
 
 /// <summary>
 ///     Application database context

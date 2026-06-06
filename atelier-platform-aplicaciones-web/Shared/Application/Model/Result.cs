@@ -1,4 +1,4 @@
-﻿namespace atelier_platform_aplicaciones_web.Shared.Application.Patterns;
+namespace atelier_platform_aplicaciones_web.Shared.Application.Model;
 
 /// <summary>
 /// Represents the outcome of an operation that can succeed with a value or fail with an error.
@@ -32,9 +32,6 @@ public abstract record Result<TValue, TError>
     /// <summary>
     /// Applies a transformation function to the success value if the result is successful.
     /// </summary>
-    /// <typeparam name="TNext">The type of the next result value.</typeparam>
-    /// <param name="onSuccess">Function to apply if successful.</param>
-    /// <returns>A new Result with the transformed value, or the current Failure.</returns>
     public Result<TNext, TError> Map<TNext>(Func<TValue, TNext> onSuccess) =>
         this switch
         {
@@ -46,10 +43,6 @@ public abstract record Result<TValue, TError>
     /// <summary>
     /// Applies a function to either the success or failure case.
     /// </summary>
-    /// <typeparam name="TResult">The type of the final result.</typeparam>
-    /// <param name="onSuccess">Function to apply if successful.</param>
-    /// <param name="onFailure">Function to apply if failed.</param>
-    /// <returns>The result of applying the appropriate function.</returns>
     public TResult Fold<TResult>(Func<TValue, TResult> onSuccess, Func<TError, TResult> onFailure) =>
         this switch
         {
@@ -61,8 +54,6 @@ public abstract record Result<TValue, TError>
     /// <summary>
     /// Executes an action based on the result type without transforming the value.
     /// </summary>
-    /// <param name="onSuccess">Action to execute if successful.</param>
-    /// <param name="onFailure">Action to execute if failed.</param>
     public void Match(Action<TValue> onSuccess, Action<TError> onFailure)
     {
         if (this is Success s)

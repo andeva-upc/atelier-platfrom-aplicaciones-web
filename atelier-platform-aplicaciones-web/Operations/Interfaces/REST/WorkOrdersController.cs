@@ -14,7 +14,7 @@ using atelier_platform_aplicaciones_web.Operations.Domain.Model.ValueObjects;
 using atelier_platform_aplicaciones_web.Operations.Interfaces.REST.Resources;
 using atelier_platform_aplicaciones_web.Operations.Interfaces.REST.Transform;
 using atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects;
-using atelier_platform_aplicaciones_web.Resources;
+using atelier_platform_aplicaciones_web.Shared.Resources;
 
 namespace atelier_platform_aplicaciones_web.Operations.Interfaces.REST;
 

@@ -8,8 +8,8 @@ using atelier_platform_aplicaciones_web.Operations.Domain.Model.Aggregates;
 using atelier_platform_aplicaciones_web.Operations.Domain.Model.ValueObjects;
 using atelier_platform_aplicaciones_web.Operations.Domain.Repositories;
 using atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects;
-using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EFC.Configuration;
-using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EFC.Repositories;
+using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EntityFrameworkCore.Configuration;
+using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 
 namespace atelier_platform_aplicaciones_web.Operations.Infrastructure.Persistence.EFC.Repositories;
 

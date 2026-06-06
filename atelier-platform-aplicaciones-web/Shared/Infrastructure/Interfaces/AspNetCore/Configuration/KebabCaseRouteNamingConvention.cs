@@ -1,7 +1,7 @@
-﻿using atelier_platform_aplicaciones_web.Shared.Infrastructure.Interfaces.ASP.Configuration.Extensions;
+﻿using atelier_platform_aplicaciones_web.Shared.Infrastructure.Interfaces.AspNetCore.Configuration.Extensions;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
 
-namespace atelier_platform_aplicaciones_web.Shared.Infrastructure.Interfaces.ASP.Configuration;
+namespace atelier_platform_aplicaciones_web.Shared.Infrastructure.Interfaces.AspNetCore.Configuration;
 
 /// <summary>
 ///     An MVC controller-model convention that rewrites <c>[controller]</c> route tokens

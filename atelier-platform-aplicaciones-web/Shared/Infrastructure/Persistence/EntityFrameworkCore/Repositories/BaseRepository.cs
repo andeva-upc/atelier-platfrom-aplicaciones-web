@@ -1,8 +1,8 @@
 ﻿using atelier_platform_aplicaciones_web.Shared.Domain.Repositories;
-using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EFC.Configuration;
+using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EntityFrameworkCore.Configuration;
 using Microsoft.EntityFrameworkCore;
 
-namespace atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EFC.Repositories;
+namespace atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 
 /// <summary>
 ///     Generic base repository providing CRUD operations for all entity types.

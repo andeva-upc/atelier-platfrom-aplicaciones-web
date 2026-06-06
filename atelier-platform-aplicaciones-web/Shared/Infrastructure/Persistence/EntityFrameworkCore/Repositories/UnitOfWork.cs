@@ -1,7 +1,7 @@
 ﻿using atelier_platform_aplicaciones_web.Shared.Domain.Repositories;
-using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EFC.Configuration;
+using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EntityFrameworkCore.Configuration;
 
-namespace atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EFC.Repositories;
+namespace atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 
 /// <summary>
 ///     Unit of work implementation for coordinating database transactions.

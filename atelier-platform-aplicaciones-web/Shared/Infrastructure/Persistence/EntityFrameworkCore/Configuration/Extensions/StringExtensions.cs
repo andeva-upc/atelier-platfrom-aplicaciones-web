@@ -1,6 +1,6 @@
 ﻿using Humanizer;
 
-namespace atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EFC.Configuration.Extensions;
+namespace atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
 
 public static class StringExtensions
 {
