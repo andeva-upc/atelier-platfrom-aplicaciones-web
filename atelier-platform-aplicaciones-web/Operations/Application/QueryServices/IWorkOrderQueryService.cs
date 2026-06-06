@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using atelier_platform_aplicaciones_web.Operations.Domain.Model.Aggregates;
 using atelier_platform_aplicaciones_web.Operations.Domain.Model.Queries;
 
-namespace atelier_platform_aplicaciones_web.Operations.Application.Services;
+namespace atelier_platform_aplicaciones_web.Operations.Application.QueryServices;
 
 public interface IWorkOrderQueryService
 {

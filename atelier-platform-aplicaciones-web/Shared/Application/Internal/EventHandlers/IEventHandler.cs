@@ -1,5 +1,5 @@
 using atelier_platform_aplicaciones_web.Shared.Domain.Model.Events;
-using MediatR;
+using Cortex.Mediator.Notifications;
 
 namespace atelier_platform_aplicaciones_web.Shared.Application.Internal.EventHandlers;
 

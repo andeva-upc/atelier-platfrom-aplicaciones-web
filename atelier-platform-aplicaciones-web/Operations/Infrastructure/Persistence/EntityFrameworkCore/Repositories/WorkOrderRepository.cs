@@ -11,7 +11,7 @@ using atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects;
 using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EntityFrameworkCore.Configuration;
 using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 
-namespace atelier_platform_aplicaciones_web.Operations.Infrastructure.Persistence.EFC.Repositories;
+namespace atelier_platform_aplicaciones_web.Operations.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 
 public class WorkOrderRepository : BaseRepository<WorkOrder>, IWorkOrderRepository
 {
