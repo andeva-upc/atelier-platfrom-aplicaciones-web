@@ -1,8 +1,8 @@
 ﻿using atelier_platform_aplicaciones_web.Operations.Application.Errors;
 using atelier_platform_aplicaciones_web.Operations.Domain.Model.Aggregates;
 using atelier_platform_aplicaciones_web.Operations.Interfaces.REST.Resources;
-using atelier_platform_aplicaciones_web.Shared.Application.Patterns;
-using atelier_platform_aplicaciones_web.Resources;
+using atelier_platform_aplicaciones_web.Shared.Application.Model;
+using atelier_platform_aplicaciones_web.Shared.Resources;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 

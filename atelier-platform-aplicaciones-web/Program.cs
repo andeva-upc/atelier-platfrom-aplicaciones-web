@@ -1,6 +1,6 @@
-using atelier_platform_aplicaciones_web.Shared.Infrastructure.Interfaces.ASP.Configuration;
-using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EFC.Configuration;
-using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EFC.Repositories;
+﻿using atelier_platform_aplicaciones_web.Shared.Infrastructure.Interfaces.AspNetCore.Configuration;
+using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EntityFrameworkCore.Configuration;
+using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 using atelier_platform_aplicaciones_web.Shared.Domain.Repositories;
 using atelier_platform_aplicaciones_web.Shared.Domain.Events;
 using atelier_platform_aplicaciones_web.Shared.Domain.Model.Events;
@@ -10,7 +10,9 @@ using atelier_platform_aplicaciones_web.Operations.Application.Services;
 using atelier_platform_aplicaciones_web.Operations.Application.Internal.CommandServices;
 using atelier_platform_aplicaciones_web.Operations.Application.Internal.QueryServices;
 using atelier_platform_aplicaciones_web.Operations.Interfaces.Events;
-using atelier_platform_aplicaciones_web.Resources;
+using atelier_platform_aplicaciones_web.Shared.Resources;
+using atelier_platform_aplicaciones_web.Shared.Interfaces.Rest.ProblemDetails;
+using atelier_platform_aplicaciones_web.Shared.Infrastructure.Pipeline.Middleware.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Swashbuckle.AspNetCore.Annotations;
@@ -77,10 +79,13 @@ builder.Services.AddScoped<IWorkOrderQueryService, WorkOrderQueryService>();
 builder.Services.AddSingleton<IDomainEventPublisher, DomainEventPublisher>();
 builder.Services.AddScoped<IDomainEventHandler<PaymentProcessedEvent>, WorkOrderPaymentListener>();
 
+// 8. Registro del Custom Problem Details Factory
+builder.Services.AddTransient<ProblemDetailsFactory>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-app.UseExceptionHandler();
+app.UseGlobalExceptionHandler();
 
 // Swagger UI habilitado para pruebas exploratorias de tu API
 app.UseSwagger();

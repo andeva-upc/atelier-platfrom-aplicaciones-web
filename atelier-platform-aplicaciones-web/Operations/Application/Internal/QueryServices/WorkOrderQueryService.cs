@@ -7,7 +7,7 @@ using atelier_platform_aplicaciones_web.Operations.Application.Services;
 using atelier_platform_aplicaciones_web.Operations.Domain.Model.Aggregates;
 using atelier_platform_aplicaciones_web.Operations.Domain.Model.Queries;
 using atelier_platform_aplicaciones_web.Operations.Domain.Repositories;
-using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EFC.Configuration;
+using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EntityFrameworkCore.Configuration;
 
 namespace atelier_platform_aplicaciones_web.Operations.Application.Internal.QueryServices;
 

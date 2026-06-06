@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using atelier_platform_aplicaciones_web.Operations.Application.Errors;
@@ -6,7 +6,7 @@ using atelier_platform_aplicaciones_web.Operations.Application.Services;
 using atelier_platform_aplicaciones_web.Operations.Domain.Model.Aggregates;
 using atelier_platform_aplicaciones_web.Operations.Domain.Model.Commands;
 using atelier_platform_aplicaciones_web.Operations.Domain.Repositories;
-using atelier_platform_aplicaciones_web.Shared.Application.Patterns;
+using atelier_platform_aplicaciones_web.Shared.Application.Model;
 using atelier_platform_aplicaciones_web.Shared.Domain.Repositories;
 
 namespace atelier_platform_aplicaciones_web.Operations.Application.Internal.CommandServices;
