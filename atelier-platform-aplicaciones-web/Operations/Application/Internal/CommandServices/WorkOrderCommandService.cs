@@ -1,9 +1,11 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using atelier_platform_aplicaciones_web.Operations.Application.Errors;
-using atelier_platform_aplicaciones_web.Operations.Application.Services;
+using atelier_platform_aplicaciones_web.Shared.Domain.Model;
 using atelier_platform_aplicaciones_web.Operations.Domain.Model.Aggregates;
+using atelier_platform_aplicaciones_web.Operations.Application.CommandServices;
+using atelier_platform_aplicaciones_web.Operations.Application.QueryServices;
+
 using atelier_platform_aplicaciones_web.Operations.Domain.Model.Commands;
 using atelier_platform_aplicaciones_web.Operations.Domain.Repositories;
 using atelier_platform_aplicaciones_web.Shared.Application.Model;
@@ -22,13 +24,13 @@ public class WorkOrderCommandService : IWorkOrderCommandService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result<WorkOrder, WorkOrderError>> Handle(CreateWorkOrderCommand command, CancellationToken cancellationToken = default)
+    public async Task<Result<WorkOrder, Error>> Handle(CreateWorkOrderCommand command, CancellationToken cancellationToken = default)
     {
         try
         {
             if (await _workOrderRepository.ExistsByAppointmentIdAsync(command.AppointmentId, cancellationToken))
             {
-                return new Result<WorkOrder, WorkOrderError>.Failure(WorkOrderError.Duplicate);
+                return new Result<WorkOrder, Error>.Failure(WorkOrderErrors.Duplicate);
             }
 
             // Calculamos secuencialmente el número interno de la orden en el servidor
@@ -48,15 +50,15 @@ public class WorkOrderCommandService : IWorkOrderCommandService
             await _workOrderRepository.AddAsync(workOrder, cancellationToken);
             await _unitOfWork.CompleteAsync(cancellationToken);
 
-            return new Result<WorkOrder, WorkOrderError>.Success(workOrder);
+            return new Result<WorkOrder, Error>.Success(workOrder);
         }
         catch (Exception)
         {
-            return new Result<WorkOrder, WorkOrderError>.Failure(WorkOrderError.UnexpectedError);
+            return new Result<WorkOrder, Error>.Failure(WorkOrderErrors.UnexpectedError);
         }
     }
 
-    public async Task<Result<WorkOrder, WorkOrderError>> Handle(AddTaskToWorkOrderCommand command, CancellationToken cancellationToken = default)
+    public async Task<Result<WorkOrder, Error>> Handle(AddTaskToWorkOrderCommand command, CancellationToken cancellationToken = default)
     {
         return await ExecuteOnAggregateAsync(command.WorkOrderId, wo =>
         {
@@ -64,7 +66,7 @@ public class WorkOrderCommandService : IWorkOrderCommandService
         }, cancellationToken);
     }
 
-    public async Task<Result<WorkOrder, WorkOrderError>> Handle(AddProductToTaskCommand command, CancellationToken cancellationToken = default)
+    public async Task<Result<WorkOrder, Error>> Handle(AddProductToTaskCommand command, CancellationToken cancellationToken = default)
     {
         return await ExecuteOnAggregateAsync(command.WorkOrderId, wo =>
         {
@@ -72,7 +74,7 @@ public class WorkOrderCommandService : IWorkOrderCommandService
         }, cancellationToken);
     }
 
-    public async Task<Result<WorkOrder, WorkOrderError>> Handle(UpdateProductQuantityInTaskCommand command, CancellationToken cancellationToken = default)
+    public async Task<Result<WorkOrder, Error>> Handle(UpdateProductQuantityInTaskCommand command, CancellationToken cancellationToken = default)
     {
         return await ExecuteOnAggregateAsync(command.WorkOrderId, wo =>
         {
@@ -80,7 +82,7 @@ public class WorkOrderCommandService : IWorkOrderCommandService
         }, cancellationToken);
     }
 
-    public async Task<Result<WorkOrder, WorkOrderError>> Handle(RemoveProductFromTaskCommand command, CancellationToken cancellationToken = default)
+    public async Task<Result<WorkOrder, Error>> Handle(RemoveProductFromTaskCommand command, CancellationToken cancellationToken = default)
     {
         return await ExecuteOnAggregateAsync(command.WorkOrderId, wo =>
         {
@@ -88,7 +90,7 @@ public class WorkOrderCommandService : IWorkOrderCommandService
         }, cancellationToken);
     }
 
-    public async Task<Result<WorkOrder, WorkOrderError>> Handle(UpdateWorkOrderTaskDetailsCommand command, CancellationToken cancellationToken = default)
+    public async Task<Result<WorkOrder, Error>> Handle(UpdateWorkOrderTaskDetailsCommand command, CancellationToken cancellationToken = default)
     {
         return await ExecuteOnAggregateAsync(command.WorkOrderId, wo =>
         {
@@ -96,7 +98,7 @@ public class WorkOrderCommandService : IWorkOrderCommandService
         }, cancellationToken);
     }
 
-    public async Task<Result<WorkOrder, WorkOrderError>> Handle(RemoveTaskFromWorkOrderCommand command, CancellationToken cancellationToken = default)
+    public async Task<Result<WorkOrder, Error>> Handle(RemoveTaskFromWorkOrderCommand command, CancellationToken cancellationToken = default)
     {
         return await ExecuteOnAggregateAsync(command.WorkOrderId, wo =>
         {
@@ -104,7 +106,7 @@ public class WorkOrderCommandService : IWorkOrderCommandService
         }, cancellationToken);
     }
 
-    public async Task<Result<WorkOrder, WorkOrderError>> Handle(StartTaskCommand command, CancellationToken cancellationToken = default)
+    public async Task<Result<WorkOrder, Error>> Handle(StartTaskCommand command, CancellationToken cancellationToken = default)
     {
         return await ExecuteOnAggregateAsync(command.WorkOrderId, wo =>
         {
@@ -112,7 +114,7 @@ public class WorkOrderCommandService : IWorkOrderCommandService
         }, cancellationToken);
     }
 
-    public async Task<Result<WorkOrder, WorkOrderError>> Handle(CompleteTaskCommand command, CancellationToken cancellationToken = default)
+    public async Task<Result<WorkOrder, Error>> Handle(CompleteTaskCommand command, CancellationToken cancellationToken = default)
     {
         return await ExecuteOnAggregateAsync(command.WorkOrderId, wo =>
         {
@@ -120,7 +122,7 @@ public class WorkOrderCommandService : IWorkOrderCommandService
         }, cancellationToken);
     }
 
-    public async Task<Result<WorkOrder, WorkOrderError>> Handle(ReopenTaskCommand command, CancellationToken cancellationToken = default)
+    public async Task<Result<WorkOrder, Error>> Handle(ReopenTaskCommand command, CancellationToken cancellationToken = default)
     {
         return await ExecuteOnAggregateAsync(command.WorkOrderId, wo =>
         {
@@ -128,7 +130,7 @@ public class WorkOrderCommandService : IWorkOrderCommandService
         }, cancellationToken);
     }
 
-    public async Task<Result<WorkOrder, WorkOrderError>> Handle(UpdateWorkOrderDetailsCommand command, CancellationToken cancellationToken = default)
+    public async Task<Result<WorkOrder, Error>> Handle(UpdateWorkOrderDetailsCommand command, CancellationToken cancellationToken = default)
     {
         return await ExecuteOnAggregateAsync(command.WorkOrderId, wo =>
         {
@@ -136,7 +138,7 @@ public class WorkOrderCommandService : IWorkOrderCommandService
         }, cancellationToken);
     }
 
-    public async Task<Result<WorkOrder, WorkOrderError>> Handle(MarkWorkOrderAsPaidCommand command, CancellationToken cancellationToken = default)
+    public async Task<Result<WorkOrder, Error>> Handle(MarkWorkOrderAsPaidCommand command, CancellationToken cancellationToken = default)
     {
         return await ExecuteOnAggregateAsync(command.WorkOrderId, wo =>
         {
@@ -144,7 +146,7 @@ public class WorkOrderCommandService : IWorkOrderCommandService
         }, cancellationToken);
     }
 
-    public async Task<Result<WorkOrder, WorkOrderError>> Handle(DeleteWorkOrderCommand command, CancellationToken cancellationToken = default)
+    public async Task<Result<WorkOrder, Error>> Handle(DeleteWorkOrderCommand command, CancellationToken cancellationToken = default)
     {
         return await ExecuteOnAggregateAsync(command.WorkOrderId, wo =>
         {
@@ -156,7 +158,7 @@ public class WorkOrderCommandService : IWorkOrderCommandService
     // 1. Obtener la raíz del agregado con carga ansiosa de sus hijos
     // 2. Ejecutar la acción lógica sobre el agregado
     // 3. Persistir y guardar transaccionalmente
-    private async Task<Result<WorkOrder, WorkOrderError>> ExecuteOnAggregateAsync(
+    private async Task<Result<WorkOrder, Error>> ExecuteOnAggregateAsync(
         Guid workOrderId, 
         Action<WorkOrder> action, 
         CancellationToken cancellationToken)
@@ -166,27 +168,29 @@ public class WorkOrderCommandService : IWorkOrderCommandService
             var workOrder = await _workOrderRepository.FindByIdWithTasksAndProductsAsync(workOrderId, cancellationToken);
             if (workOrder == null)
             {
-                return new Result<WorkOrder, WorkOrderError>.Failure(WorkOrderError.NotFound);
+                return new Result<WorkOrder, Error>.Failure(WorkOrderErrors.NotFound);
             }
 
             action(workOrder);
 
             await _unitOfWork.CompleteAsync(cancellationToken);
-            return new Result<WorkOrder, WorkOrderError>.Success(workOrder);
+            return new Result<WorkOrder, Error>.Success(workOrder);
         }
         catch (ArgumentException e)
         {
             // Pasa la llave específica de no encontrado (ej. "operations.error.task.notFound")
-            return new Result<WorkOrder, WorkOrderError>.Failure(new WorkOrderError(e.Message, "NotFound"));
+            return new Result<WorkOrder, Error>.Failure(WorkOrderErrors.GenericNotFound(e.Message));
         }
         catch (InvalidOperationException e)
         {
             // Pasa la llave específica de estado inválido (ej. "operations.error.workOrder.cannotDeletePaidOrder")
-            return new Result<WorkOrder, WorkOrderError>.Failure(WorkOrderError.InvalidState(e.Message));
+            return new Result<WorkOrder, Error>.Failure(WorkOrderErrors.InvalidState(e.Message));
         }
         catch (Exception)
         {
-            return new Result<WorkOrder, WorkOrderError>.Failure(WorkOrderError.UnexpectedError);
+            return new Result<WorkOrder, Error>.Failure(WorkOrderErrors.UnexpectedError);
         }
     }
 }
+
+
