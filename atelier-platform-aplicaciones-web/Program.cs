@@ -1,18 +1,21 @@
-﻿using atelier_platform_aplicaciones_web.Shared.Infrastructure.Interfaces.AspNetCore.Configuration;
+using atelier_platform_aplicaciones_web.Shared.Infrastructure.Interfaces.AspNetCore.Configuration;
 using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EntityFrameworkCore.Configuration;
 using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 using atelier_platform_aplicaciones_web.Shared.Domain.Repositories;
-using atelier_platform_aplicaciones_web.Shared.Domain.Events;
 using atelier_platform_aplicaciones_web.Shared.Domain.Model.Events;
 using atelier_platform_aplicaciones_web.Operations.Domain.Repositories;
-using atelier_platform_aplicaciones_web.Operations.Infrastructure.Persistence.EFC.Repositories;
-using atelier_platform_aplicaciones_web.Operations.Application.Services;
+using atelier_platform_aplicaciones_web.Operations.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
+using atelier_platform_aplicaciones_web.Operations.Application.CommandServices;
+using atelier_platform_aplicaciones_web.Operations.Application.QueryServices;
 using atelier_platform_aplicaciones_web.Operations.Application.Internal.CommandServices;
 using atelier_platform_aplicaciones_web.Operations.Application.Internal.QueryServices;
-using atelier_platform_aplicaciones_web.Operations.Interfaces.Events;
+
 using atelier_platform_aplicaciones_web.Shared.Resources;
 using atelier_platform_aplicaciones_web.Shared.Interfaces.Rest.ProblemDetails;
 using atelier_platform_aplicaciones_web.Shared.Infrastructure.Pipeline.Middleware.Extensions;
+using atelier_platform_aplicaciones_web.Shared.Infrastructure.Mediator.Cortex.Configuration;
+using Cortex.Mediator.Commands;
+using Cortex.Mediator.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Swashbuckle.AspNetCore.Annotations;
@@ -76,11 +79,12 @@ builder.Services.AddScoped<IWorkOrderRepository, WorkOrderRepository>();
 builder.Services.AddScoped<IWorkOrderCommandService, WorkOrderCommandService>();
 builder.Services.AddScoped<IWorkOrderQueryService, WorkOrderQueryService>();
 
-builder.Services.AddSingleton<IDomainEventPublisher, DomainEventPublisher>();
-builder.Services.AddScoped<IDomainEventHandler<PaymentProcessedEvent>, WorkOrderPaymentListener>();
-
 // 8. Registro del Custom Problem Details Factory
 builder.Services.AddTransient<ProblemDetailsFactory>();
+
+// 9. Cortex.Mediator Configuration
+builder.Services.AddScoped(typeof(ICommandPipelineBehavior<,>), typeof(LoggingCommandBehavior<,>));
+builder.Services.AddCortexMediator([typeof(Program)]);
 
 var app = builder.Build();
 
