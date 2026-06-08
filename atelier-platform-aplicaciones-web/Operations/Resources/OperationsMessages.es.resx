@@ -45,5 +45,17 @@
   <data name="operations.error.resource.productId.required"><value>El ID del producto es obligatorio.</value></data>
   <data name="operations.error.resource.quantity.required"><value>La cantidad del producto es obligatoria.</value></data>
   <data name="operations.error.resource.quantity.invalid"><value>La cantidad del producto debe ser al menos 1.</value></data>
+  <data name="operations.error.query.workOrderId.required"><value>El ID de la orden de trabajo es obligatorio.</value></data>
+  <data name="operations.error.query.branchId.required"><value>El ID de la sucursal es obligatorio.</value></data>
+  <data name="operations.error.query.vehicleId.required"><value>El ID del vehículo es obligatorio.</value></data>
+  <data name="operations.error.appointmentId.duplicate"><value>Ya existe una orden de trabajo para esta cita.</value></data>
+  <data name="operations.error.unexpected"><value>Ocurrió un error inesperado al procesar la operación.</value></data>
+  <data name="operations.error.mechanicId.required"><value>El ID del mecánico es obligatorio.</value></data>
+  <data name="operations.error.productId.required"><value>El ID del producto es obligatorio.</value></data>
+  <data name="operations.error.serviceId.required"><value>El ID del servicio es obligatorio.</value></data>
+  <data name="operations.error.resource.mechanicId.required"><value>El ID del mecánico asignado es obligatorio.</value></data>
+  <data name="operations.error.resource.newQuantity.required"><value>La nueva cantidad es obligatoria.</value></data>
   <data name="operations.error.resource.unitPrice.required"><value>El precio unitario es obligatorio.</value></data>
+  <data name="operations.error.address.notBlank"><value>La dirección es obligatoria y no puede estar en blanco.</value></data>
+  <data name="operations.error.address.tooLong"><value>La dirección es demasiado larga.</value></data>
 </root>

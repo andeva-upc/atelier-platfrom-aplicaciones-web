@@ -63,25 +63,26 @@ public static class ActionResultFromWorkOrderCommandResultAssembler
     {
         if (error is WorkOrderError workOrderError)
         {
+            var translatedMessage = localizer[message].Value ?? message;
             return workOrderError switch
             {
                 WorkOrderError.NotFound =>
                     controller.Problem(
                         statusCode: 404,
                         title: "Not Found",
-                        detail: message,
+                        detail: translatedMessage,
                         instance: controller.Request.Path),
                 WorkOrderError.Duplicate =>
                     controller.Problem(
                         statusCode: 409,
                         title: "Conflict",
-                        detail: message,
+                        detail: translatedMessage,
                         instance: controller.Request.Path),
                 WorkOrderError.InvalidState =>
                     controller.Problem(
                         statusCode: 400,
                         title: "Bad Request",
-                        detail: message,
+                        detail: translatedMessage,
                         instance: controller.Request.Path),
                 _ => UnexpectedErrorResult(controller, localizer)
             };

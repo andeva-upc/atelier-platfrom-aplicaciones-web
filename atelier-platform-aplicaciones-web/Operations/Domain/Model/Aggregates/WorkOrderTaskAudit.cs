@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using atelier_platform_aplicaciones_web.Shared.Domain.Model.Entities;
 
 namespace atelier_platform_aplicaciones_web.Operations.Domain.Model.Aggregates;
 
-public partial class WorkOrderTask : IAuditableEntity
+public partial class WorkOrderTask : IUserAuditableEntity
 {
     public DateTimeOffset? CreatedAt { get; set; }
     public DateTimeOffset? UpdatedAt { get; set; }

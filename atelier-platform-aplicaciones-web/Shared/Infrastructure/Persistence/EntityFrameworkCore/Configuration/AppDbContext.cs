@@ -1,10 +1,10 @@
 using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
 using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EntityFrameworkCore.Interceptors;
-using Microsoft.EntityFrameworkCore;
-
-using atelier_platform_aplicaciones_web.Operations.Domain.Model.ValueObjects;
 using atelier_platform_aplicaciones_web.Operations.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
-using atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects;
+using atelier_platform_aplicaciones_web.IAM.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
+using atelier_platform_aplicaciones_web.Core.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
+
+using Microsoft.EntityFrameworkCore;
 
 // IoT usings
 using atelier_platform_aplicaciones_web.IoT.Domain.Model.Aggregates;
@@ -15,7 +15,7 @@ namespace atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.En
 /// <summary>
 ///     Application database context
 /// </summary>
-public class AppDbContext(DbContextOptions options) : DbContext(options)
+public class AppDbContext(DbContextOptions options, AuditableEntityInterceptor auditableEntityInterceptor, DispatchDomainEventsInterceptor dispatchDomainEventsInterceptor) : DbContext(options)
 {
     public DbSet<Vehicle> Vehicles { get; set; }
     public DbSet<VehicleRegistration> VehicleRegistrations { get; set; }
@@ -28,7 +28,8 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     protected override void OnConfiguring(DbContextOptionsBuilder builder)
     {
         // Apply audit timestamp interceptor for all IAuditableEntity implementations
-        builder.AddInterceptors(new AuditableEntityInterceptor());
+        // and Dispatch domain events interceptor for all IHasDomainEvents implementations
+        builder.AddInterceptors(auditableEntityInterceptor, dispatchDomainEventsInterceptor);
         base.OnConfiguring(builder);
     }
 
@@ -37,8 +38,15 @@ public class AppDbContext(DbContextOptions options) : DbContext(options)
     {
         base.OnModelCreating(builder);
         
+        // Apply Operations Context Configuration
         builder.ApplyOperationsConfiguration();
         builder.ApplyIotConfiguration();
+        
+        // Apply IAM Context Configuration
+        builder.ApplyIamConfiguration();
+
+        // Apply Core Context Configuration
+        builder.ApplyCoreConfiguration();
         
         builder.UseSnakeCaseNamingConvention();
         

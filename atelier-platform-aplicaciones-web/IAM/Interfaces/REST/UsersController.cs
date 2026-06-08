@@ -1,0 +1,61 @@
+using System.Net.Mime;
+using System.Threading;
+using System.Threading.Tasks;
+using atelier_platform_aplicaciones_web.IAM.Application.CommandServices;
+using atelier_platform_aplicaciones_web.IAM.Application.QueryServices;
+using atelier_platform_aplicaciones_web.IAM.Domain.Model.Queries;
+using atelier_platform_aplicaciones_web.IAM.Domain.Model.ValueObjects;
+using atelier_platform_aplicaciones_web.IAM.Interfaces.REST.Resources;
+using atelier_platform_aplicaciones_web.IAM.Interfaces.REST.Transform;
+using atelier_platform_aplicaciones_web.IAM.Infrastructure.Pipeline.Middleware.Attributes;
+using Microsoft.AspNetCore.Mvc;
+
+namespace atelier_platform_aplicaciones_web.IAM.Interfaces.REST;
+
+[ApiController]
+[Route("api/v1/users")]
+[Produces(MediaTypeNames.Application.Json)]
+[Tags("Users")]
+[Authorize]
+public class UsersController(
+    IUserCommandService userCommandService,
+    IUserQueryService userQueryService,
+    Microsoft.Extensions.Localization.IStringLocalizer<atelier_platform_aplicaciones_web.IAM.Resources.IamMessages> localizer,
+    atelier_platform_aplicaciones_web.Shared.Interfaces.Rest.ProblemDetails.ProblemDetailsFactory problemDetailsFactory) : ControllerBase
+{
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetUserById(Guid id, CancellationToken cancellationToken)
+    {
+        var query = new GetUserByIdQuery(new UserId(id));
+        var user = await userQueryService.Handle(query, cancellationToken);
+
+        if (user == null) return NotFound();
+
+        var resource = UserResourceFromEntityAssembler.ToResourceFromEntity(user);
+        return Ok(resource);
+    }
+
+    [HttpPut("{id}/email")]
+    public async Task<IActionResult> UpdateUserEmail(Guid id, [FromBody] UpdateUserEmailResource resource, CancellationToken cancellationToken)
+    {
+        var command = UpdateUserEmailCommandFromResourceAssembler.ToCommandFromResource(id, resource);
+        var result = await userCommandService.Handle(command, cancellationToken);
+
+        if (!result.IsSuccess)
+            return IamErrorToActionAssembler.ToActionResult(result.Error, result.Message, this, problemDetailsFactory, localizer);
+
+        return Ok(UserResourceFromEntityAssembler.ToResourceFromEntity(result.Value!));
+    }
+
+    [HttpPut("{id}/password")]
+    public async Task<IActionResult> UpdateUserPassword(Guid id, [FromBody] UpdateUserPasswordResource resource, CancellationToken cancellationToken)
+    {
+        var command = UpdateUserPasswordCommandFromResourceAssembler.ToCommandFromResource(id, resource);
+        var result = await userCommandService.Handle(command, cancellationToken);
+
+        if (!result.IsSuccess)
+            return IamErrorToActionAssembler.ToActionResult(result.Error, result.Message, this, problemDetailsFactory, localizer);
+
+        return Ok(new { Message = "Password updated successfully." });
+    }
+}

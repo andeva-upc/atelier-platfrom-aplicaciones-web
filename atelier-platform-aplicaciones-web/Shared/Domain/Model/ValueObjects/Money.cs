@@ -6,18 +6,24 @@ public record Money
 {
     public static readonly Money Zero = new(0m);
 
+    private const string NotNullMessageKey = "operations.error.money.required";
     private const string NotNegativeMessageKey = "operations.error.money.cannotBeNegative";
 
     public decimal Amount { get; init; }
 
-    public Money(decimal amount)
+    public Money(decimal? amount)
     {
+        if (amount == null)
+        {
+            throw new ArgumentException(NotNullMessageKey, nameof(amount));
+        }
+
         if (amount < 0)
         {
             throw new ArgumentException(NotNegativeMessageKey, nameof(amount));
         }
 
-        Amount = Math.Round(amount, 2, MidpointRounding.AwayFromZero);
+        Amount = Math.Round(amount.Value, 2, MidpointRounding.AwayFromZero);
     }
 
     public Money Plus(Money? other)
