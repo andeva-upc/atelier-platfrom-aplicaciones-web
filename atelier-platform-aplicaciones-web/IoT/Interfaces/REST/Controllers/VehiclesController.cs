@@ -2,6 +2,7 @@ using atelier_platform_aplicaciones_web.IoT.Domain.Model.Queries;
 using atelier_platform_aplicaciones_web.IoT.Domain.Services;
 using atelier_platform_aplicaciones_web.IoT.Interfaces.REST.Resources;
 using atelier_platform_aplicaciones_web.IoT.Interfaces.REST.Transform;
+using atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net.Mime;
@@ -45,7 +46,7 @@ public class VehiclesController : ControllerBase
     [SwaggerResponse(StatusCodes.Status200OK, "Active vehicles in branch", typeof(IEnumerable<VehicleResource>))]
     public async Task<IActionResult> GetVehiclesInBranch(Guid branchId)
     {
-        var query = new GetVehiclesByBranchIdQuery(branchId);
+        var query = new GetVehiclesByBranchIdQuery(new BranchId(branchId));
         var vehicles = await _vehicleQueryService.Handle(query);
         var resources = vehicles.Select(VehicleResourceFromAggregateAssembler.ToResourceFromAggregate);
 

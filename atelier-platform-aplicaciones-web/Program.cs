@@ -172,6 +172,24 @@ builder.Services.AddScoped<IHashingService, BCryptHashingService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 
+// IoT Repositories
+builder.Services.AddScoped<IOBD2DeviceRepository, OBD2DeviceRepository>();
+builder.Services.AddScoped<IOBD2DeviceRegistrationRepository, OBD2DeviceRegistrationRepository>();
+builder.Services.AddScoped<ITelemetrySnapshotRepository, TelemetrySnapshotRepository>();
+builder.Services.AddScoped<IDtcAlertRepository, DtcAlertRepository>();
+builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
+builder.Services.AddScoped<IVehicleRegistrationRepository, VehicleRegistrationRepository>();
+
+// IoT Services
+builder.Services.AddScoped<IOBD2DeviceCommandService, OBD2DeviceCommandService>();
+builder.Services.AddScoped<IOBD2DeviceQueryService, OBD2DeviceQueryService>();
+builder.Services.AddScoped<ITelemetryCommandService, TelemetryCommandService>();
+builder.Services.AddScoped<ITelemetryQueryService, TelemetryQueryService>();
+builder.Services.AddScoped<IDtcCommandService, DtcCommandService>();
+builder.Services.AddScoped<IDtcQueryService, DtcQueryService>();
+builder.Services.AddScoped<IVehicleCommandService, VehicleCommandService>();
+builder.Services.AddScoped<IVehicleQueryService, VehicleQueryService>();
+
 // TokenSettings Configuration
 builder.Services.Configure<TokenSettings>(builder.Configuration.GetSection("TokenSettings"));
 

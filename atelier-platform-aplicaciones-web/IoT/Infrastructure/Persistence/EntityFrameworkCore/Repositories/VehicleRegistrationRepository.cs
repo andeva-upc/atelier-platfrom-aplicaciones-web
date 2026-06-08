@@ -12,10 +12,6 @@ public class VehicleRegistrationRepository : BaseRepository<VehicleRegistration>
 {
     public VehicleRegistrationRepository(AppDbContext context) : base(context) {}
 
-    public async Task<VehicleRegistration?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        return await Context.Set<VehicleRegistration>().FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
-    }
 
     public async Task<VehicleRegistration?> FindByVehicleIdAndStatusAsync(VehicleId vehicleId, VehicleRegistrationStatus status, CancellationToken cancellationToken = default)
     {

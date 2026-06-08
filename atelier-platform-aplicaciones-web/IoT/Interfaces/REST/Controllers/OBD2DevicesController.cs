@@ -2,6 +2,7 @@ using atelier_platform_aplicaciones_web.IoT.Domain.Model.Queries;
 using atelier_platform_aplicaciones_web.IoT.Domain.Services;
 using atelier_platform_aplicaciones_web.IoT.Interfaces.REST.Resources;
 using atelier_platform_aplicaciones_web.IoT.Interfaces.REST.Transform;
+using atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net.Mime;
@@ -63,7 +64,7 @@ public class OBD2DevicesController : ControllerBase
     [SwaggerResponse(StatusCodes.Status200OK, "List of devices", typeof(IEnumerable<OBD2DeviceResource>))]
     public async Task<IActionResult> GetDevicesByBranch(Guid branchId)
     {
-        var query = new GetOBD2DevicesByBranchIdQuery(branchId);
+        var query = new GetOBD2DevicesByBranchIdQuery(new BranchId(branchId));
         var devices = await _deviceQueryService.Handle(query);
         var resources = devices.Select(OBD2DeviceResourceFromAggregateAssembler.ToResourceFromAggregate);
 
@@ -76,7 +77,7 @@ public class OBD2DevicesController : ControllerBase
     [SwaggerResponse(StatusCodes.Status400BadRequest, "Invalid request or MAC address collision")]
     public async Task<IActionResult> UpdateDevice(Guid id, [FromBody] CreateOBD2DeviceResource resource)
     {
-        var command = new Domain.Model.Commands.UpdateOBD2DeviceCommand(id, resource.BranchId, resource.MacAddress);
+        var command = new Domain.Model.Commands.UpdateOBD2DeviceCommand(id, new BranchId(resource.BranchId), resource.MacAddress);
         var result = await _deviceCommandService.Handle(command);
 
         return result.Fold<IActionResult>(

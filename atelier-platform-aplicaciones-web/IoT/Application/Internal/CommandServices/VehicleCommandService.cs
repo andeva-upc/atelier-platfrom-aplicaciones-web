@@ -34,7 +34,6 @@ public class VehicleCommandService : IVehicleCommandService
     public async Task<Result<Vehicle>> Handle(RegisterVehicleCommand command)
     {
         var vehicle = await _vehicleRepository.FindByVinAsync(command.Vin);
-        bool isNewVehicle = false;
 
         if (vehicle == null)
         {
@@ -46,17 +45,16 @@ public class VehicleCommandService : IVehicleCommandService
                 command.Model
             );
             await _vehicleRepository.AddAsync(vehicle);
-            isNewVehicle = true;
         }
         else
         {
             // If vehicle exists, update its details
-            vehicle.UpdateDetails(command.PlateNumber, command.Year, command.Brand, command.Model);
+            vehicle.UpdateDetails(command.PlateNumber, command.Vin, command.Year, command.Brand, command.Model);
             _vehicleRepository.Update(vehicle);
 
             // Deactivate previous active owner registrations for this vehicle
             var activeOwnerReg = await _vehicleRegistrationRepository.FindByVehicleIdAndStatusAsync(
-                new VehicleId(vehicle.Id), VehicleRegistrationStatus.ACTIVE);
+                vehicle.Id, VehicleRegistrationStatus.ACTIVE);
 
             if (activeOwnerReg != null)
             {
@@ -66,7 +64,7 @@ public class VehicleCommandService : IVehicleCommandService
                 // Cascade OBD2 deactivation logic:
                 // Find any active OBD2 device registration for this vehicle_id
                 var activeObd2Reg = await _obd2RegistrationRepository.FindByVehicleIdAndStatusAsync(
-                    new VehicleId(vehicle.Id), OBD2DeviceRegistrationStatus.ACTIVE);
+                    vehicle.Id, OBD2DeviceRegistrationStatus.ACTIVE);
 
                 if (activeObd2Reg != null)
                 {
@@ -85,7 +83,7 @@ public class VehicleCommandService : IVehicleCommandService
         }
 
         // Create new active owner registration
-        var registration = new VehicleRegistration(command.UserId, new VehicleId(vehicle.Id));
+        var registration = new VehicleRegistration(command.UserId, vehicle.Id);
         await _vehicleRegistrationRepository.AddAsync(registration);
 
         await _unitOfWork.CompleteAsync();

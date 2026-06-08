@@ -10,8 +10,8 @@ public static class OBD2DeviceRegistrationResourceFromAggregateAssembler
         return new OBD2DeviceRegistrationResource(
             aggregate.Id,
             aggregate.Obd2DeviceId,
-            aggregate.BranchId,
-            aggregate.VehicleId,
+            aggregate.BranchId.Value,
+            aggregate.VehicleId.Value,
             aggregate.Status.ToString(),
             aggregate.CreatedAt,
             aggregate.DeletedAt

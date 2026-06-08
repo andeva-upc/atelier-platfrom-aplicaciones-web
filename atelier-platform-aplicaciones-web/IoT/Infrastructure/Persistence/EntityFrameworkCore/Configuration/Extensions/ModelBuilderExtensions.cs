@@ -18,11 +18,12 @@ public static class ModelBuilderExtensions
         builder.Entity<Vehicle>(entity =>
         {
             entity.HasKey(v => v.Id);
-            entity.Property(v => v.Id).ValueGeneratedNever();
+            entity.Property(v => v.Id)
+                .HasConversion(vo => vo.Value, value => new VehicleId(value))
+                .ValueGeneratedNever();
             entity.Property(v => v.PlateNumber).IsRequired();
             entity.Property(v => v.Vin).IsRequired();
             entity.HasIndex(v => v.Vin).IsUnique();
-            entity.Property(p => p.Version).IsConcurrencyToken();
         });
 
         // Vehicle registrations

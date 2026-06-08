@@ -10,10 +10,6 @@ public class VehicleRepository : BaseRepository<Vehicle>, IVehicleRepository
 {
     public VehicleRepository(AppDbContext context) : base(context) {}
 
-    public async Task<Vehicle?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        return await Context.Set<Vehicle>().FirstOrDefaultAsync(v => v.Id == id, cancellationToken);
-    }
 
     public async Task<Vehicle?> FindByVinAsync(string vin, CancellationToken cancellationToken = default)
     {

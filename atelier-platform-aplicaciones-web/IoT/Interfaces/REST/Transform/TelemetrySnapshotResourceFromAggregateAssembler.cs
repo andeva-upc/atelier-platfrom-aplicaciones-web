@@ -10,7 +10,7 @@ public static class TelemetrySnapshotResourceFromAggregateAssembler
         return new TelemetrySnapshotResource(
             aggregate.Id,
             aggregate.Obd2DeviceRegistrationId,
-            aggregate.BranchId,
+            aggregate.BranchId.Value,
             aggregate.Rpm,
             aggregate.Temperature,
             aggregate.SpeedKmh,

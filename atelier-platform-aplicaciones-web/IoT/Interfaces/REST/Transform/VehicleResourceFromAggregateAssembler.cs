@@ -8,7 +8,7 @@ public static class VehicleResourceFromAggregateAssembler
     public static VehicleResource ToResourceFromAggregate(Vehicle aggregate)
     {
         return new VehicleResource(
-            aggregate.Id,
+            aggregate.Id.Value,
             aggregate.PlateNumber,
             aggregate.Vin,
             aggregate.Year,

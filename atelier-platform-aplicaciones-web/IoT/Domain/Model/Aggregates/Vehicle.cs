@@ -1,26 +1,27 @@
-using atelier_platform_aplicaciones_web.Shared.Domain.Model;
+using atelier_platform_aplicaciones_web.Shared.Domain.Model.Entities;
+using atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects;
 
 namespace atelier_platform_aplicaciones_web.IoT.Domain.Model.Aggregates;
 
-public class Vehicle : IAuditableEntity
+public partial class Vehicle : IAuditableEntity
 {
-    public Guid Id { get; private set; }
+    public VehicleId Id { get; private set; }
     public string PlateNumber { get; private set; } = string.Empty;
     public string Vin { get; private set; } = string.Empty;
     public int Year { get; private set; }
     public string Brand { get; private set; } = string.Empty;
     public string Model { get; private set; } = string.Empty;
+    
     public DateTimeOffset? CreatedAt { get; set; }
     public DateTimeOffset? UpdatedAt { get; set; }
-    public DateTime? DeletedAt { get; private set; }
-    public long Version { get; private set; }
+    public DateTimeOffset? DeletedAt { get; set; }
 
     // Required by EF Core
     protected Vehicle() {}
 
-    public Vehicle(string plateNumber, string vin, int year, string brand, string model)
+    public Vehicle(string plateNumber, string vin, int year, string brand, string model): this()
     {
-        Id = Guid.NewGuid();
+        Id = new VehicleId(Guid.NewGuid());
         PlateNumber = plateNumber;
         Vin = vin;
         Year = year;
@@ -28,9 +29,10 @@ public class Vehicle : IAuditableEntity
         Model = model;
     }
 
-    public void UpdateDetails(string plateNumber, int year, string brand, string model)
+    public void UpdateDetails(string plateNumber, string vin, int year, string brand, string model)
     {
         PlateNumber = plateNumber;
+        Vin = vin;
         Year = year;
         Brand = brand;
         Model = model;

@@ -9,7 +9,7 @@ public static class OBD2DeviceResourceFromAggregateAssembler
     {
         return new OBD2DeviceResource(
             aggregate.Id,
-            aggregate.BranchId,
+            aggregate.BranchId.Value,
             aggregate.MacAddress,
             aggregate.Status.ToString(),
             aggregate.LastPing

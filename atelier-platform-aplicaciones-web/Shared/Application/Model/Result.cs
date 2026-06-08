@@ -29,6 +29,15 @@ public class Result<T>
     {
         return new Result<T>(false, default, message, error);
     }
+
+    /// <summary>
+    ///     Pattern-matches success and failure branches, returning a unified output type.
+    ///     The onFailure delegate receives the error message string.
+    /// </summary>
+    public TResult Fold<TResult>(Func<T, TResult> onSuccess, Func<string, TResult> onFailure)
+    {
+        return IsSuccess ? onSuccess(Value!) : onFailure(Message);
+    }
 }
 
 /// <summary>

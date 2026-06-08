@@ -10,7 +10,7 @@ public static class DtcAlertResourceFromAggregateAssembler
         return new DtcAlertResource(
             aggregate.Id,
             aggregate.TelemetrySnapshotId,
-            aggregate.BranchId,
+            aggregate.BranchId.Value,
             aggregate.DtcCode.Value,
             aggregate.Description,
             aggregate.Severity.ToString(),

@@ -2,6 +2,7 @@ using atelier_platform_aplicaciones_web.IoT.Domain.Model.Queries;
 using atelier_platform_aplicaciones_web.IoT.Domain.Services;
 using atelier_platform_aplicaciones_web.IoT.Interfaces.REST.Resources;
 using atelier_platform_aplicaciones_web.IoT.Interfaces.REST.Transform;
+using atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 using System.Net.Mime;
@@ -50,7 +51,7 @@ public class VehicleDtcErrorsController : ControllerBase
     [SwaggerResponse(StatusCodes.Status200OK, "Active warnings list", typeof(IEnumerable<DtcAlertResource>))]
     public async Task<IActionResult> GetActiveDtcErrors([FromQuery] Guid branchId)
     {
-        var query = new GetActiveDtcAlertsQuery(branchId);
+        var query = new GetActiveDtcAlertsQuery(new BranchId(branchId));
         var alerts = await _dtcQueryService.Handle(query);
         var resources = alerts.Select(DtcAlertResourceFromAggregateAssembler.ToResourceFromAggregate);
 
