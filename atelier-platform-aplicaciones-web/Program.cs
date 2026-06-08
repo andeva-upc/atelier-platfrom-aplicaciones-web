@@ -16,6 +16,13 @@ using atelier_platform_aplicaciones_web.Shared.Infrastructure.Pipeline.Middlewar
 using atelier_platform_aplicaciones_web.Shared.Infrastructure.Mediator.Cortex.Configuration;
 using Cortex.Mediator.Commands;
 using Cortex.Mediator.DependencyInjection;
+
+// IoT usings
+using atelier_platform_aplicaciones_web.IoT.Domain.Repositories;
+using atelier_platform_aplicaciones_web.IoT.Domain.Services;
+using atelier_platform_aplicaciones_web.IoT.Application.Internal.CommandServices;
+using atelier_platform_aplicaciones_web.IoT.Application.Internal.QueryServices;
+using atelier_platform_aplicaciones_web.IoT.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Swashbuckle.AspNetCore.Annotations;
@@ -72,12 +79,30 @@ builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>
 });
 
 // 7. REGISTRO DE DEPENDENCIAS (Inyección de Dependencias)
-// Aquí registraremos los repositorios y servicios de Operations cuando los creemos
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+// Operations Repositories and Services
 builder.Services.AddScoped<IWorkOrderRepository, WorkOrderRepository>();
 builder.Services.AddScoped<IWorkOrderCommandService, WorkOrderCommandService>();
 builder.Services.AddScoped<IWorkOrderQueryService, WorkOrderQueryService>();
+
+// IoT Repositories
+builder.Services.AddScoped<IOBD2DeviceRepository, OBD2DeviceRepository>();
+builder.Services.AddScoped<IOBD2DeviceRegistrationRepository, OBD2DeviceRegistrationRepository>();
+builder.Services.AddScoped<ITelemetrySnapshotRepository, TelemetrySnapshotRepository>();
+builder.Services.AddScoped<IDtcAlertRepository, DtcAlertRepository>();
+builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
+builder.Services.AddScoped<IVehicleRegistrationRepository, VehicleRegistrationRepository>();
+
+// IoT Services
+builder.Services.AddScoped<IOBD2DeviceCommandService, OBD2DeviceCommandService>();
+builder.Services.AddScoped<IOBD2DeviceQueryService, OBD2DeviceQueryService>();
+builder.Services.AddScoped<ITelemetryCommandService, TelemetryCommandService>();
+builder.Services.AddScoped<ITelemetryQueryService, TelemetryQueryService>();
+builder.Services.AddScoped<IDtcCommandService, DtcCommandService>();
+builder.Services.AddScoped<IDtcQueryService, DtcQueryService>();
+builder.Services.AddScoped<IVehicleCommandService, VehicleCommandService>();
+builder.Services.AddScoped<IVehicleQueryService, VehicleQueryService>();
 
 // 8. Registro del Custom Problem Details Factory
 builder.Services.AddTransient<ProblemDetailsFactory>();
