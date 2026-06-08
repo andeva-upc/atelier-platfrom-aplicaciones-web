@@ -1,5 +1,4 @@
 using Cortex.Mediator.Commands;
-using Microsoft.Extensions.Logging;
 
 namespace atelier_platform_aplicaciones_web.Shared.Infrastructure.Mediator.Cortex.Configuration;
 

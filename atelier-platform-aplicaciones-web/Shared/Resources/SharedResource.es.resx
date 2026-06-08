@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -23,5 +23,17 @@
   </data>
   <data name="shared.error.vehicleId.required">
     <value>Se requiere el ID del vehículo.</value>
+  </data>
+  <data name="UnexpectedServerError">
+    <value>Error inesperado del servidor</value>
+  </data>
+  <data name="UnexpectedErrorProcessingRequest">
+    <value>Ocurrió un error inesperado al procesar su solicitud.</value>
+  </data>
+  <data name="DatabaseConflict">
+    <value>Conflicto en la base de datos</value>
+  </data>
+  <data name="DatabaseConflictDetail">
+    <value>Ocurrió un conflicto al actualizar la base de datos. Es posible que se haya violado una restricción de unicidad.</value>
   </data>
 </root>
