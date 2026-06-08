@@ -1,0 +1,72 @@
+using System;
+using atelier_platform_aplicaciones_web.Operations.Domain.Model.Commands;
+using atelier_platform_aplicaciones_web.Operations.Domain.Model.ValueObjects;
+using atelier_platform_aplicaciones_web.Operations.Interfaces.REST.Resources;
+using atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects;
+
+namespace atelier_platform_aplicaciones_web.Operations.Interfaces.REST.Transform;
+
+/// <summary>
+///     Assembler class to map incoming HTTP resources into domain-level Commands.
+/// </summary>
+public static class WorkOrderCommandFromResourceAssembler
+{
+    public static CreateWorkOrderCommand ToCommandFromResource(CreateWorkOrderResource resource)
+    {
+        return new CreateWorkOrderCommand(
+            new AppointmentId(resource.AppointmentId),
+            new BranchId(resource.BranchId),
+            new VehicleId(resource.VehicleId),
+            new CustomerId(resource.CustomerId),
+            new DiagnosticSummary(resource.DiagnosticSummary),
+            new Mileage(resource.MileageIn));
+    }
+
+    public static AddTaskToWorkOrderCommand ToCommandFromResource(Guid workOrderId, AddTaskResource resource)
+    {
+        return new AddTaskToWorkOrderCommand(
+            workOrderId,
+            new ServiceId(resource.ServiceId),
+            new MechanicId(resource.MechanicId),
+            new TaskDescription(resource.Description),
+            new Money(resource.LaborPrice));
+    }
+
+    public static UpdateWorkOrderTaskDetailsCommand ToCommandFromResource(Guid workOrderId, Guid taskId, UpdateWorkOrderTaskDetailsResource resource)
+    {
+        return new UpdateWorkOrderTaskDetailsCommand(
+            workOrderId,
+            taskId,
+            new ServiceId(resource.ServiceId),
+            new MechanicId(resource.MechanicId),
+            new TaskDescription(resource.Description),
+            new Money(resource.LaborPrice));
+    }
+
+    public static AddProductToTaskCommand ToCommandFromResource(Guid workOrderId, Guid taskId, AddProductResource resource)
+    {
+        return new AddProductToTaskCommand(
+            workOrderId,
+            taskId,
+            new ProductId(resource.ProductId),
+            new Quantity(resource.Quantity),
+            new Money(resource.UnitPrice));
+    }
+
+    public static UpdateProductQuantityInTaskCommand ToCommandFromResource(Guid workOrderId, Guid taskId, Guid productId, UpdateProductQuantityInTaskResource resource)
+    {
+        return new UpdateProductQuantityInTaskCommand(
+            workOrderId,
+            taskId,
+            new ProductId(productId),
+            new Quantity(resource.NewQuantity));
+    }
+
+    public static UpdateWorkOrderDetailsCommand ToCommandFromResource(Guid workOrderId, UpdateWorkOrderDetailsResource resource)
+    {
+        return new UpdateWorkOrderDetailsCommand(
+            workOrderId,
+            new DiagnosticSummary(resource.DiagnosticSummary),
+            new Mileage(resource.MileageIn));
+    }
+}
