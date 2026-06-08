@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="iam.error.userId.required">
+    <value>User ID is required.</value>
+  </data>
+  <data name="iam.error.email.required">
+    <value>Email is required.</value>
+  </data>
+  <data name="iam.error.currentPassword.required">
+    <value>Current password is required.</value>
+  </data>
+  <data name="iam.error.newPassword.required">
+    <value>New password is required.</value>
+  </data>
+  <data name="iam.error.email.alreadyInUse">
+    <value>Email already in use.</value>
+  </data>
+  <data name="iam.error.credentials.invalid">
+    <value>Invalid email or password.</value>
+  </data>
+  <data name="iam.error.user.notFound">
+    <value>User not found.</value>
+  </data>
+  <data name="iam.error.currentPassword.invalid">
+    <value>Invalid current password.</value>
+  </data>
+  <data name="iam.error.token.invalidOrExpired">
+    <value>Invalid or expired token.</value>
+  </data>
+  <data name="iam.error.token.expiredOrUsed">
+    <value>Token has expired or already used.</value>
+  </data>
+  <data name="iam.error.idToken.required">
+    <value>Google ID token is required.</value>
+  </data>
+  <data name="iam.error.googleToken.invalid">
+    <value>Invalid Google token.</value>
+  </data>
+
+  <data name="email.recovery.subject">
+    <value>Password Recovery - Atelier</value>
+  </data>
+  <data name="email.recovery.body">
+    <value>Hello,
+
+We received a request to change your password.
+Click the link below to create a new one:
+
+{0}/reset-password?token={1}
+
+If you did not request this change, please ignore this email.</value>
+  </data>
+</root>
