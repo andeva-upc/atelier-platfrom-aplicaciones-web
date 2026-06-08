@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using atelier_platform_aplicaciones_web.Shared.Domain.Model.Entities;
 
 namespace atelier_platform_aplicaciones_web.Operations.Domain.Model.Aggregates;
