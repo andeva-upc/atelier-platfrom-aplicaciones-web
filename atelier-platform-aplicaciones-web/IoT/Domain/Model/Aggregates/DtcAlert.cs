@@ -1,4 +1,5 @@
 using atelier_platform_aplicaciones_web.IoT.Domain.Model.ValueObjects;
+using atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects;
 
 namespace atelier_platform_aplicaciones_web.IoT.Domain.Model.Aggregates;
 
@@ -6,7 +7,7 @@ public class DtcAlert
 {
     public Guid Id { get; private set; }
     public Guid TelemetrySnapshotId { get; private set; }
-    public Guid BranchId { get; private set; }
+    public BranchId BranchId { get; private set; }
     public DtcCode DtcCode { get; private set; } = null!;
     public string Description { get; private set; } = string.Empty;
     public DtcSeverity Severity { get; private set; }
@@ -15,7 +16,7 @@ public class DtcAlert
     // Required by EF Core
     protected DtcAlert() {}
 
-    public DtcAlert(Guid telemetrySnapshotId, Guid branchId, DtcCode dtcCode, string description)
+    public DtcAlert(Guid telemetrySnapshotId, BranchId branchId, DtcCode dtcCode, string description)
     {
         Id = Guid.NewGuid();
         TelemetrySnapshotId = telemetrySnapshotId;

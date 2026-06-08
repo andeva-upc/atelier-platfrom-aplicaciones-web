@@ -25,7 +25,7 @@ public class VehicleQueryService : IVehicleQueryService
 
         foreach (var reg in activeRegs)
         {
-            var vehicle = await _vehicleRepository.FindByIdAsync(reg.VehicleId);
+            var vehicle = await _vehicleRepository.FindByIdAsync(reg.VehicleId.Value);
             if (vehicle != null)
             {
                 vehicles.Add(vehicle);

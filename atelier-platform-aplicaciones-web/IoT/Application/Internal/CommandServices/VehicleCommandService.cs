@@ -3,7 +3,8 @@ using atelier_platform_aplicaciones_web.IoT.Domain.Model.Commands;
 using atelier_platform_aplicaciones_web.IoT.Domain.Model.ValueObjects;
 using atelier_platform_aplicaciones_web.IoT.Domain.Repositories;
 using atelier_platform_aplicaciones_web.IoT.Domain.Services;
-using atelier_platform_aplicaciones_web.Shared.Application.Patterns;
+using atelier_platform_aplicaciones_web.Shared.Application.Model;
+using atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects;
 using atelier_platform_aplicaciones_web.Shared.Domain.Repositories;
 
 namespace atelier_platform_aplicaciones_web.IoT.Application.Internal.CommandServices;
@@ -30,7 +31,7 @@ public class VehicleCommandService : IVehicleCommandService
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result<Vehicle, string>> Handle(RegisterVehicleCommand command)
+    public async Task<Result<Vehicle>> Handle(RegisterVehicleCommand command)
     {
         var vehicle = await _vehicleRepository.FindByVinAsync(command.Vin);
         bool isNewVehicle = false;
@@ -55,7 +56,7 @@ public class VehicleCommandService : IVehicleCommandService
 
             // Deactivate previous active owner registrations for this vehicle
             var activeOwnerReg = await _vehicleRegistrationRepository.FindByVehicleIdAndStatusAsync(
-                vehicle.Id, VehicleRegistrationStatus.ACTIVE);
+                new VehicleId(vehicle.Id), VehicleRegistrationStatus.ACTIVE);
 
             if (activeOwnerReg != null)
             {
@@ -65,7 +66,7 @@ public class VehicleCommandService : IVehicleCommandService
                 // Cascade OBD2 deactivation logic:
                 // Find any active OBD2 device registration for this vehicle_id
                 var activeObd2Reg = await _obd2RegistrationRepository.FindByVehicleIdAndStatusAsync(
-                    vehicle.Id, OBD2DeviceRegistrationStatus.ACTIVE);
+                    new VehicleId(vehicle.Id), OBD2DeviceRegistrationStatus.ACTIVE);
 
                 if (activeObd2Reg != null)
                 {
@@ -84,11 +85,11 @@ public class VehicleCommandService : IVehicleCommandService
         }
 
         // Create new active owner registration
-        var registration = new VehicleRegistration(command.UserId, vehicle.Id);
+        var registration = new VehicleRegistration(command.UserId, new VehicleId(vehicle.Id));
         await _vehicleRegistrationRepository.AddAsync(registration);
 
         await _unitOfWork.CompleteAsync();
 
-        return new Result<Vehicle, string>.Success(vehicle);
+        return Result<Vehicle>.Success(vehicle);
     }
 }

@@ -1,10 +1,11 @@
 using atelier_platform_aplicaciones_web.IoT.Domain.Model.Aggregates;
 using atelier_platform_aplicaciones_web.IoT.Domain.Repositories;
-using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EFC.Configuration;
-using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EFC.Repositories;
+using atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects;
+using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EntityFrameworkCore.Configuration;
+using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace atelier_platform_aplicaciones_web.IoT.Infrastructure.Persistence.EFC.Repositories;
+namespace atelier_platform_aplicaciones_web.IoT.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 
 public class DtcAlertRepository : BaseRepository<DtcAlert>, IDtcAlertRepository
 {
@@ -15,7 +16,7 @@ public class DtcAlertRepository : BaseRepository<DtcAlert>, IDtcAlertRepository
         return await Context.Set<DtcAlert>().FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
     }
 
-    public async Task<IEnumerable<DtcAlert>> FindActiveByBranchIdAsync(Guid branchId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<DtcAlert>> FindActiveByBranchIdAsync(BranchId branchId, CancellationToken cancellationToken = default)
     {
         return await Context.Set<DtcAlert>()
             .Where(a => a.BranchId == branchId)

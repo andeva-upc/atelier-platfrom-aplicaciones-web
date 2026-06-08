@@ -1,12 +1,13 @@
 using atelier_platform_aplicaciones_web.IoT.Domain.Model.ValueObjects;
-using atelier_platform_aplicaciones_web.Shared.Domain.Model;
+using atelier_platform_aplicaciones_web.Shared.Domain.Model.Entities;
+using atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects;
 
 namespace atelier_platform_aplicaciones_web.IoT.Domain.Model.Aggregates;
 
 public class OBD2Device : IAuditableEntity
 {
     public Guid Id { get; private set; }
-    public Guid BranchId { get; private set; }
+    public BranchId BranchId { get; private set; }
     public string MacAddress { get; private set; } = string.Empty;
     public DateTime? LastPing { get; private set; }
     public OBD2DeviceStatus Status { get; private set; }
@@ -18,7 +19,7 @@ public class OBD2Device : IAuditableEntity
     // Required by EF Core
     protected OBD2Device() {}
 
-    public OBD2Device(Guid branchId, string macAddress)
+    public OBD2Device(BranchId branchId, string macAddress)
     {
         Id = Guid.NewGuid();
         BranchId = branchId;
@@ -46,7 +47,7 @@ public class OBD2Device : IAuditableEntity
         DeletedAt = DateTime.UtcNow;
     }
 
-    public void UpdateDetails(Guid branchId, string macAddress)
+    public void UpdateDetails(BranchId branchId, string macAddress)
     {
         BranchId = branchId;
         MacAddress = macAddress;

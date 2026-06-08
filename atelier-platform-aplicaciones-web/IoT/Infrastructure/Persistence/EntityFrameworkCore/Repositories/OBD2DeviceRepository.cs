@@ -1,10 +1,11 @@
 using atelier_platform_aplicaciones_web.IoT.Domain.Model.Aggregates;
 using atelier_platform_aplicaciones_web.IoT.Domain.Repositories;
-using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EFC.Configuration;
-using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EFC.Repositories;
+using atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects;
+using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EntityFrameworkCore.Configuration;
+using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace atelier_platform_aplicaciones_web.IoT.Infrastructure.Persistence.EFC.Repositories;
+namespace atelier_platform_aplicaciones_web.IoT.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 
 public class OBD2DeviceRepository : BaseRepository<OBD2Device>, IOBD2DeviceRepository
 {
@@ -20,7 +21,7 @@ public class OBD2DeviceRepository : BaseRepository<OBD2Device>, IOBD2DeviceRepos
         return await Context.Set<OBD2Device>().FirstOrDefaultAsync(d => d.MacAddress == macAddress, cancellationToken);
     }
 
-    public async Task<IEnumerable<OBD2Device>> FindByBranchIdAsync(Guid branchId, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<OBD2Device>> FindByBranchIdAsync(BranchId branchId, CancellationToken cancellationToken = default)
     {
         return await Context.Set<OBD2Device>().Where(d => d.BranchId == branchId).ToListAsync(cancellationToken);
     }

@@ -1,10 +1,12 @@
+using atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects;
+
 namespace atelier_platform_aplicaciones_web.IoT.Domain.Model.Aggregates;
 
 public class TelemetrySnapshot
 {
     public Guid Id { get; private set; }
     public Guid Obd2DeviceRegistrationId { get; private set; }
-    public Guid BranchId { get; private set; }
+    public BranchId BranchId { get; private set; }
     public int Rpm { get; private set; }
     public int Temperature { get; private set; }
     public double? SpeedKmh { get; private set; }
@@ -15,7 +17,7 @@ public class TelemetrySnapshot
     // Required by EF Core
     protected TelemetrySnapshot() {}
 
-    public TelemetrySnapshot(Guid obd2DeviceRegistrationId, Guid branchId, 
+    public TelemetrySnapshot(Guid obd2DeviceRegistrationId, BranchId branchId, 
         int? rpm, int? temperature, double? speedKmh, int? odometerKm, double? fuelLevelPercent)
     {
         Id = Guid.NewGuid();
