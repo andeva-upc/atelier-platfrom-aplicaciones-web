@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="iam.error.userId.required">
+    <value>El ID de usuario es obligatorio.</value>
+  </data>
+  <data name="iam.error.email.required">
+    <value>El correo electrónico es obligatorio.</value>
+  </data>
+  <data name="iam.error.currentPassword.required">
+    <value>La contraseña actual es obligatoria.</value>
+  </data>
+  <data name="iam.error.newPassword.required">
+    <value>La nueva contraseña es obligatoria.</value>
+  </data>
+  <data name="iam.error.email.alreadyInUse">
+    <value>El correo electrónico ya está en uso.</value>
+  </data>
+  <data name="iam.error.credentials.invalid">
+    <value>Correo electrónico o contraseña no válidos.</value>
+  </data>
+  <data name="iam.error.user.notFound">
+    <value>Usuario no encontrado.</value>
+  </data>
+  <data name="iam.error.currentPassword.invalid">
+    <value>La contraseña actual es inválida.</value>
+  </data>
+  <data name="iam.error.token.invalidOrExpired">
+    <value>Token inválido o expirado.</value>
+  </data>
+  <data name="iam.error.token.expiredOrUsed">
+    <value>El token ha expirado o ya fue usado.</value>
+  </data>
+  <data name="iam.error.idToken.required">
+    <value>El token de ID de Google es obligatorio.</value>
+  </data>
+  <data name="iam.error.googleToken.invalid">
+    <value>Token de Google inválido.</value>
+  </data>
+
+  <data name="email.recovery.subject">
+    <value>Recuperación de Contraseña - Atelier</value>
+  </data>
+  <data name="email.recovery.body">
+    <value>Hola,
+
+Hemos recibido una solicitud para cambiar tu contraseña.
+Haz clic en el siguiente enlace para crear una nueva:
+
+{0}/reset-password?token={1}
+
+Si no solicitaste este cambio, ignora este correo.</value>
+  </data>
+</root>

@@ -1,3 +1,7 @@
-﻿namespace atelier_platform_aplicaciones_web.Operations.Interfaces.REST.Resources;
+using System.ComponentModel.DataAnnotations;
 
-public record UpdateWorkOrderDetailsResource(string DiagnosticSummary, int MileageIn);
+namespace atelier_platform_aplicaciones_web.Operations.Interfaces.REST.Resources;
+
+public record UpdateWorkOrderDetailsResource(
+    [Required(ErrorMessage = "operations.error.resource.diagnosticSummary.required")] string DiagnosticSummary, 
+    [Required(ErrorMessage = "operations.error.resource.mileageIn.required")] int MileageIn);

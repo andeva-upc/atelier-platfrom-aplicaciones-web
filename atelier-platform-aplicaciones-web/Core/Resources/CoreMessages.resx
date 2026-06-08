@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="core.error.workshop.notFound"><value>Workshop not found.</value></data>
+  <data name="core.error.branch.codeMustBeUnique"><value>Branch code must be unique.</value></data>
+  <data name="core.error.branch.notFound"><value>Branch not found.</value></data>
+  <data name="core.error.customer.profileAlreadyExists"><value>Customer profile already exists for this user.</value></data>
+  <data name="core.error.customer.notFound"><value>Customer profile not found.</value></data>
+  <data name="core.error.employee.profileAlreadyExists"><value>Employee profile already exists for this user.</value></data>
+  <data name="core.error.employee.notFound"><value>Employee profile not found.</value></data>
+  <data name="core.error.owner.profileAlreadyExists"><value>Owner profile already exists for this user.</value></data>
+  <data name="core.error.owner.notFound"><value>Owner profile not found.</value></data>
+  <data name="core.error.subscriptionPlan.notFound"><value>Subscription plan not found.</value></data>
+  <data name="core.error.branch.noActiveSubscription"><value>Branch does not have an active subscription.</value></data>
+  <data name="core.error.code.required"><value>Branch code is required.</value></data>
+  <data name="core.error.name.required"><value>Name is required.</value></data>
+  <data name="core.error.businessName.required"><value>Business name is required.</value></data>
+  <data name="core.error.personName.required"><value>Person name is required.</value></data>
+  <data name="core.error.customer.corporateDocumentTypeImmutable"><value>Corporate document type is immutable.</value></data>
+  <data name="core.error.brandName.required"><value>Brand name is required.</value></data>
+  <data name="core.error.taxId.required"><value>Tax ID is required.</value></data>
+  <data name="core.error.startDate.required"><value>Start date is required.</value></data>
+  <data name="core.error.endDate.required"><value>End date is required.</value></data>
+  <data name="core.error.branchSubscriptionId.required"><value>Branch subscription ID is required.</value></data>
+  <data name="core.error.cardNumber.invalid"><value>Card number is invalid.</value></data>
+  <data name="core.error.cardHolderName.required"><value>Card holder name is required.</value></data>
+  <data name="core.error.expirationDate.invalid"><value>Expiration date is invalid.</value></data>
+  <data name="core.error.cvv.invalid"><value>CVV is invalid.</value></data>
+  <data name="core.error.documentType.notNull"><value>Document type cannot be null.</value></data>
+  <data name="core.error.documentNumber.notBlank"><value>Document number cannot be empty.</value></data>
+  <data name="core.error.documentType.invalid"><value>Document type is invalid.</value></data>
+  <data name="core.error.employeeId.required"><value>Employee ID is required.</value></data>
+  <data name="core.error.ownerId.required"><value>Owner ID is required.</value></data>
+  <data name="core.error.firstName.notBlank"><value>First name is required.</value></data>
+  <data name="core.error.lastName.notBlank"><value>Last name is required.</value></data>
+  <data name="core.error.phone.required"><value>Phone number is required.</value></data>
+  <data name="core.error.subscriptionPlanId.required"><value>Subscription plan ID is required.</value></data>
+  <data name="core.error.userId.required"><value>User ID is required.</value></data>
+  <data name="core.error.workshopId.required"><value>Workshop ID is required.</value></data>
+  <data name="core.error.unexpected"><value>An unexpected error occurred.</value></data>
+</root>

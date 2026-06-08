@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
@@ -23,5 +23,17 @@
   </data>
   <data name="shared.error.vehicleId.required">
     <value>Vehicle ID is required.</value>
+  </data>
+  <data name="UnexpectedServerError">
+    <value>Unexpected Server Error</value>
+  </data>
+  <data name="UnexpectedErrorProcessingRequest">
+    <value>An unexpected error occurred while processing your request.</value>
+  </data>
+  <data name="DatabaseConflict">
+    <value>Database Conflict</value>
+  </data>
+  <data name="DatabaseConflictDetail">
+    <value>A conflict occurred while updating the database. A unique constraint might have been violated.</value>
   </data>
 </root>

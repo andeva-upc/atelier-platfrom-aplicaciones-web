@@ -1,4 +1,6 @@
 using atelier_platform_aplicaciones_web.Shared.Domain.Model.Entities;
+
+using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -6,17 +8,10 @@ namespace atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.En
 
 /// <summary>
 ///     EF Core interceptor that automatically populates audit timestamps on any entity
-///     that implements <see cref="IAuditableEntity"/>.
+///     that implements <see cref="IAuditableEntity"/>, and the user identifier on any
+///     entity that implements <see cref="IUserAuditableEntity"/>.
 /// </summary>
-/// <remarks>
-///     <list type="bullet">
-///         <item><description><c>CreatedDate</c> — set once when the entity is first added.</description></item>
-///         <item><description><c>UpdatedDate</c> — refreshed on every add or update.</description></item>
-///     </list>
-///     Register this interceptor in <c>AppDbContext.OnConfiguring</c> so it applies to all
-///     bounded contexts sharing the same <see cref="DbContext"/>.
-/// </remarks>
-public sealed class AuditableEntityInterceptor : SaveChangesInterceptor
+public sealed class AuditableEntityInterceptor(IHttpContextAccessor httpContextAccessor) : SaveChangesInterceptor
 {
     /// <inheritdoc />
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
@@ -35,16 +30,32 @@ public sealed class AuditableEntityInterceptor : SaveChangesInterceptor
         return base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 
-    private static void ApplyAuditTimestamps(DbContext? context)
+    private void ApplyAuditTimestamps(DbContext? context)
     {
         if (context is null) return;
 
         var now = DateTimeOffset.UtcNow;
+        var userIdClaim = httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        Guid? currentUserId = Guid.TryParse(userIdClaim, out var parsedId) ? parsedId : null;
 
         foreach (var entry in context.ChangeTracker.Entries<IAuditableEntity>())
         {
-            if (entry.State is EntityState.Added or EntityState.Modified) entry.Entity.UpdatedAt = now;
-            if (entry.State == EntityState.Added) entry.Entity.CreatedAt ??= now;
+            if (entry.State is EntityState.Added or EntityState.Modified)
+            {
+                entry.Entity.UpdatedAt = now;
+                if (entry.Entity is IUserAuditableEntity userEntityModified)
+                {
+                    userEntityModified.UpdatedBy = currentUserId;
+                }
+            }
+            if (entry.State == EntityState.Added)
+            {
+                entry.Entity.CreatedAt ??= now;
+                if (entry.Entity is IUserAuditableEntity userEntityAdded)
+                {
+                    userEntityAdded.CreatedBy ??= currentUserId;
+                }
+            }
         }
     }
 }

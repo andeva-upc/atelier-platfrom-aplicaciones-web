@@ -1,13 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using atelier_platform_aplicaciones_web.Operations.Domain.Model.ValueObjects;
 using atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects;
 using atelier_platform_aplicaciones_web.Operations.Domain.Model.Events;
+using atelier_platform_aplicaciones_web.Shared.Domain.Model.Entities;
+using atelier_platform_aplicaciones_web.Shared.Domain.Model.Events;
 
 namespace atelier_platform_aplicaciones_web.Operations.Domain.Model.Aggregates;
 
-public partial class WorkOrder
+public partial class WorkOrder : IHasDomainEvents
 {
     public Guid Id { get; private set; }
     public AppointmentId AppointmentId { get; private set; }
@@ -24,10 +26,10 @@ public partial class WorkOrder
     public IReadOnlyCollection<WorkOrderTask> Tasks => _tasks.AsReadOnly();
 
     // Soporte nativo para eventos de dominio en DDD C#
-    private readonly List<object> _domainEvents = new();
-    public IReadOnlyCollection<object> DomainEvents => _domainEvents.AsReadOnly();
+    private readonly List<IEvent> _domainEvents = new();
+    public IReadOnlyCollection<IEvent> DomainEvents => _domainEvents.AsReadOnly();
 
-    protected void RegisterEvent(object domainEvent) => _domainEvents.Add(domainEvent);
+    protected void RegisterEvent(IEvent domainEvent) => _domainEvents.Add(domainEvent);
     public void ClearDomainEvents() => _domainEvents.Clear();
 
     protected WorkOrder()
@@ -78,7 +80,7 @@ public partial class WorkOrder
         
         // Registramos el evento para ser procesado por infraestructura
         // Nota: Los eventos (ProductReservedEvent) se crearán en un paso posterior
-        RegisterEvent(new { WorkOrderId = Id, BranchId, ProductId = productId, Quantity = quantity }); 
+        RegisterEvent(new ProductReservedEvent(Id, BranchId, productId, quantity));
     }
 
     public void RemoveProductFromTask(Guid taskId, ProductId productId)
@@ -95,7 +97,7 @@ public partial class WorkOrder
         task.RemoveProduct(productId);
         RecalculateTotalAmount();
 
-        RegisterEvent(new { WorkOrderId = Id, BranchId, ProductId = product.ProductId, Quantity = product.Quantity, IsCancellation = true });
+        RegisterEvent(new ProductReservationCanceledEvent(Id, BranchId, product.ProductId, product.Quantity));
     }
 
     public void RemoveTask(Guid taskId)
@@ -112,7 +114,7 @@ public partial class WorkOrder
 
         foreach (var product in task.Products)
         {
-            RegisterEvent(new { WorkOrderId = Id, BranchId, product.ProductId, product.Quantity, IsCancellation = true });
+            RegisterEvent(new ProductReservationCanceledEvent(Id, BranchId, product.ProductId, product.Quantity));
         }
 
         _tasks.Remove(task);
@@ -208,7 +210,7 @@ public partial class WorkOrder
         Status = Status.TransitionTo(WorkOrderStatus.Paid);
 
         var dispatchedProducts = _tasks.SelectMany(t => t.Products).ToList();
-        RegisterEvent(new { WorkOrderId = Id, BranchId, DispatchedProducts = dispatchedProducts, IsPaid = true });
+        RegisterEvent(new WorkOrderPaidEvent(Id, BranchId, dispatchedProducts));
     }
 
     public void UpdateDetails(DiagnosticSummary diagnosticSummary, Mileage mileageIn)
@@ -246,11 +248,11 @@ public partial class WorkOrder
         int delta = newQuantity.Value - oldQuantity.Value;
         if (delta > 0)
         {
-            RegisterEvent(new { WorkOrderId = Id, BranchId, ProductId = productId, Quantity = new Quantity(delta) });
+            RegisterEvent(new ProductReservedEvent(Id, BranchId, productId, new Quantity(delta)));
         }
         else if (delta < 0)
         {
-            RegisterEvent(new { WorkOrderId = Id, BranchId, ProductId = productId, Quantity = new Quantity(Math.Abs(delta)), IsCancellation = true });
+            RegisterEvent(new ProductReservationCanceledEvent(Id, BranchId, productId, new Quantity(Math.Abs(delta))));
         }
     }
 

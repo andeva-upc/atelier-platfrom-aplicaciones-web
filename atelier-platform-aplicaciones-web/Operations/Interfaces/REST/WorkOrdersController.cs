@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Localization;
 using Swashbuckle.AspNetCore.Annotations;
+using atelier_platform_aplicaciones_web.IAM.Infrastructure.Pipeline.Middleware.Attributes;
 
 using atelier_platform_aplicaciones_web.Operations.Application.CommandServices;
 using atelier_platform_aplicaciones_web.Operations.Application.QueryServices;
@@ -23,6 +24,7 @@ namespace atelier_platform_aplicaciones_web.Operations.Interfaces.REST;
 [Route("api/v1/work-orders")]
 [Produces(MediaTypeNames.Application.Json)]
 [Tags("Work Orders")]
+[Authorize]
 public class WorkOrdersController(
     IWorkOrderCommandService workOrderCommandService,
     IWorkOrderQueryService workOrderQueryService,
@@ -33,7 +35,7 @@ public class WorkOrdersController(
     [SwaggerOperation(Summary = "Create a new Work Order")]
     public async Task<ActionResult> CreateWorkOrder([FromBody] CreateWorkOrderResource resource)
     {
-        var command = CreateWorkOrderCommandFromResourceAssembler.ToCommandFromResource(resource);
+        var command = WorkOrderCommandFromResourceAssembler.ToCommandFromResource(resource);
         var result = await workOrderCommandService.Handle(command);
         
         return ActionResultFromWorkOrderCommandResultAssembler.ToCreatedAtActionResult(
@@ -47,13 +49,7 @@ public class WorkOrdersController(
     [SwaggerOperation(Summary = "Add a mechanic task to a Work Order")]
     public async Task<ActionResult> AddTaskToWorkOrder(Guid id, [FromBody] AddTaskResource resource)
     {
-        var command = new AddTaskToWorkOrderCommand(
-            id,
-            new ServiceId(resource.ServiceId),
-            new MechanicId(resource.MechanicId),
-            new TaskDescription(resource.Description),
-            new Money(resource.LaborPrice)
-        );
+        var command = WorkOrderCommandFromResourceAssembler.ToCommandFromResource(id, resource);
         var result = await workOrderCommandService.Handle(command);
 
         return ActionResultFromWorkOrderCommandResultAssembler.ToOkActionResult(result, this, localizer);
@@ -63,14 +59,7 @@ public class WorkOrdersController(
     [SwaggerOperation(Summary = "Update mechanic task details")]
     public async Task<ActionResult> UpdateTaskDetails(Guid id, Guid taskId, [FromBody] UpdateWorkOrderTaskDetailsResource resource)
     {
-        var command = new UpdateWorkOrderTaskDetailsCommand(
-            id,
-            taskId,
-            new ServiceId(resource.ServiceId),
-            new MechanicId(resource.MechanicId),
-            new TaskDescription(resource.Description),
-            new Money(resource.LaborPrice)
-        );
+        var command = WorkOrderCommandFromResourceAssembler.ToCommandFromResource(id, taskId, resource);
         var result = await workOrderCommandService.Handle(command);
 
         return ActionResultFromWorkOrderCommandResultAssembler.ToOkActionResult(result, this, localizer);
@@ -80,13 +69,7 @@ public class WorkOrdersController(
     [SwaggerOperation(Summary = "Add an inventory product/part to a task")]
     public async Task<ActionResult> AddProductToTask(Guid id, Guid taskId, [FromBody] AddProductResource resource)
     {
-        var command = new AddProductToTaskCommand(
-            id,
-            taskId,
-            new ProductId(resource.ProductId),
-            new Quantity(resource.Quantity),
-            new Money(resource.UnitPrice)
-        );
+        var command = WorkOrderCommandFromResourceAssembler.ToCommandFromResource(id, taskId, resource);
         var result = await workOrderCommandService.Handle(command);
 
         return ActionResultFromWorkOrderCommandResultAssembler.ToOkActionResult(result, this, localizer);
@@ -96,7 +79,7 @@ public class WorkOrdersController(
     [SwaggerOperation(Summary = "Update a product's quantity in a task")]
     public async Task<ActionResult> UpdateProductQuantity(Guid id, Guid taskId, Guid productId, [FromBody] UpdateProductQuantityInTaskResource resource)
     {
-        var command = new UpdateProductQuantityInTaskCommand(id, taskId, new ProductId(productId), new Quantity(resource.NewQuantity));
+        var command = WorkOrderCommandFromResourceAssembler.ToCommandFromResource(id, taskId, productId, resource);
         var result = await workOrderCommandService.Handle(command);
 
         return ActionResultFromWorkOrderCommandResultAssembler.ToOkActionResult(result, this, localizer);
@@ -163,6 +146,7 @@ public class WorkOrdersController(
     }
 
     [HttpGet("{id}")]
+    [ActionName(nameof(GetWorkOrderById))]
     [SwaggerOperation(Summary = "Get a Work Order by ID")]
     public async Task<ActionResult> GetWorkOrderById(Guid id)
     {
@@ -207,7 +191,7 @@ public class WorkOrdersController(
     [SwaggerOperation(Summary = "Update Work Order details (diagnostic and mileage)")]
     public async Task<ActionResult> UpdateWorkOrderDetails(Guid id, [FromBody] UpdateWorkOrderDetailsResource resource)
     {
-        var command = new UpdateWorkOrderDetailsCommand(id, new DiagnosticSummary(resource.DiagnosticSummary), new Mileage(resource.MileageIn));
+        var command = WorkOrderCommandFromResourceAssembler.ToCommandFromResource(id, resource);
         var result = await workOrderCommandService.Handle(command);
 
         return ActionResultFromWorkOrderCommandResultAssembler.ToOkActionResult(result, this, localizer);

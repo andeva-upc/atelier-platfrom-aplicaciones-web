@@ -45,5 +45,17 @@
   <data name="operations.error.resource.productId.required"><value>Product ID is required.</value></data>
   <data name="operations.error.resource.quantity.required"><value>Product quantity is required.</value></data>
   <data name="operations.error.resource.quantity.invalid"><value>Product quantity must be at least 1.</value></data>
+  <data name="operations.error.query.workOrderId.required"><value>Work Order ID is required.</value></data>
+  <data name="operations.error.query.branchId.required"><value>Branch ID is required.</value></data>
+  <data name="operations.error.query.vehicleId.required"><value>Vehicle ID is required.</value></data>
+  <data name="operations.error.appointmentId.duplicate"><value>A work order already exists for this appointment.</value></data>
+  <data name="operations.error.unexpected"><value>An unexpected error occurred while processing the operation.</value></data>
+  <data name="operations.error.mechanicId.required"><value>Mechanic ID is required.</value></data>
+  <data name="operations.error.productId.required"><value>Product ID is required.</value></data>
+  <data name="operations.error.serviceId.required"><value>Service ID is required.</value></data>
+  <data name="operations.error.resource.mechanicId.required"><value>Assigned mechanic ID is required.</value></data>
+  <data name="operations.error.resource.newQuantity.required"><value>New quantity is required.</value></data>
   <data name="operations.error.resource.unitPrice.required"><value>Unit price is required.</value></data>
+  <data name="operations.error.address.notBlank"><value>Address is required and cannot be blank.</value></data>
+  <data name="operations.error.address.tooLong"><value>Address is too long.</value></data>
 </root>

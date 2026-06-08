@@ -8,16 +8,29 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="BCrypt.Net-Next" Version="4.2.0" />
         <PackageReference Include="Cortex.Mediator" Version="3.1.2" />
+        <PackageReference Include="Google.Apis.Auth" Version="1.75.0" />
         <PackageReference Include="Humanizer" Version="3.0.10" />
+        <PackageReference Include="MailKit" Version="4.17.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.8" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.5" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.8" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.8">
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
           <PrivateAssets>all</PrivateAssets>
         </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="10.0.8" />
+        <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.18.0" />
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.2" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.7" />
         <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="10.1.7" />
+        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.18.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Core\Domain\Model\" />
+      <Folder Include="Core\Domain\Repositories\" />
     </ItemGroup>
 
 </Project>
