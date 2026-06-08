@@ -55,6 +55,7 @@ CREATE TABLE branches
     updated_at  timestamp    NOT NULL,
     deleted_at  timestamp   ,
     created_by  uuid         NOT NULL,
+    updated_by  uuid        ,
     version     bigint      ,
     PRIMARY KEY (id)
 );
@@ -81,9 +82,17 @@ CREATE TABLE customers
     last_name     varchar(100),
     is_corporate  boolean      NOT NULL,
     business_name varchar(100),
-    created_by    uuid        ,
+    document_type   varchar(20)  NOT NULL,
+    document_number varchar(50)  NOT NULL,
+    phone           char(9)      NOT NULL,
+    created_at      timestamp    NOT NULL,
+    updated_at      timestamp    NOT NULL,
+    deleted_at      timestamp   ,
+    version         bigint       NOT NULL DEFAULT 0,
     PRIMARY KEY (id)
 );
+
+COMMENT ON COLUMN customers.document_type IS 'enum: DNI, RUC, CE, PASSPORT';
 
 CREATE TABLE dtc_alerts
 (
@@ -123,9 +132,17 @@ CREATE TABLE employees
     user_id    uuid         NOT NULL,
     first_name varchar(100) NOT NULL,
     last_name  varchar(100) NOT NULL,
-    created_by uuid        ,
+    document_type   varchar(20)  NOT NULL,
+    document_number varchar(50)  NOT NULL,
+    phone           char(9)      NOT NULL,
+    created_at      timestamp    NOT NULL,
+    updated_at      timestamp    NOT NULL,
+    deleted_at      timestamp   ,
+    version         bigint       NOT NULL DEFAULT 0,
     PRIMARY KEY (id)
 );
+
+COMMENT ON COLUMN employees.document_type IS 'enum: DNI, RUC, CE, PASSPORT';
 
 CREATE TABLE obd2_device_registrations
 (
@@ -163,8 +180,17 @@ CREATE TABLE owners
     user_id    uuid         NOT NULL,
     first_name varchar(100) NOT NULL,
     last_name  varchar(100) NOT NULL,
+    document_type   varchar(20)  NOT NULL,
+    document_number varchar(50)  NOT NULL,
+    phone           char(9)      NOT NULL,
+    created_at      timestamp    NOT NULL,
+    updated_at      timestamp    NOT NULL,
+    deleted_at      timestamp   ,
+    version         bigint       NOT NULL DEFAULT 0,
     PRIMARY KEY (id)
 );
+
+COMMENT ON COLUMN owners.document_type IS 'enum: DNI, RUC, CE, PASSPORT';
 
 CREATE TABLE password_recovery_tokens
 (
@@ -296,10 +322,6 @@ CREATE TABLE users
     email           varchar(100) NOT NULL UNIQUE,
     password_hash   varchar(255) NOT NULL UNIQUE,
     google_id       varchar(255) UNIQUE,
-    document_type   varchar(20)  NOT NULL,
-    document_number varchar(50)  NOT NULL,
-    phone           char(9)      NOT NULL UNIQUE,
-    birth_date      date         NOT NULL,
     status          varchar(20)  NOT NULL DEFAULT 'ACTIVE',
     created_at      timestamp    NOT NULL,
     updated_at      timestamp    NOT NULL,
@@ -308,7 +330,6 @@ CREATE TABLE users
     PRIMARY KEY (id)
 );
 
-COMMENT ON COLUMN users.document_type IS 'enum: DNI, RUC, CE, PASSPORT';
 COMMENT ON COLUMN users.status IS 'enum: ACTIVE, INACTIVE';
 
 CREATE TABLE vehicle_registrations
@@ -318,6 +339,7 @@ CREATE TABLE vehicle_registrations
     vehicle_id uuid        NOT NULL,
     status     varchar(20) NOT NULL DEFAULT 'ACTIVE',
     created_at timestamp   NOT NULL,
+    deleted_at timestamp  ,
     PRIMARY KEY (id)
 );
 
@@ -532,7 +554,6 @@ CREATE INDEX idx_services_branch_id ON services (branch_id);
 CREATE INDEX idx_telemetry_registration_id ON telemetry_snapshots (obd2_device_registration_id);
 CREATE INDEX idx_telemetry_branch_id ON telemetry_snapshots (branch_id);
 CREATE INDEX idx_telemetry_created_at ON telemetry_snapshots (created_at DESC);
-CREATE INDEX idx_users_document_number ON users (document_number);
 CREATE INDEX idx_vehicle_regs_user_id ON vehicle_registrations (user_id);
 CREATE INDEX idx_vehicle_regs_vehicle_id ON vehicle_registrations (vehicle_id);
 CREATE INDEX idx_vehicles_plate_number ON vehicles (plate_number);
@@ -567,8 +588,11 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER trg_appointments_updated_at BEFORE UPDATE ON appointments FOR EACH ROW EXECUTE FUNCTION update_modified_column();
 CREATE TRIGGER trg_branches_updated_at BEFORE UPDATE ON branches FOR EACH ROW EXECUTE FUNCTION update_modified_column();
 CREATE TRIGGER trg_customer_registrations_updated_at BEFORE UPDATE ON customer_registrations FOR EACH ROW EXECUTE FUNCTION update_modified_column();
+CREATE TRIGGER trg_customers_updated_at BEFORE UPDATE ON customers FOR EACH ROW EXECUTE FUNCTION update_modified_column();
 CREATE TRIGGER trg_employee_registrations_updated_at BEFORE UPDATE ON employee_registrations FOR EACH ROW EXECUTE FUNCTION update_modified_column();
+CREATE TRIGGER trg_employees_updated_at BEFORE UPDATE ON employees FOR EACH ROW EXECUTE FUNCTION update_modified_column();
 CREATE TRIGGER trg_obd2_devices_updated_at BEFORE UPDATE ON obd2_devices FOR EACH ROW EXECUTE FUNCTION update_modified_column();
+CREATE TRIGGER trg_owners_updated_at BEFORE UPDATE ON owners FOR EACH ROW EXECUTE FUNCTION update_modified_column();
 CREATE TRIGGER trg_product_batches_updated_at BEFORE UPDATE ON product_batches FOR EACH ROW EXECUTE FUNCTION update_modified_column();
 CREATE TRIGGER trg_products_updated_at BEFORE UPDATE ON products FOR EACH ROW EXECUTE FUNCTION update_modified_column();
 CREATE TRIGGER trg_quotes_updated_at BEFORE UPDATE ON quotes FOR EACH ROW EXECUTE FUNCTION update_modified_column();
