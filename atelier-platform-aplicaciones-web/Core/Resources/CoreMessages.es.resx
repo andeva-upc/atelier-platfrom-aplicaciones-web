@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="core.error.workshop.notFound"><value>Taller no encontrado.</value></data>
+  <data name="core.error.branch.codeMustBeUnique"><value>El código de la sucursal debe ser único.</value></data>
+  <data name="core.error.branch.notFound"><value>Sucursal no encontrada.</value></data>
+  <data name="core.error.customer.profileAlreadyExists"><value>El perfil de cliente ya existe para este usuario.</value></data>
+  <data name="core.error.customer.notFound"><value>Perfil de cliente no encontrado.</value></data>
+  <data name="core.error.employee.profileAlreadyExists"><value>El perfil de empleado ya existe para este usuario.</value></data>
+  <data name="core.error.employee.notFound"><value>Perfil de empleado no encontrado.</value></data>
+  <data name="core.error.owner.profileAlreadyExists"><value>El perfil de propietario ya existe para este usuario.</value></data>
+  <data name="core.error.owner.notFound"><value>Perfil de propietario no encontrado.</value></data>
+  <data name="core.error.subscriptionPlan.notFound"><value>Plan de suscripción no encontrado.</value></data>
+  <data name="core.error.branch.noActiveSubscription"><value>La sucursal no tiene una suscripción activa.</value></data>
+  <data name="core.error.code.required"><value>El código de la sucursal es obligatorio.</value></data>
+  <data name="core.error.name.required"><value>El nombre es obligatorio.</value></data>
+  <data name="core.error.businessName.required"><value>La razón social es obligatoria.</value></data>
+  <data name="core.error.personName.required"><value>El nombre de la persona es obligatorio.</value></data>
+  <data name="core.error.customer.corporateDocumentTypeImmutable"><value>El tipo de documento corporativo no se puede cambiar.</value></data>
+  <data name="core.error.brandName.required"><value>El nombre de la marca es obligatorio.</value></data>
+  <data name="core.error.taxId.required"><value>El RUC/identificación fiscal es obligatorio.</value></data>
+  <data name="core.error.startDate.required"><value>La fecha de inicio es obligatoria.</value></data>
+  <data name="core.error.endDate.required"><value>La fecha de fin es obligatoria.</value></data>
+  <data name="core.error.branchSubscriptionId.required"><value>El ID de la suscripción de sucursal es obligatorio.</value></data>
+  <data name="core.error.cardNumber.invalid"><value>El número de tarjeta es inválido.</value></data>
+  <data name="core.error.cardHolderName.required"><value>El nombre del titular es obligatorio.</value></data>
+  <data name="core.error.expirationDate.invalid"><value>La fecha de expiración es inválida.</value></data>
+  <data name="core.error.cvv.invalid"><value>El CVV es inválido.</value></data>
+  <data name="core.error.documentType.notNull"><value>El tipo de documento no puede ser nulo.</value></data>
+  <data name="core.error.documentNumber.notBlank"><value>El número de documento no puede estar vacío.</value></data>
+  <data name="core.error.documentType.invalid"><value>El tipo de documento es inválido.</value></data>
+  <data name="core.error.employeeId.required"><value>El ID del empleado es obligatorio.</value></data>
+  <data name="core.error.ownerId.required"><value>El ID del propietario es obligatorio.</value></data>
+  <data name="core.error.firstName.notBlank"><value>El primer nombre es obligatorio.</value></data>
+  <data name="core.error.lastName.notBlank"><value>El apellido es obligatorio.</value></data>
+  <data name="core.error.phone.required"><value>El número de teléfono es obligatorio.</value></data>
+  <data name="core.error.subscriptionPlanId.required"><value>El ID del plan de suscripción es obligatorio.</value></data>
+  <data name="core.error.userId.required"><value>El ID de usuario es obligatorio.</value></data>
+  <data name="core.error.workshopId.required"><value>El ID del taller es obligatorio.</value></data>
+  <data name="core.error.unexpected"><value>Ocurrió un error inesperado.</value></data>
+</root>
