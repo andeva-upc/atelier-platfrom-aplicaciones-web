@@ -38,6 +38,13 @@ using atelier_platform_aplicaciones_web.IAM.Infrastructure.Pipeline.Middleware.E
 using atelier_platform_aplicaciones_web.Shared.Infrastructure.Mediator.Cortex.Configuration;
 using Cortex.Mediator.Commands;
 using Cortex.Mediator.DependencyInjection;
+
+// IoT usings
+using atelier_platform_aplicaciones_web.IoT.Domain.Repositories;
+using atelier_platform_aplicaciones_web.IoT.Domain.Services;
+using atelier_platform_aplicaciones_web.IoT.Application.Internal.CommandServices;
+using atelier_platform_aplicaciones_web.IoT.Application.Internal.QueryServices;
+using atelier_platform_aplicaciones_web.IoT.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -124,9 +131,9 @@ builder.Services.AddDbContext<AppDbContext>((serviceProvider, options) =>
 });
 
 // 7. REGISTRO DE DEPENDENCIAS (Inyección de Dependencias)
-// Aquí registraremos los repositorios y servicios de Operations cuando los creemos
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+// Operations Repositories and Services
 builder.Services.AddScoped<IWorkOrderRepository, WorkOrderRepository>();
 builder.Services.AddScoped<IWorkOrderCommandService, WorkOrderCommandService>();
 builder.Services.AddScoped<IWorkOrderQueryService, WorkOrderQueryService>();
