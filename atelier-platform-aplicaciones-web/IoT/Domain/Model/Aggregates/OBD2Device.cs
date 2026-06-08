@@ -45,4 +45,10 @@ public class OBD2Device : IAuditableEntity
     {
         DeletedAt = DateTime.UtcNow;
     }
+
+    public void UpdateDetails(Guid branchId, string macAddress)
+    {
+        BranchId = branchId;
+        MacAddress = macAddress;
+    }
 }
