@@ -28,7 +28,7 @@ public class QuotesController : ControllerBase
         if (!result.IsSuccess)
             return BadRequest(result.Message);
 
-        var quoteResource = QuoteResourceFromEntityAssembler.ToResourceFromEntity(result.Value);
+        var quoteResource = QuoteResourceFromEntityAssembler.ToResourceFromEntity(result.Value!);
         
         return StatusCode(201, quoteResource);
     }

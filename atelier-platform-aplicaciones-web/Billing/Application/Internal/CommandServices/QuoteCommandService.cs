@@ -11,6 +11,8 @@ using atelier_platform_aplicaciones_web.Shared.Application.Model;
 
 namespace atelier_platform_aplicaciones_web.Billing.Application.Internal.CommandServices;
 
+public enum BillingErrorCodes { CreationFailed }
+
 public class QuoteCommandService : IQuoteCommandService
 {
     private readonly IQuoteRepository _quoteRepository;
@@ -46,7 +48,7 @@ public class QuoteCommandService : IQuoteCommandService
         }
         catch (Exception ex)
         {
-            return Result<Quote>.Failure($"An error occurred while creating the quote: {ex.Message}");
+            return Result<Quote>.Failure(BillingErrorCodes.CreationFailed, $"An error occurred while creating the quote: {ex.Message}");
         }
     }
 }

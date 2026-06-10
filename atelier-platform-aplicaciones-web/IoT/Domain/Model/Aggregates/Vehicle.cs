@@ -1,4 +1,5 @@
 using atelier_platform_aplicaciones_web.Shared.Domain.Model;
+using atelier_platform_aplicaciones_web.Shared.Domain.Model.Entities;
 
 namespace atelier_platform_aplicaciones_web.IoT.Domain.Model.Aggregates;
 

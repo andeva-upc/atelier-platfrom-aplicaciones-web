@@ -21,7 +21,7 @@ public class QuoteRepository : BaseRepository<Quote>, IQuoteRepository
             .ToListAsync();
     }
 
-    public new async Task<Quote?> FindByIdAsync(Guid id)
+    public async Task<Quote?> FindByIdAsync(Guid id)
     {
         return await Context.Set<Quote>()
             .Include(q => q.Items)
