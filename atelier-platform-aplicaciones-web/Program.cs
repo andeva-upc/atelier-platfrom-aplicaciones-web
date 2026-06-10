@@ -44,12 +44,6 @@ using atelier_platform_aplicaciones_web.Shared.Infrastructure.Mediator.Cortex.Co
 using Cortex.Mediator.Commands;
 using Cortex.Mediator.DependencyInjection;
 
-// IoT usings
-using atelier_platform_aplicaciones_web.IoT.Domain.Repositories;
-using atelier_platform_aplicaciones_web.IoT.Domain.Services;
-using atelier_platform_aplicaciones_web.IoT.Application.Internal.CommandServices;
-using atelier_platform_aplicaciones_web.IoT.Application.Internal.QueryServices;
-using atelier_platform_aplicaciones_web.IoT.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
