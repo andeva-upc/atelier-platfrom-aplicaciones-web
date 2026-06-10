@@ -12,6 +12,11 @@ using atelier_platform_aplicaciones_web.Operations.Application.Internal.QuerySer
 using atelier_platform_aplicaciones_web.Core.Domain.Repositories;
 using atelier_platform_aplicaciones_web.Core.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 
+using atelier_platform_aplicaciones_web.Billing.Domain.Repositories;
+using atelier_platform_aplicaciones_web.Billing.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
+using atelier_platform_aplicaciones_web.Billing.Application.CommandServices;
+using atelier_platform_aplicaciones_web.Billing.Application.Internal.CommandServices;
+
 using atelier_platform_aplicaciones_web.IAM.Application.CommandServices;
 using atelier_platform_aplicaciones_web.IAM.Application.Internal.CommandServices;
 using atelier_platform_aplicaciones_web.IAM.Application.Internal.OutboundServices.Email;
@@ -171,6 +176,10 @@ builder.Services.AddScoped<IWorkshopQueryService, WorkshopQueryService>();
 builder.Services.AddScoped<IHashingService, BCryptHashingService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
+
+// Billing Dependencies
+builder.Services.AddScoped<IQuoteRepository, QuoteRepository>();
+builder.Services.AddScoped<IQuoteCommandService, QuoteCommandService>();
 
 // TokenSettings Configuration
 builder.Services.Configure<TokenSettings>(builder.Configuration.GetSection("TokenSettings"));
