@@ -20,4 +20,9 @@ public class VoucherQueryService : IVoucherQueryService
     {
         return await _voucherRepository.FindByIdAsync(query.Id);
     }
+
+    public async Task<System.Collections.Generic.IEnumerable<Voucher>> Handle(GetVouchersByBranchIdQuery query, CancellationToken cancellationToken = default)
+    {
+        return await _voucherRepository.FindByBranchIdAsync(query.BranchId);
+    }
 }
