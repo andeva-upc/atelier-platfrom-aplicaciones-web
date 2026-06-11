@@ -11,7 +11,7 @@ using atelier_platform_aplicaciones_web.Shared.Application.Model;
 
 namespace atelier_platform_aplicaciones_web.Billing.Application.Internal.CommandServices;
 
-public enum BillingErrorCodes { CreationFailed, UpdateFailed, QuoteNotFound }
+public enum BillingErrorCodes { CreationFailed, UpdateFailed, QuoteNotFound, ApprovalFailed }
 
 public class QuoteCommandService : IQuoteCommandService
 {
@@ -65,6 +65,28 @@ public class QuoteCommandService : IQuoteCommandService
         catch (Exception ex)
         {
             return Result<Quote>.Failure(BillingErrorCodes.UpdateFailed, $"An error occurred while updating the quote: {ex.Message}");
+        }
+    }
+
+    public async Task<Result<Quote>> Handle(ApproveQuoteCommand command, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var quote = await _quoteRepository.FindByIdAsync(command.Id);
+            if (quote == null)
+            {
+                return Result<Quote>.Failure(BillingErrorCodes.QuoteNotFound, $"Quote with ID {command.Id} not found.");
+            }
+
+            quote.Approve();
+            _quoteRepository.Update(quote);
+            await _unitOfWork.CompleteAsync();
+
+            return Result<Quote>.Success(quote);
+        }
+        catch (Exception ex)
+        {
+            return Result<Quote>.Failure(BillingErrorCodes.ApprovalFailed, $"An error occurred while approving the quote: {ex.Message}");
         }
     }
 }
