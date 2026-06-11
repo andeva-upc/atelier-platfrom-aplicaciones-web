@@ -60,4 +60,27 @@ public class QuotesController : ControllerBase
         var quoteResources = quotes.Select(QuoteResourceFromEntityAssembler.ToResourceFromEntity);
         return Ok(quoteResources);
     }
+
+    [HttpPut("{quoteId}")]
+    public async Task<IActionResult> UpdateQuote(Guid quoteId, [FromBody] UpdateQuoteResource resource)
+    {
+        var updateQuoteCommand = new atelier_platform_aplicaciones_web.Billing.Domain.Model.Commands.UpdateQuoteCommand(
+            quoteId,
+            resource.SubtotalAmount,
+            resource.DiscountPercentage
+        );
+
+        var result = await _quoteCommandService.Handle(updateQuoteCommand);
+
+        if (!result.IsSuccess)
+        {
+            if (Equals(result.Error, atelier_platform_aplicaciones_web.Billing.Application.Internal.CommandServices.BillingErrorCodes.QuoteNotFound))
+                return NotFound(result.Message);
+
+            return BadRequest(result.Message);
+        }
+
+        var quoteResource = QuoteResourceFromEntityAssembler.ToResourceFromEntity(result.Value!);
+        return Ok(quoteResource);
+    }
 }
