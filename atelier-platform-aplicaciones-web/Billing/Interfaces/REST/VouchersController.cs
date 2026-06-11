@@ -62,4 +62,18 @@ public class VouchersController : ControllerBase
         var resource = VoucherResourceFromEntityAssembler.ToResourceFromEntity(voucher);
         return Ok(resource);
     }
+
+    [HttpGet]
+    [SwaggerOperation(Summary = "Get vouchers by branch id", Description = "Gets all vouchers for a specific branch")]
+    public async Task<IActionResult> GetVouchersByBranchId([FromQuery] System.Guid branchId)
+    {
+        if (branchId == System.Guid.Empty)
+            return BadRequest(new { code = "BAD_REQUEST", message = "branchId is required", details = (string?)null });
+
+        var query = new atelier_platform_aplicaciones_web.Billing.Domain.Model.Queries.GetVouchersByBranchIdQuery(branchId);
+        var vouchers = await _voucherQueryService.Handle(query);
+
+        var resources = System.Linq.Enumerable.Select(vouchers, VoucherResourceFromEntityAssembler.ToResourceFromEntity);
+        return Ok(resources);
+    }
 }
