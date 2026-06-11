@@ -91,6 +91,21 @@ public class Voucher : IUserAuditableEntity
         }
     }
 
+    public void RemovePayment(Guid paymentId)
+    {
+        var payment = System.Linq.Enumerable.FirstOrDefault(Payments, p => p.Id == paymentId);
+        if (payment == null)
+            throw new Exception("Payment not found.");
+
+        Payments.Remove(payment);
+
+        var totalPaid = System.Linq.Enumerable.Sum(Payments, p => p.Amount);
+        if (totalPaid < TotalAmount && Status == VoucherStatus.PAID)
+        {
+            Status = VoucherStatus.PENDING;
+        }
+    }
+
     public void MarkAsPaid()
     {
         Status = VoucherStatus.PAID;
