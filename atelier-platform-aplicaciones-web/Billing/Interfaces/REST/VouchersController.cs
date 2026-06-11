@@ -126,4 +126,41 @@ public class VouchersController : ControllerBase
 
         return Ok(new { message = "Payment removed successfully" });
     }
+
+    [HttpPost("checkout")]
+    [SwaggerOperation(Summary = "Process complete checkout", Description = "Generates a voucher and registers the total payment immediately")]
+    public async Task<IActionResult> ProcessCheckout([FromBody] ProcessCheckoutResource resource)
+    {
+        var command = new atelier_platform_aplicaciones_web.Billing.Domain.Model.Commands.ProcessCheckoutCommand(
+            resource.QuoteId,
+            resource.Type,
+            resource.CustomerDocumentType,
+            resource.CustomerDocumentNumber,
+            resource.CustomerName,
+            resource.Method
+        );
+
+        var result = await _voucherCommandService.Handle(command);
+
+        if (!result.IsSuccess)
+        {
+            var errorResponse = new { code = result.Error?.ToString() ?? "BAD_REQUEST", message = result.Message, details = (string?)null };
+
+            if (result.Error?.ToString() == "QuoteNotApproved")
+            {
+                errorResponse = new { code = "QUOTE_CONFLICT", message = "Quote must be APPROVED to checkout", details = (string?)null };
+                return Conflict(errorResponse);
+            }
+
+            if (result.Error?.ToString() == "FacthubServiceUnavailable")
+            {
+                return StatusCode(503, errorResponse);
+            }
+
+            return BadRequest(errorResponse);
+        }
+
+        var voucherResource = VoucherResourceFromEntityAssembler.ToResourceFromEntity(result.Value!);
+        return CreatedAtAction(nameof(GetVoucherById), new { id = voucherResource.Id }, voucherResource);
+    }
 }
