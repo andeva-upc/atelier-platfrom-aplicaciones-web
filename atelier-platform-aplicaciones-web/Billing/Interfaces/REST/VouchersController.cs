@@ -2,7 +2,9 @@ using System.Threading.Tasks;
 using atelier_platform_aplicaciones_web.Billing.Application.CommandServices;
 using atelier_platform_aplicaciones_web.Billing.Interfaces.REST.Resources;
 using atelier_platform_aplicaciones_web.Billing.Interfaces.REST.Transform;
+using atelier_platform_aplicaciones_web.Billing.Resources;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace atelier_platform_aplicaciones_web.Billing.Interfaces.REST;
@@ -13,11 +15,13 @@ public class VouchersController : ControllerBase
 {
     private readonly IVoucherCommandService _voucherCommandService;
     private readonly atelier_platform_aplicaciones_web.Billing.Application.QueryServices.IVoucherQueryService _voucherQueryService;
+    private readonly IStringLocalizer<BillingMessages> _localizer;
 
-    public VouchersController(IVoucherCommandService voucherCommandService, atelier_platform_aplicaciones_web.Billing.Application.QueryServices.IVoucherQueryService voucherQueryService)
+    public VouchersController(IVoucherCommandService voucherCommandService, atelier_platform_aplicaciones_web.Billing.Application.QueryServices.IVoucherQueryService voucherQueryService, IStringLocalizer<BillingMessages> localizer)
     {
         _voucherCommandService = voucherCommandService;
         _voucherQueryService = voucherQueryService;
+        _localizer = localizer;
     }
 
     [HttpPost]
@@ -27,26 +31,13 @@ public class VouchersController : ControllerBase
         var generateVoucherCommand = GenerateVoucherCommandFromResourceAssembler.ToCommandFromResource(resource);
         var result = await _voucherCommandService.Handle(generateVoucherCommand);
 
-        if (!result.IsSuccess)
+        if (result.IsSuccess)
         {
-            var errorResponse = new { code = result.Error?.ToString() ?? "BAD_REQUEST", message = result.Message, details = (string?)null };
-
-            if (result.Error?.ToString() == "QuoteNotApproved")
-            {
-                errorResponse = new { code = "QUOTE_CONFLICT", message = "Quote must be APPROVED to generate a voucher", details = (string?)null };
-                return Conflict(errorResponse);
-            }
-
-            if (result.Error?.ToString() == "FacthubServiceUnavailable")
-            {
-                return StatusCode(503, errorResponse);
-            }
-
-            return BadRequest(errorResponse);
+            var voucherResource = VoucherResourceFromEntityAssembler.ToResourceFromEntity(result.Value!);
+            return CreatedAtAction(nameof(GetVoucherById), new { id = voucherResource.Id }, voucherResource);
         }
 
-        var voucherResource = VoucherResourceFromEntityAssembler.ToResourceFromEntity(result.Value!);
-        return CreatedAtAction(nameof(GetVoucherById), new { id = voucherResource.Id }, voucherResource);
+        return ActionResultFromBillingCommandResultAssembler.MapFailureToActionResult(result.Error, result.Message, this, _localizer);
     }
 
     [HttpGet("{id}")]
@@ -84,25 +75,12 @@ public class VouchersController : ControllerBase
         var command = new atelier_platform_aplicaciones_web.Billing.Domain.Model.Commands.AddPaymentCommand(voucherId, resource.Amount, resource.Method);
         var result = await _voucherCommandService.Handle(command);
 
-        if (!result.IsSuccess)
+        if (result.IsSuccess)
         {
-            var errorResponse = new { code = result.Error?.ToString() ?? "BAD_REQUEST", message = result.Message, details = (string?)null };
-
-            if (result.Error?.ToString() == "PaymentConflict")
-            {
-                errorResponse = new { code = "PAYMENT_CONFLICT", message = result.Message, details = (string?)null };
-                return Conflict(errorResponse);
-            }
-
-            if (result.Error?.ToString() == "VoucherNotFound")
-            {
-                return NotFound();
-            }
-
-            return BadRequest(errorResponse);
+            return Ok(new { message = "Payment registered successfully", paymentId = result.Value?.Id });
         }
 
-        return Ok(new { message = "Payment registered successfully", paymentId = result.Value?.Id });
+        return ActionResultFromBillingCommandResultAssembler.MapFailureToActionResult(result.Error, result.Message, this, _localizer);
     }
 
     [HttpDelete("{voucherId}/payments/{paymentId}")]
@@ -112,19 +90,12 @@ public class VouchersController : ControllerBase
         var command = new atelier_platform_aplicaciones_web.Billing.Domain.Model.Commands.RemovePaymentCommand(voucherId, paymentId);
         var result = await _voucherCommandService.Handle(command);
 
-        if (!result.IsSuccess)
+        if (result.IsSuccess)
         {
-            var errorResponse = new { code = result.Error?.ToString() ?? "BAD_REQUEST", message = result.Message, details = (string?)null };
-
-            if (result.Error?.ToString() == "VoucherNotFound" || result.Error?.ToString() == "PaymentNotFound")
-            {
-                return NotFound();
-            }
-
-            return BadRequest(errorResponse);
+            return Ok(new { message = "Payment removed successfully" });
         }
 
-        return Ok(new { message = "Payment removed successfully" });
+        return ActionResultFromBillingCommandResultAssembler.MapFailureToActionResult(result.Error, result.Message, this, _localizer);
     }
 
     [HttpPost("checkout")]
@@ -142,25 +113,12 @@ public class VouchersController : ControllerBase
 
         var result = await _voucherCommandService.Handle(command);
 
-        if (!result.IsSuccess)
+        if (result.IsSuccess)
         {
-            var errorResponse = new { code = result.Error?.ToString() ?? "BAD_REQUEST", message = result.Message, details = (string?)null };
-
-            if (result.Error?.ToString() == "QuoteNotApproved")
-            {
-                errorResponse = new { code = "QUOTE_CONFLICT", message = "Quote must be APPROVED to checkout", details = (string?)null };
-                return Conflict(errorResponse);
-            }
-
-            if (result.Error?.ToString() == "FacthubServiceUnavailable")
-            {
-                return StatusCode(503, errorResponse);
-            }
-
-            return BadRequest(errorResponse);
+            var voucherResource = VoucherResourceFromEntityAssembler.ToResourceFromEntity(result.Value!);
+            return CreatedAtAction(nameof(GetVoucherById), new { id = voucherResource.Id }, voucherResource);
         }
 
-        var voucherResource = VoucherResourceFromEntityAssembler.ToResourceFromEntity(result.Value!);
-        return CreatedAtAction(nameof(GetVoucherById), new { id = voucherResource.Id }, voucherResource);
+        return ActionResultFromBillingCommandResultAssembler.MapFailureToActionResult(result.Error, result.Message, this, _localizer);
     }
 }

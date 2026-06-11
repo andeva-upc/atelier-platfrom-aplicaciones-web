@@ -6,7 +6,9 @@ using atelier_platform_aplicaciones_web.Billing.Application.CommandServices;
 using atelier_platform_aplicaciones_web.Billing.Application.QueryServices;
 using atelier_platform_aplicaciones_web.Billing.Interfaces.REST.Resources;
 using atelier_platform_aplicaciones_web.Billing.Interfaces.REST.Transform;
+using atelier_platform_aplicaciones_web.Billing.Resources;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace atelier_platform_aplicaciones_web.Billing.Interfaces.REST;
@@ -18,11 +20,13 @@ public class QuotesController : ControllerBase
 {
     private readonly IQuoteCommandService _quoteCommandService;
     private readonly IQuoteQueryService _quoteQueryService;
+    private readonly IStringLocalizer<BillingMessages> _localizer;
 
-    public QuotesController(IQuoteCommandService quoteCommandService, IQuoteQueryService quoteQueryService)
+    public QuotesController(IQuoteCommandService quoteCommandService, IQuoteQueryService quoteQueryService, IStringLocalizer<BillingMessages> localizer)
     {
         _quoteCommandService = quoteCommandService;
         _quoteQueryService = quoteQueryService;
+        _localizer = localizer;
     }
 
     [HttpPost]
@@ -32,12 +36,13 @@ public class QuotesController : ControllerBase
         var command = CreateQuoteCommandFromResourceAssembler.ToCommandFromResource(resource);
         var result = await _quoteCommandService.Handle(command);
 
-        if (!result.IsSuccess)
-            return BadRequest(result.Message);
+        if (result.IsSuccess)
+        {
+            var quoteResource = QuoteResourceFromEntityAssembler.ToResourceFromEntity(result.Value!);
+            return StatusCode(201, quoteResource);
+        }
 
-        var quoteResource = QuoteResourceFromEntityAssembler.ToResourceFromEntity(result.Value!);
-        
-        return StatusCode(201, quoteResource);
+        return ActionResultFromBillingCommandResultAssembler.MapFailureToActionResult(result.Error, result.Message, this, _localizer);
     }
 
     [HttpGet("{quoteId}")]
@@ -77,16 +82,13 @@ public class QuotesController : ControllerBase
 
         var result = await _quoteCommandService.Handle(updateQuoteCommand);
 
-        if (!result.IsSuccess)
+        if (result.IsSuccess)
         {
-            if (Equals(result.Error, atelier_platform_aplicaciones_web.Billing.Application.Internal.CommandServices.BillingErrorCodes.QuoteNotFound))
-                return NotFound(result.Message);
-
-            return BadRequest(result.Message);
+            var quoteResource = QuoteResourceFromEntityAssembler.ToResourceFromEntity(result.Value!);
+            return Ok(quoteResource);
         }
 
-        var quoteResource = QuoteResourceFromEntityAssembler.ToResourceFromEntity(result.Value!);
-        return Ok(quoteResource);
+        return ActionResultFromBillingCommandResultAssembler.MapFailureToActionResult(result.Error, result.Message, this, _localizer);
     }
 
     [HttpPost("{quoteId}/approve")]
@@ -96,16 +98,13 @@ public class QuotesController : ControllerBase
         var approveQuoteCommand = new atelier_platform_aplicaciones_web.Billing.Domain.Model.Commands.ApproveQuoteCommand(quoteId);
         var result = await _quoteCommandService.Handle(approveQuoteCommand);
 
-        if (!result.IsSuccess)
+        if (result.IsSuccess)
         {
-            if (Equals(result.Error, atelier_platform_aplicaciones_web.Billing.Application.Internal.CommandServices.BillingErrorCodes.QuoteNotFound))
-                return NotFound(result.Message);
-
-            return BadRequest(result.Message);
+            var quoteResource = QuoteResourceFromEntityAssembler.ToResourceFromEntity(result.Value!);
+            return Ok(quoteResource);
         }
 
-        var quoteResource = QuoteResourceFromEntityAssembler.ToResourceFromEntity(result.Value!);
-        return Ok(quoteResource);
+        return ActionResultFromBillingCommandResultAssembler.MapFailureToActionResult(result.Error, result.Message, this, _localizer);
     }
 
     [HttpPost("{quoteId}/cancel")]
@@ -115,15 +114,12 @@ public class QuotesController : ControllerBase
         var cancelQuoteCommand = new atelier_platform_aplicaciones_web.Billing.Domain.Model.Commands.CancelQuoteCommand(quoteId);
         var result = await _quoteCommandService.Handle(cancelQuoteCommand);
 
-        if (!result.IsSuccess)
+        if (result.IsSuccess)
         {
-            if (Equals(result.Error, atelier_platform_aplicaciones_web.Billing.Application.Internal.CommandServices.BillingErrorCodes.QuoteNotFound))
-                return NotFound(result.Message);
-
-            return BadRequest(result.Message);
+            var quoteResource = QuoteResourceFromEntityAssembler.ToResourceFromEntity(result.Value!);
+            return Ok(quoteResource);
         }
 
-        var quoteResource = QuoteResourceFromEntityAssembler.ToResourceFromEntity(result.Value!);
-        return Ok(quoteResource);
+        return ActionResultFromBillingCommandResultAssembler.MapFailureToActionResult(result.Error, result.Message, this, _localizer);
     }
 }
