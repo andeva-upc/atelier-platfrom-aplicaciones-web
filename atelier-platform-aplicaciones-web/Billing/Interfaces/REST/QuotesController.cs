@@ -107,4 +107,23 @@ public class QuotesController : ControllerBase
         var quoteResource = QuoteResourceFromEntityAssembler.ToResourceFromEntity(result.Value!);
         return Ok(quoteResource);
     }
+
+    [HttpPost("{quoteId}/cancel")]
+    [SwaggerOperation(Summary = "Cancel a quote", Description = "Changes the status of a quote to CANCELLED")]
+    public async Task<IActionResult> CancelQuote(Guid quoteId)
+    {
+        var cancelQuoteCommand = new atelier_platform_aplicaciones_web.Billing.Domain.Model.Commands.CancelQuoteCommand(quoteId);
+        var result = await _quoteCommandService.Handle(cancelQuoteCommand);
+
+        if (!result.IsSuccess)
+        {
+            if (Equals(result.Error, atelier_platform_aplicaciones_web.Billing.Application.Internal.CommandServices.BillingErrorCodes.QuoteNotFound))
+                return NotFound(result.Message);
+
+            return BadRequest(result.Message);
+        }
+
+        var quoteResource = QuoteResourceFromEntityAssembler.ToResourceFromEntity(result.Value!);
+        return Ok(quoteResource);
+    }
 }
