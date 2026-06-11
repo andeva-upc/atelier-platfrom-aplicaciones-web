@@ -180,6 +180,7 @@ builder.Services.AddScoped<IQuoteQueryService, QuoteQueryService>();
 
 builder.Services.AddScoped<IVoucherRepository, VoucherRepository>();
 builder.Services.AddScoped<IVoucherCommandService, VoucherCommandService>();
+builder.Services.AddScoped<IVoucherQueryService, VoucherQueryService>();
 
 builder.Services.AddHttpClient<atelier_platform_aplicaciones_web.Billing.Application.OutboundServices.IFacthubService, 
     atelier_platform_aplicaciones_web.Billing.Infrastructure.ExternalServices.Facthub.FacthubService>(client => 
