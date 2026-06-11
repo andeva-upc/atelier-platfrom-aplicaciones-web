@@ -21,6 +21,8 @@ public class Voucher : IUserAuditableEntity
     public string? CustomerName { get; private set; }
     public Guid? ExternalInvoiceId { get; private set; }
 
+    public ICollection<atelier_platform_aplicaciones_web.Billing.Domain.Model.Entities.Payment> Payments { get; private set; }
+
     // IAuditableEntity properties
     public DateTimeOffset? CreatedAt { get; set; }
     public DateTimeOffset? UpdatedAt { get; set; }
@@ -38,6 +40,7 @@ public class Voucher : IUserAuditableEntity
         Type = null!;
         Status = null!;
         Currency = null!;
+        Payments = new System.Collections.Generic.List<atelier_platform_aplicaciones_web.Billing.Domain.Model.Entities.Payment>();
     }
 
     public Voucher(Guid quoteId, Guid branchId, int voucherNumber, decimal subtotalAmount, string type, string currency, string? customerDocType, string? customerDocNum, string? customerName, Guid? externalInvoiceId)
@@ -55,6 +58,7 @@ public class Voucher : IUserAuditableEntity
         ExternalInvoiceId = externalInvoiceId;
         Status = VoucherStatus.PENDING;
         CreatedBy = Guid.Empty;
+        Payments = new System.Collections.Generic.List<atelier_platform_aplicaciones_web.Billing.Domain.Model.Entities.Payment>();
         CalculateTotal();
     }
 
@@ -62,6 +66,29 @@ public class Voucher : IUserAuditableEntity
     {
         // Total is Subtotal + 18% IGV/Tax
         TotalAmount = SubtotalAmount * 1.18m;
+    }
+
+    public void AddPayment(decimal amount, string method, string currency)
+    {
+        if (Status == VoucherStatus.PAID)
+            throw new Exception("Voucher is already fully paid.");
+
+        if (Status == VoucherStatus.CANCELED)
+            throw new Exception("Cannot add payment to a canceled voucher.");
+
+        var totalPaid = System.Linq.Enumerable.Sum(Payments, p => p.Amount);
+        var remaining = TotalAmount - totalPaid;
+
+        if (amount > remaining)
+            throw new Exception("Payment amount exceeds the remaining balance.");
+
+        var payment = new atelier_platform_aplicaciones_web.Billing.Domain.Model.Entities.Payment(Id, BranchId, amount, method, currency);
+        Payments.Add(payment);
+
+        if (totalPaid + amount >= TotalAmount)
+        {
+            Status = VoucherStatus.PAID;
+        }
     }
 
     public void MarkAsPaid()

@@ -39,6 +39,21 @@ public static class ModelBuilderExtensions
             entity.Property(e => e.CustomerDocumentNumber).HasColumnName("customer_document_number");
             entity.Property(e => e.CustomerName).HasColumnName("customer_name");
             entity.Property(e => e.ExternalInvoiceId).HasColumnName("external_invoice_id");
+
+            entity.HasMany(e => e.Payments).WithOne().HasForeignKey(p => p.VoucherId);
+        });
+
+        builder.Entity<atelier_platform_aplicaciones_web.Billing.Domain.Model.Entities.Payment>(entity =>
+        {
+            entity.ToTable("payments");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).HasColumnName("id").ValueGeneratedNever();
+            entity.Property(e => e.VoucherId).HasColumnName("voucher_id").IsRequired();
+            entity.Property(e => e.BranchId).HasColumnName("branch_id").IsRequired();
+            entity.Property(e => e.Amount).HasColumnName("amount").HasColumnType("numeric").IsRequired();
+            entity.Property(e => e.Method).HasColumnName("method").HasColumnType("character varying").IsRequired();
+            entity.Property(e => e.Currency).HasColumnName("currency").HasColumnType("character").IsRequired();
+            entity.Property(e => e.PaidAt).HasColumnName("paid_at").HasColumnType("timestamp without time zone").IsRequired();
         });
 
         return builder;

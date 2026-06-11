@@ -4,4 +4,5 @@ public static class VoucherStatus
 {
     public const string PENDING = "PENDING";
     public const string PAID = "PAID";
+    public const string CANCELED = "CANCELED";
 }
