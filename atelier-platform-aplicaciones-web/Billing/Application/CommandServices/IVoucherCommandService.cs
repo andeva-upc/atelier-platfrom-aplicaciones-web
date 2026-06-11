@@ -1,0 +1,12 @@
+using System.Threading;
+using System.Threading.Tasks;
+using atelier_platform_aplicaciones_web.Billing.Domain.Model.Aggregates;
+using atelier_platform_aplicaciones_web.Billing.Domain.Model.Commands;
+using atelier_platform_aplicaciones_web.Shared.Application.Model;
+
+namespace atelier_platform_aplicaciones_web.Billing.Application.CommandServices;
+
+public interface IVoucherCommandService
+{
+    Task<Result<Voucher>> Handle(GenerateVoucherCommand command, CancellationToken cancellationToken = default);
+}

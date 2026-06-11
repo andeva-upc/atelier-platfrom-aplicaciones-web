@@ -178,6 +178,9 @@ builder.Services.AddScoped<IQuoteRepository, QuoteRepository>();
 builder.Services.AddScoped<IQuoteCommandService, QuoteCommandService>();
 builder.Services.AddScoped<IQuoteQueryService, QuoteQueryService>();
 
+builder.Services.AddScoped<IVoucherRepository, VoucherRepository>();
+builder.Services.AddScoped<IVoucherCommandService, VoucherCommandService>();
+
 // TokenSettings Configuration
 builder.Services.Configure<TokenSettings>(builder.Configuration.GetSection("TokenSettings"));
 
