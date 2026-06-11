@@ -121,4 +121,30 @@ public class VoucherCommandService : IVoucherCommandService
             return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, $"An error occurred while generating the voucher: {ex.Message}. Inner: {innerMsg}");
         }
     }
+    public async Task<Result<atelier_platform_aplicaciones_web.Billing.Domain.Model.Entities.Payment>> Handle(AddPaymentCommand command, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var voucher = await _voucherRepository.FindByIdWithPaymentsAsync(command.VoucherId);
+            if (voucher == null) return Result<atelier_platform_aplicaciones_web.Billing.Domain.Model.Entities.Payment>.Failure(BillingErrorCodes.VoucherNotFound, "Voucher not found.");
+
+            voucher.AddPayment(command.Amount, command.Method, voucher.Currency);
+            
+            _voucherRepository.Update(voucher);
+            await _unitOfWork.CompleteAsync();
+
+            var paymentAdded = voucher.Payments.OrderByDescending(p => p.PaidAt).FirstOrDefault();
+            return Result<atelier_platform_aplicaciones_web.Billing.Domain.Model.Entities.Payment>.Success(paymentAdded!);
+        }
+        catch (Exception ex)
+        {
+            if (ex.Message == "Voucher is already fully paid." || ex.Message == "Cannot add payment to a canceled voucher.")
+                return Result<atelier_platform_aplicaciones_web.Billing.Domain.Model.Entities.Payment>.Failure(BillingErrorCodes.PaymentConflict, ex.Message);
+            
+            if (ex.Message == "Payment amount exceeds the remaining balance.")
+                return Result<atelier_platform_aplicaciones_web.Billing.Domain.Model.Entities.Payment>.Failure(BillingErrorCodes.BadRequest, ex.Message);
+
+            return Result<atelier_platform_aplicaciones_web.Billing.Domain.Model.Entities.Payment>.Failure(BillingErrorCodes.InternalError, ex.Message);
+        }
+    }
 }
