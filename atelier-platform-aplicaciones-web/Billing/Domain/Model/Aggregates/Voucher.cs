@@ -9,13 +9,17 @@ public class Voucher : IUserAuditableEntity
     public Guid Id { get; private set; }
     public Guid QuoteId { get; private set; }
     public Guid BranchId { get; private set; }
-    public string Series { get; private set; }
     public int VoucherNumber { get; private set; }
     public decimal SubtotalAmount { get; private set; }
     public decimal TotalAmount { get; private set; }
     public string Type { get; private set; }
     public string Status { get; private set; }
     public string Currency { get; private set; }
+    
+    public string? CustomerDocumentType { get; private set; }
+    public string? CustomerDocumentNumber { get; private set; }
+    public string? CustomerName { get; private set; }
+    public Guid? ExternalInvoiceId { get; private set; }
 
     // IAuditableEntity properties
     public DateTimeOffset? CreatedAt { get; set; }
@@ -29,18 +33,26 @@ public class Voucher : IUserAuditableEntity
     public DateTimeOffset? DeletedAt { get; set; }
     public long Version { get; set; }
 
-    protected Voucher() { }
+    protected Voucher()
+    {
+        Type = null!;
+        Status = null!;
+        Currency = null!;
+    }
 
-    public Voucher(Guid quoteId, Guid branchId, string series, int voucherNumber, decimal subtotalAmount, string type, string currency)
+    public Voucher(Guid quoteId, Guid branchId, int voucherNumber, decimal subtotalAmount, string type, string currency, string? customerDocType, string? customerDocNum, string? customerName, Guid? externalInvoiceId)
     {
         Id = Guid.NewGuid();
         QuoteId = quoteId;
         BranchId = branchId;
-        Series = series;
         VoucherNumber = voucherNumber;
         SubtotalAmount = subtotalAmount;
         Type = type;
         Currency = currency;
+        CustomerDocumentType = customerDocType;
+        CustomerDocumentNumber = customerDocNum;
+        CustomerName = customerName;
+        ExternalInvoiceId = externalInvoiceId;
         Status = VoucherStatus.PENDING;
         CreatedBy = Guid.Empty;
         CalculateTotal();

@@ -12,6 +12,7 @@ using atelier_platform_aplicaciones_web.Core.Domain.Repositories;
 using atelier_platform_aplicaciones_web.Operations.Domain.Repositories;
 using atelier_platform_aplicaciones_web.Shared.Domain.Repositories;
 using atelier_platform_aplicaciones_web.Shared.Application.Model;
+using atelier_platform_aplicaciones_web.Billing.Domain.Model.ValueObjects;
 
 namespace atelier_platform_aplicaciones_web.Billing.Application.Internal.CommandServices;
 
@@ -54,32 +55,36 @@ public class VoucherCommandService : IVoucherCommandService
             var quote = await _quoteRepository.FindByIdAsync(command.QuoteId);
             if (quote == null) return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, "Quote not found.");
 
-            var workOrder = await _workOrderRepository.FindByIdAsync(quote.WorkOrderId);
+            if (quote.Status != QuoteStatus.APPROVED)
+            {
+                return Result<Voucher>.Failure(BillingErrorCodes.QuoteNotApproved, "Quote must be APPROVED to generate a voucher");
+            }
+
+            var workOrder = await _workOrderRepository.FindByIdWithTasksAndProductsAsync(quote.WorkOrderId);
             if (workOrder == null) return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, "WorkOrder not found.");
 
-            var customer = await _customerRepository.FindByIdAsync(workOrder.CustomerId.Value);
-            if (customer == null) return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, "Customer not found.");
-
-            var branch = await _branchRepository.FindByIdAsync(command.BranchId);
+            var branch = await _branchRepository.FindByIdAsync(quote.BranchId);
             if (branch == null) return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, "Branch not found.");
 
             var workshop = await _workshopRepository.FindByIdAsync(branch.WorkshopId.Value);
             if (workshop == null) return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, "Workshop not found.");
+
+            var items = workOrder.Tasks.Select(t => new FacthubItem 
+            { 
+                Description = t.Description.Value, 
+                Quantity = 1, 
+                UnitPrice = t.Price.Amount 
+            }).ToList();
 
             // 2. Prepare Facthub Request
             var request = new FacthubIssueRequest
             {
                 IssuerRuc = workshop.TaxId,
                 DocumentType = command.Type,
-                CustomerDocumentType = customer.Document.DocumentType.ToString(),
-                CustomerDocumentNumber = customer.Document.DocumentNumber,
-                CustomerName = !string.IsNullOrEmpty(customer.BusinessName) ? customer.BusinessName : (customer.Name?.FullName ?? string.Empty),
-                Items = command.Items.Select(i => new FacthubItem 
-                { 
-                    Description = i.Description, 
-                    Quantity = i.Quantity, 
-                    UnitPrice = i.UnitPrice 
-                }).ToList()
+                CustomerDocumentType = command.CustomerDocumentType,
+                CustomerDocumentNumber = command.CustomerDocumentNumber,
+                CustomerName = command.CustomerName,
+                Items = items
             };
 
             // 3. Call Facthub Service
@@ -87,18 +92,22 @@ public class VoucherCommandService : IVoucherCommandService
 
             if (response == null || !response.Success || response.Invoice == null)
             {
-                return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, "Failed to issue invoice in Facthub: " + (response?.Message ?? "Unknown error"));
+                return Result<Voucher>.Failure(BillingErrorCodes.FacthubServiceUnavailable, "Failed to issue invoice in Facthub: " + (response?.Message ?? "Unknown error"));
             }
 
             // 4. Create Voucher with Facthub data
+            Guid? externalInvoiceId = Guid.TryParse(response.Invoice.Id, out var parsedId) ? parsedId : null;
             var voucher = new Voucher(
                 command.QuoteId,
-                command.BranchId,
-                response.Invoice.Series,
-                response.Invoice.Number,
-                command.SubtotalAmount,
+                quote.BranchId,
+                response.Invoice.Number, // We use the number from Facthub as voucher number if needed, or we could generate our own
+                quote.SubtotalAmount,
                 command.Type,
-                command.Currency
+                "PEN",
+                command.CustomerDocumentType,
+                command.CustomerDocumentNumber,
+                command.CustomerName,
+                externalInvoiceId
             );
 
             await _voucherRepository.AddAsync(voucher);
@@ -108,7 +117,8 @@ public class VoucherCommandService : IVoucherCommandService
         }
         catch (Exception ex)
         {
-            return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, $"An error occurred while generating the voucher: {ex.Message}");
+            var innerMsg = ex.InnerException != null ? ex.InnerException.Message : "";
+            return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, $"An error occurred while generating the voucher: {ex.Message}. Inner: {innerMsg}");
         }
     }
 }

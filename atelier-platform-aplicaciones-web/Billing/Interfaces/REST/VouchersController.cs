@@ -27,7 +27,20 @@ public class VouchersController : ControllerBase
 
         if (!result.IsSuccess)
         {
-            return BadRequest(result.Message);
+            var errorResponse = new { code = result.Error?.ToString() ?? "BAD_REQUEST", message = result.Message, details = (string?)null };
+
+            if (result.Error?.ToString() == "QuoteNotApproved")
+            {
+                errorResponse = new { code = "QUOTE_CONFLICT", message = "Quote must be APPROVED to generate a voucher", details = (string?)null };
+                return Conflict(errorResponse);
+            }
+
+            if (result.Error?.ToString() == "FacthubServiceUnavailable")
+            {
+                return StatusCode(503, errorResponse);
+            }
+
+            return BadRequest(errorResponse);
         }
 
         var voucherResource = VoucherResourceFromEntityAssembler.ToResourceFromEntity(result.Value!);

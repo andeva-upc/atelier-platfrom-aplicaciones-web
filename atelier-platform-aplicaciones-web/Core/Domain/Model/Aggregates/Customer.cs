@@ -47,7 +47,7 @@ public partial class Customer : IAuditableEntity
     public UserId UserId { get; private set; }
     public bool IsCorporate { get; private set; }
     public PersonName? Name { get; private set; }
-    public string BusinessName { get; private set; }
+    public string? BusinessName { get; private set; }
     public Document Document { get; private set; }
     public Phone Phone { get; private set; }
 

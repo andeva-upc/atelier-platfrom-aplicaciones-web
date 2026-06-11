@@ -11,13 +11,16 @@ public static class VoucherResourceFromEntityAssembler
             entity.Id,
             entity.QuoteId,
             entity.BranchId,
-            entity.Series,
             entity.VoucherNumber,
             entity.SubtotalAmount,
             entity.TotalAmount,
             entity.Type,
             entity.Status,
-            entity.Currency
+            entity.Currency,
+            entity.CustomerDocumentType,
+            entity.CustomerDocumentNumber,
+            entity.CustomerName,
+            entity.ExternalInvoiceId
         );
     }
 }
