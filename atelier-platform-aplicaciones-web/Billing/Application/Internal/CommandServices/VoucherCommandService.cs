@@ -32,6 +32,7 @@ public class VoucherCommandService : IVoucherCommandService
             var voucher = new Voucher(
                 command.QuoteId,
                 command.BranchId,
+                "F001", // Dummy series for now
                 voucherNumber,
                 command.SubtotalAmount,
                 command.Type,

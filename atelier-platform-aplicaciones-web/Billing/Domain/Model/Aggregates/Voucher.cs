@@ -9,6 +9,7 @@ public class Voucher : IUserAuditableEntity
     public Guid Id { get; private set; }
     public Guid QuoteId { get; private set; }
     public Guid BranchId { get; private set; }
+    public string Series { get; private set; }
     public int VoucherNumber { get; private set; }
     public decimal SubtotalAmount { get; private set; }
     public decimal TotalAmount { get; private set; }
@@ -30,11 +31,12 @@ public class Voucher : IUserAuditableEntity
 
     protected Voucher() { }
 
-    public Voucher(Guid quoteId, Guid branchId, int voucherNumber, decimal subtotalAmount, string type, string currency)
+    public Voucher(Guid quoteId, Guid branchId, string series, int voucherNumber, decimal subtotalAmount, string type, string currency)
     {
         Id = Guid.NewGuid();
         QuoteId = quoteId;
         BranchId = branchId;
+        Series = series;
         VoucherNumber = voucherNumber;
         SubtotalAmount = subtotalAmount;
         Type = type;

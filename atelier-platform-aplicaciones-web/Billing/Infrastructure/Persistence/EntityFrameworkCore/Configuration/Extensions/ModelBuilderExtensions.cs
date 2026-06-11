@@ -28,6 +28,7 @@ public static class ModelBuilderExtensions
             
             entity.Property(e => e.QuoteId).HasColumnName("QuoteId").IsRequired();
             entity.Property(e => e.BranchId).HasColumnName("BranchId").IsRequired();
+            entity.Property(e => e.Series).HasColumnName("Series").HasMaxLength(4).IsRequired();
             entity.Property(e => e.VoucherNumber).HasColumnName("VoucherNumber").IsRequired();
             entity.Property(e => e.SubtotalAmount).HasColumnName("SubtotalAmount").HasColumnType("decimal(10,2)").IsRequired();
             entity.Property(e => e.TotalAmount).HasColumnName("TotalAmount").HasColumnType("decimal(10,2)").IsRequired();
