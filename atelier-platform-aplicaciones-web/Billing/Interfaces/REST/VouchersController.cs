@@ -104,4 +104,26 @@ public class VouchersController : ControllerBase
 
         return Ok(new { message = "Payment registered successfully", paymentId = result.Value?.Id });
     }
+
+    [HttpDelete("{voucherId}/payments/{paymentId}")]
+    [SwaggerOperation(Summary = "Remove a payment from a voucher", Description = "Removes a payment registered by mistake")]
+    public async Task<IActionResult> DeletePayment(System.Guid voucherId, System.Guid paymentId)
+    {
+        var command = new atelier_platform_aplicaciones_web.Billing.Domain.Model.Commands.RemovePaymentCommand(voucherId, paymentId);
+        var result = await _voucherCommandService.Handle(command);
+
+        if (!result.IsSuccess)
+        {
+            var errorResponse = new { code = result.Error?.ToString() ?? "BAD_REQUEST", message = result.Message, details = (string?)null };
+
+            if (result.Error?.ToString() == "VoucherNotFound" || result.Error?.ToString() == "PaymentNotFound")
+            {
+                return NotFound();
+            }
+
+            return BadRequest(errorResponse);
+        }
+
+        return Ok(new { message = "Payment removed successfully" });
+    }
 }
