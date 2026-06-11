@@ -12,10 +12,12 @@ namespace atelier_platform_aplicaciones_web.Billing.Interfaces.REST;
 public class VouchersController : ControllerBase
 {
     private readonly IVoucherCommandService _voucherCommandService;
+    private readonly atelier_platform_aplicaciones_web.Billing.Application.QueryServices.IVoucherQueryService _voucherQueryService;
 
-    public VouchersController(IVoucherCommandService voucherCommandService)
+    public VouchersController(IVoucherCommandService voucherCommandService, atelier_platform_aplicaciones_web.Billing.Application.QueryServices.IVoucherQueryService voucherQueryService)
     {
         _voucherCommandService = voucherCommandService;
+        _voucherQueryService = voucherQueryService;
     }
 
     [HttpPost]
@@ -44,6 +46,20 @@ public class VouchersController : ControllerBase
         }
 
         var voucherResource = VoucherResourceFromEntityAssembler.ToResourceFromEntity(result.Value!);
-        return CreatedAtAction(nameof(GenerateVoucher), new { id = voucherResource.Id }, voucherResource);
+        return CreatedAtAction(nameof(GetVoucherById), new { id = voucherResource.Id }, voucherResource);
+    }
+
+    [HttpGet("{id}")]
+    [SwaggerOperation(Summary = "Get voucher by id", Description = "Gets a voucher by its identifier")]
+    public async Task<IActionResult> GetVoucherById(System.Guid id)
+    {
+        var query = new atelier_platform_aplicaciones_web.Billing.Domain.Model.Queries.GetVoucherByIdQuery(id);
+        var voucher = await _voucherQueryService.Handle(query);
+
+        if (voucher == null)
+            return NotFound();
+
+        var resource = VoucherResourceFromEntityAssembler.ToResourceFromEntity(voucher);
+        return Ok(resource);
     }
 }
