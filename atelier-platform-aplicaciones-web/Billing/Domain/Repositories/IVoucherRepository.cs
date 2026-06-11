@@ -5,4 +5,5 @@ namespace atelier_platform_aplicaciones_web.Billing.Domain.Repositories;
 
 public interface IVoucherRepository : IBaseRepository<Voucher>
 {
+    Task<IEnumerable<Voucher>> FindByBranchIdAsync(System.Guid branchId);
 }
