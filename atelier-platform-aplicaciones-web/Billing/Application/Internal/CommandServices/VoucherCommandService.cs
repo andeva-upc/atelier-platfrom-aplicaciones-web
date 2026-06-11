@@ -13,6 +13,8 @@ using atelier_platform_aplicaciones_web.Operations.Domain.Repositories;
 using atelier_platform_aplicaciones_web.Shared.Domain.Repositories;
 using atelier_platform_aplicaciones_web.Shared.Application.Model;
 using atelier_platform_aplicaciones_web.Billing.Domain.Model.ValueObjects;
+using atelier_platform_aplicaciones_web.Billing.Resources;
+using Microsoft.Extensions.Localization;
 
 namespace atelier_platform_aplicaciones_web.Billing.Application.Internal.CommandServices;
 
@@ -26,6 +28,7 @@ public class VoucherCommandService : IVoucherCommandService
     private readonly IWorkshopRepository _workshopRepository;
     private readonly IFacthubService _facthubService;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IStringLocalizer<BillingMessages> _localizer;
 
     public VoucherCommandService(
         IVoucherRepository voucherRepository, 
@@ -35,7 +38,8 @@ public class VoucherCommandService : IVoucherCommandService
         IBranchRepository branchRepository,
         IWorkshopRepository workshopRepository,
         IFacthubService facthubService,
-        IUnitOfWork unitOfWork)
+        IUnitOfWork unitOfWork,
+        IStringLocalizer<BillingMessages> localizer)
     {
         _voucherRepository = voucherRepository;
         _quoteRepository = quoteRepository;
@@ -45,6 +49,7 @@ public class VoucherCommandService : IVoucherCommandService
         _workshopRepository = workshopRepository;
         _facthubService = facthubService;
         _unitOfWork = unitOfWork;
+        _localizer = localizer;
     }
 
     public async Task<Result<Voucher>> Handle(GenerateVoucherCommand command, CancellationToken cancellationToken = default)
@@ -53,21 +58,21 @@ public class VoucherCommandService : IVoucherCommandService
         {
             // 1. Gather all required data for Facthub
             var quote = await _quoteRepository.FindByIdAsync(command.QuoteId);
-            if (quote == null) return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, "Quote not found.");
+            if (quote == null) return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, _localizer["billing.error.quote.notFound"]);
 
             if (quote.Status != QuoteStatus.APPROVED)
             {
-                return Result<Voucher>.Failure(BillingErrorCodes.QuoteNotApproved, "Quote must be APPROVED to generate a voucher");
+                return Result<Voucher>.Failure(BillingErrorCodes.QuoteNotApproved, _localizer["billing.error.quote.notApproved"]);
             }
 
             var workOrder = await _workOrderRepository.FindByIdWithTasksAndProductsAsync(quote.WorkOrderId);
-            if (workOrder == null) return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, "WorkOrder not found.");
+            if (workOrder == null) return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, _localizer["billing.error.workOrder.notFound"]);
 
             var branch = await _branchRepository.FindByIdAsync(quote.BranchId);
-            if (branch == null) return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, "Branch not found.");
+            if (branch == null) return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, _localizer["billing.error.branch.notFound"]);
 
             var workshop = await _workshopRepository.FindByIdAsync(branch.WorkshopId.Value);
-            if (workshop == null) return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, "Workshop not found.");
+            if (workshop == null) return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, _localizer["billing.error.workshop.notFound"]);
 
             var items = workOrder.Tasks.Select(t => new FacthubItem 
             { 
@@ -92,7 +97,7 @@ public class VoucherCommandService : IVoucherCommandService
 
             if (response == null || !response.Success || response.Invoice == null)
             {
-                return Result<Voucher>.Failure(BillingErrorCodes.FacthubServiceUnavailable, "Failed to issue invoice in Facthub: " + (response?.Message ?? "Unknown error"));
+                return Result<Voucher>.Failure(BillingErrorCodes.FacthubServiceUnavailable, _localizer["billing.error.facthub.unavailable"]);
             }
 
             // 4. Create Voucher with Facthub data
@@ -118,7 +123,7 @@ public class VoucherCommandService : IVoucherCommandService
         catch (Exception ex)
         {
             var innerMsg = ex.InnerException != null ? ex.InnerException.Message : "";
-            return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, $"An error occurred while generating the voucher: {ex.Message}. Inner: {innerMsg}");
+            return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, _localizer["billing.error.internal"]);
         }
     }
     public async Task<Result<atelier_platform_aplicaciones_web.Billing.Domain.Model.Entities.Payment>> Handle(AddPaymentCommand command, CancellationToken cancellationToken = default)
@@ -126,7 +131,7 @@ public class VoucherCommandService : IVoucherCommandService
         try
         {
             var voucher = await _voucherRepository.FindByIdWithPaymentsAsync(command.VoucherId);
-            if (voucher == null) return Result<atelier_platform_aplicaciones_web.Billing.Domain.Model.Entities.Payment>.Failure(BillingErrorCodes.VoucherNotFound, "Voucher not found.");
+            if (voucher == null) return Result<atelier_platform_aplicaciones_web.Billing.Domain.Model.Entities.Payment>.Failure(BillingErrorCodes.VoucherNotFound, _localizer["billing.error.voucher.notFound"]);
 
             voucher.AddPayment(command.Amount, command.Method, voucher.Currency);
             
@@ -139,12 +144,12 @@ public class VoucherCommandService : IVoucherCommandService
         catch (Exception ex)
         {
             if (ex.Message == "Voucher is already fully paid." || ex.Message == "Cannot add payment to a canceled voucher.")
-                return Result<atelier_platform_aplicaciones_web.Billing.Domain.Model.Entities.Payment>.Failure(BillingErrorCodes.PaymentConflict, ex.Message);
+                return Result<atelier_platform_aplicaciones_web.Billing.Domain.Model.Entities.Payment>.Failure(BillingErrorCodes.PaymentConflict, _localizer["billing.error.payment.conflict"]);
             
             if (ex.Message == "Payment amount exceeds the remaining balance.")
-                return Result<atelier_platform_aplicaciones_web.Billing.Domain.Model.Entities.Payment>.Failure(BillingErrorCodes.BadRequest, ex.Message);
+                return Result<atelier_platform_aplicaciones_web.Billing.Domain.Model.Entities.Payment>.Failure(BillingErrorCodes.BadRequest, _localizer["billing.error.payment.conflict"]);
 
-            return Result<atelier_platform_aplicaciones_web.Billing.Domain.Model.Entities.Payment>.Failure(BillingErrorCodes.InternalError, ex.Message);
+            return Result<atelier_platform_aplicaciones_web.Billing.Domain.Model.Entities.Payment>.Failure(BillingErrorCodes.InternalError, _localizer["billing.error.internal"]);
         }
     }
 
@@ -153,7 +158,7 @@ public class VoucherCommandService : IVoucherCommandService
         try
         {
             var voucher = await _voucherRepository.FindByIdWithPaymentsAsync(command.VoucherId);
-            if (voucher == null) return Result.Failure(BillingErrorCodes.VoucherNotFound, "Voucher not found.");
+            if (voucher == null) return Result.Failure(BillingErrorCodes.VoucherNotFound, _localizer["billing.error.voucher.notFound"]);
 
             voucher.RemovePayment(command.PaymentId);
             
@@ -165,9 +170,9 @@ public class VoucherCommandService : IVoucherCommandService
         catch (Exception ex)
         {
             if (ex.Message == "Payment not found.")
-                return Result.Failure(BillingErrorCodes.PaymentNotFound, ex.Message);
+                return Result.Failure(BillingErrorCodes.PaymentNotFound, _localizer["billing.error.payment.notFound"]);
 
-            return Result.Failure(BillingErrorCodes.InternalError, ex.Message);
+            return Result.Failure(BillingErrorCodes.InternalError, _localizer["billing.error.internal"]);
         }
     }
 
@@ -177,21 +182,21 @@ public class VoucherCommandService : IVoucherCommandService
         {
             // 1. Validate Quote
             var quote = await _quoteRepository.FindByIdAsync(command.QuoteId);
-            if (quote == null) return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, "Quote not found.");
+            if (quote == null) return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, _localizer["billing.error.quote.notFound"]);
 
             if (quote.Status != QuoteStatus.APPROVED)
             {
-                return Result<Voucher>.Failure(BillingErrorCodes.QuoteNotApproved, "Quote must be APPROVED to checkout");
+                return Result<Voucher>.Failure(BillingErrorCodes.QuoteNotApproved, _localizer["billing.error.quote.notApproved"]);
             }
 
             var workOrder = await _workOrderRepository.FindByIdWithTasksAndProductsAsync(quote.WorkOrderId);
-            if (workOrder == null) return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, "WorkOrder not found.");
+            if (workOrder == null) return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, _localizer["billing.error.workOrder.notFound"]);
 
             var branch = await _branchRepository.FindByIdAsync(quote.BranchId);
-            if (branch == null) return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, "Branch not found.");
+            if (branch == null) return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, _localizer["billing.error.branch.notFound"]);
 
             var workshop = await _workshopRepository.FindByIdAsync(branch.WorkshopId.Value);
-            if (workshop == null) return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, "Workshop not found.");
+            if (workshop == null) return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, _localizer["billing.error.workshop.notFound"]);
 
             var items = workOrder.Tasks.Select(t => new FacthubItem 
             { 
@@ -215,7 +220,7 @@ public class VoucherCommandService : IVoucherCommandService
 
             if (response == null || !response.Success || response.Invoice == null)
             {
-                return Result<Voucher>.Failure(BillingErrorCodes.FacthubServiceUnavailable, "Failed to issue invoice in Facthub: " + (response?.Message ?? "Unknown error"));
+                return Result<Voucher>.Failure(BillingErrorCodes.FacthubServiceUnavailable, _localizer["billing.error.facthub.unavailable"]);
             }
 
             // 3. Create Voucher
@@ -244,7 +249,7 @@ public class VoucherCommandService : IVoucherCommandService
         catch (Exception ex)
         {
             var innerMsg = ex.InnerException != null ? ex.InnerException.Message : "";
-            return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, $"An error occurred during checkout: {ex.Message}. Inner: {innerMsg}");
+            return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, _localizer["billing.error.internal"]);
         }
     }
 }
