@@ -7,6 +7,7 @@ using atelier_platform_aplicaciones_web.Billing.Application.QueryServices;
 using atelier_platform_aplicaciones_web.Billing.Interfaces.REST.Resources;
 using atelier_platform_aplicaciones_web.Billing.Interfaces.REST.Transform;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace atelier_platform_aplicaciones_web.Billing.Interfaces.REST;
 
@@ -25,6 +26,7 @@ public class QuotesController : ControllerBase
     }
 
     [HttpPost]
+    [SwaggerOperation(Summary = "Create a new quote", Description = "Creates a new draft quote for a specific work order and branch")]
     public async Task<IActionResult> CreateQuote([FromBody] CreateQuoteResource resource)
     {
         var command = CreateQuoteCommandFromResourceAssembler.ToCommandFromResource(resource);
@@ -39,6 +41,7 @@ public class QuotesController : ControllerBase
     }
 
     [HttpGet("{quoteId}")]
+    [SwaggerOperation(Summary = "Get a quote by ID", Description = "Retrieves the details of a specific quote")]
     public async Task<IActionResult> GetQuoteById(Guid quoteId)
     {
         var getQuoteByIdQuery = new Billing.Domain.Model.Queries.GetQuoteByIdQuery(quoteId);
@@ -52,6 +55,7 @@ public class QuotesController : ControllerBase
     }
 
     [HttpGet("branch/{branchId}")]
+    [SwaggerOperation(Summary = "Get quotes by branch ID", Description = "Retrieves all quotes associated with a specific branch")]
     public async Task<IActionResult> GetQuotesByBranchId(Guid branchId)
     {
         var getQuotesByBranchIdQuery = new Billing.Domain.Model.Queries.GetQuotesByBranchIdQuery(branchId);
@@ -62,6 +66,7 @@ public class QuotesController : ControllerBase
     }
 
     [HttpPut("{quoteId}")]
+    [SwaggerOperation(Summary = "Update quote details", Description = "Updates the subtotal and discount percentage of an existing quote")]
     public async Task<IActionResult> UpdateQuote(Guid quoteId, [FromBody] UpdateQuoteResource resource)
     {
         var updateQuoteCommand = new atelier_platform_aplicaciones_web.Billing.Domain.Model.Commands.UpdateQuoteCommand(
