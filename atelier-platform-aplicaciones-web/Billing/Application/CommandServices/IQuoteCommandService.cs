@@ -9,4 +9,5 @@ namespace atelier_platform_aplicaciones_web.Billing.Application.CommandServices;
 public interface IQuoteCommandService
 {
     Task<Result<Quote>> Handle(CreateQuoteCommand command, CancellationToken cancellationToken = default);
+    Task<Result<Quote>> Handle(UpdateQuoteCommand command, CancellationToken cancellationToken = default);
 }
