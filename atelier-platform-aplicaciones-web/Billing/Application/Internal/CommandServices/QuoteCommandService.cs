@@ -8,6 +8,8 @@ using atelier_platform_aplicaciones_web.Billing.Domain.Model.ValueObjects;
 using atelier_platform_aplicaciones_web.Billing.Domain.Repositories;
 using atelier_platform_aplicaciones_web.Shared.Domain.Repositories;
 using atelier_platform_aplicaciones_web.Shared.Application.Model;
+using atelier_platform_aplicaciones_web.Billing.Resources;
+using Microsoft.Extensions.Localization;
 
 namespace atelier_platform_aplicaciones_web.Billing.Application.Internal.CommandServices;
 
@@ -17,11 +19,13 @@ public class QuoteCommandService : IQuoteCommandService
 {
     private readonly IQuoteRepository _quoteRepository;
     private readonly IUnitOfWork _unitOfWork;
+    private readonly IStringLocalizer<BillingMessages> _localizer;
 
-    public QuoteCommandService(IQuoteRepository quoteRepository, IUnitOfWork unitOfWork)
+    public QuoteCommandService(IQuoteRepository quoteRepository, IUnitOfWork unitOfWork, IStringLocalizer<BillingMessages> localizer)
     {
         _quoteRepository = quoteRepository;
         _unitOfWork = unitOfWork;
+        _localizer = localizer;
     }
 
     public async Task<Result<Quote>> Handle(CreateQuoteCommand command, CancellationToken cancellationToken = default)
@@ -42,7 +46,7 @@ public class QuoteCommandService : IQuoteCommandService
         }
         catch (Exception ex)
         {
-            return Result<Quote>.Failure(BillingErrorCodes.CreationFailed, $"An error occurred while creating the quote: {ex.Message}");
+            return Result<Quote>.Failure(BillingErrorCodes.CreationFailed, _localizer["billing.error.unexpected"]);
         }
     }
 
@@ -53,7 +57,7 @@ public class QuoteCommandService : IQuoteCommandService
             var quote = await _quoteRepository.FindByIdAsync(command.Id);
             if (quote == null)
             {
-                return Result<Quote>.Failure(BillingErrorCodes.QuoteNotFound, $"Quote with ID {command.Id} not found.");
+                return Result<Quote>.Failure(BillingErrorCodes.QuoteNotFound, _localizer["billing.error.quote.notFound"]);
             }
 
             quote.Update(command.SubtotalAmount, command.DiscountPercentage);
@@ -64,7 +68,7 @@ public class QuoteCommandService : IQuoteCommandService
         }
         catch (Exception ex)
         {
-            return Result<Quote>.Failure(BillingErrorCodes.UpdateFailed, $"An error occurred while updating the quote: {ex.Message}");
+            return Result<Quote>.Failure(BillingErrorCodes.UpdateFailed, _localizer["billing.error.unexpected"]);
         }
     }
 
@@ -75,7 +79,7 @@ public class QuoteCommandService : IQuoteCommandService
             var quote = await _quoteRepository.FindByIdAsync(command.Id);
             if (quote == null)
             {
-                return Result<Quote>.Failure(BillingErrorCodes.QuoteNotFound, $"Quote with ID {command.Id} not found.");
+                return Result<Quote>.Failure(BillingErrorCodes.QuoteNotFound, _localizer["billing.error.quote.notFound"]);
             }
 
             quote.Approve();
@@ -86,7 +90,7 @@ public class QuoteCommandService : IQuoteCommandService
         }
         catch (Exception ex)
         {
-            return Result<Quote>.Failure(BillingErrorCodes.ApprovalFailed, $"An error occurred while approving the quote: {ex.Message}");
+            return Result<Quote>.Failure(BillingErrorCodes.ApprovalFailed, _localizer["billing.error.unexpected"]);
         }
     }
 
@@ -97,7 +101,7 @@ public class QuoteCommandService : IQuoteCommandService
             var quote = await _quoteRepository.FindByIdAsync(command.Id);
             if (quote == null)
             {
-                return Result<Quote>.Failure(BillingErrorCodes.QuoteNotFound, $"Quote with ID {command.Id} not found.");
+                return Result<Quote>.Failure(BillingErrorCodes.QuoteNotFound, _localizer["billing.error.quote.notFound"]);
             }
 
             quote.Cancel();
@@ -108,7 +112,7 @@ public class QuoteCommandService : IQuoteCommandService
         }
         catch (Exception ex)
         {
-            return Result<Quote>.Failure(BillingErrorCodes.CancellationFailed, $"An error occurred while cancelling the quote: {ex.Message}");
+            return Result<Quote>.Failure(BillingErrorCodes.CancellationFailed, _localizer["billing.error.unexpected"]);
         }
     }
 }
