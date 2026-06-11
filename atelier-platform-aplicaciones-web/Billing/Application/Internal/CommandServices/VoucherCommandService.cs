@@ -147,4 +147,27 @@ public class VoucherCommandService : IVoucherCommandService
             return Result<atelier_platform_aplicaciones_web.Billing.Domain.Model.Entities.Payment>.Failure(BillingErrorCodes.InternalError, ex.Message);
         }
     }
+
+    public async Task<Result> Handle(RemovePaymentCommand command, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var voucher = await _voucherRepository.FindByIdWithPaymentsAsync(command.VoucherId);
+            if (voucher == null) return Result.Failure(BillingErrorCodes.VoucherNotFound, "Voucher not found.");
+
+            voucher.RemovePayment(command.PaymentId);
+            
+            _voucherRepository.Update(voucher);
+            await _unitOfWork.CompleteAsync();
+
+            return Result.Success();
+        }
+        catch (Exception ex)
+        {
+            if (ex.Message == "Payment not found.")
+                return Result.Failure(BillingErrorCodes.PaymentNotFound, ex.Message);
+
+            return Result.Failure(BillingErrorCodes.InternalError, ex.Message);
+        }
+    }
 }
