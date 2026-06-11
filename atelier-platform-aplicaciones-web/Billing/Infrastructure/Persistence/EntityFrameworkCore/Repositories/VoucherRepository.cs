@@ -19,4 +19,9 @@ public class VoucherRepository : BaseRepository<Voucher>, IVoucherRepository
     {
         return await Context.Set<Voucher>().Where(v => v.BranchId == branchId).ToListAsync();
     }
+
+    public async Task<Voucher?> FindByIdWithPaymentsAsync(System.Guid id)
+    {
+        return await Context.Set<Voucher>().Include(v => v.Payments).FirstOrDefaultAsync(v => v.Id == id);
+    }
 }
