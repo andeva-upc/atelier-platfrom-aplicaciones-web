@@ -88,4 +88,23 @@ public class QuotesController : ControllerBase
         var quoteResource = QuoteResourceFromEntityAssembler.ToResourceFromEntity(result.Value!);
         return Ok(quoteResource);
     }
+
+    [HttpPost("{quoteId}/approve")]
+    [SwaggerOperation(Summary = "Approve a quote", Description = "Changes the status of a draft quote to APPROVED")]
+    public async Task<IActionResult> ApproveQuote(Guid quoteId)
+    {
+        var approveQuoteCommand = new atelier_platform_aplicaciones_web.Billing.Domain.Model.Commands.ApproveQuoteCommand(quoteId);
+        var result = await _quoteCommandService.Handle(approveQuoteCommand);
+
+        if (!result.IsSuccess)
+        {
+            if (Equals(result.Error, atelier_platform_aplicaciones_web.Billing.Application.Internal.CommandServices.BillingErrorCodes.QuoteNotFound))
+                return NotFound(result.Message);
+
+            return BadRequest(result.Message);
+        }
+
+        var quoteResource = QuoteResourceFromEntityAssembler.ToResourceFromEntity(result.Value!);
+        return Ok(quoteResource);
+    }
 }
