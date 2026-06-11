@@ -178,6 +178,15 @@ builder.Services.AddScoped<IQuoteRepository, QuoteRepository>();
 builder.Services.AddScoped<IQuoteCommandService, QuoteCommandService>();
 builder.Services.AddScoped<IQuoteQueryService, QuoteQueryService>();
 
+builder.Services.AddScoped<IVoucherRepository, VoucherRepository>();
+builder.Services.AddScoped<IVoucherCommandService, VoucherCommandService>();
+
+builder.Services.AddHttpClient<atelier_platform_aplicaciones_web.Billing.Application.OutboundServices.IFacthubService, 
+    atelier_platform_aplicaciones_web.Billing.Infrastructure.ExternalServices.Facthub.FacthubService>(client => 
+{
+    client.BaseAddress = new Uri("https://facthub-service.onrender.com/");
+});
+
 // TokenSettings Configuration
 builder.Services.Configure<TokenSettings>(builder.Configuration.GetSection("TokenSettings"));
 

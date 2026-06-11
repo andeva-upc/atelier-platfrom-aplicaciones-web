@@ -11,7 +11,7 @@ using atelier_platform_aplicaciones_web.Shared.Application.Model;
 
 namespace atelier_platform_aplicaciones_web.Billing.Application.Internal.CommandServices;
 
-public enum BillingErrorCodes { CreationFailed, UpdateFailed, QuoteNotFound, ApprovalFailed, CancellationFailed }
+public enum BillingErrorCodes { CreationFailed, UpdateFailed, QuoteNotFound, ApprovalFailed, CancellationFailed, VoucherGenerationFailed, QuoteNotApproved, FacthubServiceUnavailable }
 
 public class QuoteCommandService : IQuoteCommandService
 {

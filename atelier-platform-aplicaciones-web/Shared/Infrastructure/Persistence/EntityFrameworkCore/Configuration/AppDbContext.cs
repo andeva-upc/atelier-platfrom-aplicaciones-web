@@ -16,6 +16,7 @@ namespace atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.En
 public class AppDbContext(DbContextOptions options, AuditableEntityInterceptor auditableEntityInterceptor, DispatchDomainEventsInterceptor dispatchDomainEventsInterceptor) : DbContext(options)
 {
     public DbSet<Quote> Quotes { get; set; }
+    public DbSet<Voucher> Vouchers { get; set; }
 
     /// <inheritdoc />
     protected override void OnConfiguring(DbContextOptionsBuilder builder)
