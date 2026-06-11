@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="billing.error.quote.notFound"><value>Cotización no encontrada.</value></data>
+  <data name="billing.error.quote.notApproved"><value>La cotización debe estar en estado APPROVED para realizar esta acción.</value></data>
+  <data name="billing.error.quote.duplicate"><value>Ya existe una cotización para esta orden de trabajo.</value></data>
+  <data name="billing.error.quote.invalidState"><value>La cotización está en un estado inválido para esta operación.</value></data>
+  <data name="billing.error.voucher.notFound"><value>Comprobante no encontrado.</value></data>
+  <data name="billing.error.payment.notFound"><value>Pago no encontrado.</value></data>
+  <data name="billing.error.payment.conflict"><value>Conflicto en el pago. El monto puede exceder el balance restante o el comprobante ya está pagado en su totalidad.</value></data>
+  <data name="billing.error.facthub.unavailable"><value>El servicio Facthub no está disponible o devolvió un error.</value></data>
+  <data name="billing.error.internal"><value>Ocurrió un error interno al procesar la operación de facturación.</value></data>
+  <data name="billing.error.badRequest"><value>Solicitud incorrecta.</value></data>
+  <data name="billing.error.workOrder.notFound"><value>Orden de trabajo no encontrada.</value></data>
+  <data name="billing.error.branch.notFound"><value>Sucursal no encontrada.</value></data>
+  <data name="billing.error.workshop.notFound"><value>Taller no encontrado.</value></data>
+  <data name="billing.error.unexpected"><value>Ocurrió un error inesperado.</value></data>
+</root>

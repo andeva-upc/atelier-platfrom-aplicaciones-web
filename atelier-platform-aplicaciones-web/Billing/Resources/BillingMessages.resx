@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="billing.error.quote.notFound"><value>Quote not found.</value></data>
+  <data name="billing.error.quote.notApproved"><value>Quote must be APPROVED to perform this action.</value></data>
+  <data name="billing.error.quote.duplicate"><value>A quote already exists for this work order.</value></data>
+  <data name="billing.error.quote.invalidState"><value>Quote is in an invalid state for this operation.</value></data>
+  <data name="billing.error.voucher.notFound"><value>Voucher not found.</value></data>
+  <data name="billing.error.payment.notFound"><value>Payment not found.</value></data>
+  <data name="billing.error.payment.conflict"><value>Payment conflict. The amount may exceed the remaining balance or the voucher is already fully paid.</value></data>
+  <data name="billing.error.facthub.unavailable"><value>Facthub service is unavailable or returned an error.</value></data>
+  <data name="billing.error.internal"><value>An internal error occurred while processing the billing operation.</value></data>
+  <data name="billing.error.badRequest"><value>Bad request.</value></data>
+  <data name="billing.error.workOrder.notFound"><value>Work Order not found.</value></data>
+  <data name="billing.error.branch.notFound"><value>Branch not found.</value></data>
+  <data name="billing.error.workshop.notFound"><value>Workshop not found.</value></data>
+  <data name="billing.error.unexpected"><value>An unexpected error occurred.</value></data>
+</root>
