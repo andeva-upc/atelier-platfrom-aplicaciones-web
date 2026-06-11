@@ -9,4 +9,5 @@ public interface IQuoteRepository : IBaseRepository<Quote>
     // or adding BranchId to the Quote entity if it corresponds directly to a branch.
     // Based on diagram, Quote belongs to WorkshopId, not explicitly BranchId.
     // For the endpoint quotes/branch/{branchId}, we might need to filter.
+    Task<IEnumerable<Quote>> FindByBranchIdAsync(Guid branchId);
 }

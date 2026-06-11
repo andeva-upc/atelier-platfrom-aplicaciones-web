@@ -15,6 +15,7 @@ public class QuoteRepository : BaseRepository<Quote>, IQuoteRepository
     public async Task<IEnumerable<Quote>> FindByBranchIdAsync(Guid branchId)
     {
         return await Context.Set<Quote>()
+            .Where(q => q.BranchId == branchId)
             .ToListAsync();
     }
 
