@@ -170,4 +170,81 @@ public class VoucherCommandService : IVoucherCommandService
             return Result.Failure(BillingErrorCodes.InternalError, ex.Message);
         }
     }
+
+    public async Task<Result<Voucher>> Handle(ProcessCheckoutCommand command, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            // 1. Validate Quote
+            var quote = await _quoteRepository.FindByIdAsync(command.QuoteId);
+            if (quote == null) return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, "Quote not found.");
+
+            if (quote.Status != QuoteStatus.APPROVED)
+            {
+                return Result<Voucher>.Failure(BillingErrorCodes.QuoteNotApproved, "Quote must be APPROVED to checkout");
+            }
+
+            var workOrder = await _workOrderRepository.FindByIdWithTasksAndProductsAsync(quote.WorkOrderId);
+            if (workOrder == null) return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, "WorkOrder not found.");
+
+            var branch = await _branchRepository.FindByIdAsync(quote.BranchId);
+            if (branch == null) return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, "Branch not found.");
+
+            var workshop = await _workshopRepository.FindByIdAsync(branch.WorkshopId.Value);
+            if (workshop == null) return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, "Workshop not found.");
+
+            var items = workOrder.Tasks.Select(t => new FacthubItem 
+            { 
+                Description = t.Description.Value, 
+                Quantity = 1, 
+                UnitPrice = t.Price.Amount 
+            }).ToList();
+
+            // 2. Issue Invoice via Facthub
+            var request = new FacthubIssueRequest
+            {
+                IssuerRuc = workshop.TaxId,
+                DocumentType = command.Type,
+                CustomerDocumentType = command.CustomerDocumentType,
+                CustomerDocumentNumber = command.CustomerDocumentNumber,
+                CustomerName = command.CustomerName,
+                Items = items
+            };
+
+            var response = await _facthubService.IssueInvoiceAsync(request);
+
+            if (response == null || !response.Success || response.Invoice == null)
+            {
+                return Result<Voucher>.Failure(BillingErrorCodes.FacthubServiceUnavailable, "Failed to issue invoice in Facthub: " + (response?.Message ?? "Unknown error"));
+            }
+
+            // 3. Create Voucher
+            Guid? externalInvoiceId = Guid.TryParse(response.Invoice.Id, out var parsedId) ? parsedId : null;
+            var voucher = new Voucher(
+                command.QuoteId,
+                quote.BranchId,
+                response.Invoice.Number,
+                quote.SubtotalAmount,
+                command.Type,
+                "PEN",
+                command.CustomerDocumentType,
+                command.CustomerDocumentNumber,
+                command.CustomerName,
+                externalInvoiceId
+            );
+
+            // 4. Register full payment immediately
+            voucher.AddPayment(voucher.TotalAmount, command.Method, voucher.Currency);
+
+            await _voucherRepository.AddAsync(voucher);
+            await _unitOfWork.CompleteAsync();
+
+            return Result<Voucher>.Success(voucher);
+        }
+        catch (Exception ex)
+        {
+            var innerMsg = ex.InnerException != null ? ex.InnerException.Message : "";
+            return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, $"An error occurred during checkout: {ex.Message}. Inner: {innerMsg}");
+        }
+    }
 }
