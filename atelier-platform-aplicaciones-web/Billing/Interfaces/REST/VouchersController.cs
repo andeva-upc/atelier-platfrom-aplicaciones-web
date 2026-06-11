@@ -76,4 +76,32 @@ public class VouchersController : ControllerBase
         var resources = System.Linq.Enumerable.Select(vouchers, VoucherResourceFromEntityAssembler.ToResourceFromEntity);
         return Ok(resources);
     }
+
+    [HttpPost("{voucherId}/payments")]
+    [SwaggerOperation(Summary = "Add a payment to a voucher", Description = "Adds a partial or full payment to a voucher")]
+    public async Task<IActionResult> AddPayment(System.Guid voucherId, [FromBody] AddPaymentResource resource)
+    {
+        var command = new atelier_platform_aplicaciones_web.Billing.Domain.Model.Commands.AddPaymentCommand(voucherId, resource.Amount, resource.Method);
+        var result = await _voucherCommandService.Handle(command);
+
+        if (!result.IsSuccess)
+        {
+            var errorResponse = new { code = result.Error?.ToString() ?? "BAD_REQUEST", message = result.Message, details = (string?)null };
+
+            if (result.Error?.ToString() == "PaymentConflict")
+            {
+                errorResponse = new { code = "PAYMENT_CONFLICT", message = result.Message, details = (string?)null };
+                return Conflict(errorResponse);
+            }
+
+            if (result.Error?.ToString() == "VoucherNotFound")
+            {
+                return NotFound();
+            }
+
+            return BadRequest(errorResponse);
+        }
+
+        return Ok(new { message = "Payment registered successfully", paymentId = result.Value?.Id });
+    }
 }
