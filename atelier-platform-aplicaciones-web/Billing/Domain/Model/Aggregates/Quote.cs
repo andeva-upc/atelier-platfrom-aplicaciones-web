@@ -46,6 +46,13 @@ public class Quote : IUserAuditableEntity
         CalculateFinalTotal();
     }
 
+    public void Update(decimal subtotalAmount, decimal discountPercentage)
+    {
+        SubtotalAmount = subtotalAmount;
+        DiscountPercentage = discountPercentage;
+        CalculateFinalTotal();
+    }
+
     public void Approve()
     {
         Status = QuoteStatus.APPROVED;
