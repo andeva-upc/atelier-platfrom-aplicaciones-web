@@ -11,4 +11,5 @@ public interface IQuoteCommandService
     Task<Result<Quote>> Handle(CreateQuoteCommand command, CancellationToken cancellationToken = default);
     Task<Result<Quote>> Handle(UpdateQuoteCommand command, CancellationToken cancellationToken = default);
     Task<Result<Quote>> Handle(ApproveQuoteCommand command, CancellationToken cancellationToken = default);
+    Task<Result<Quote>> Handle(CancelQuoteCommand command, CancellationToken cancellationToken = default);
 }
