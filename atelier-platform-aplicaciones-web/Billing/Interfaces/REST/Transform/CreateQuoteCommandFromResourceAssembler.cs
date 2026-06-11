@@ -8,13 +8,10 @@ public static class CreateQuoteCommandFromResourceAssembler
     public static CreateQuoteCommand ToCommandFromResource(CreateQuoteResource resource)
     {
         return new CreateQuoteCommand(
-            resource.WorkshopId,
-            resource.CustomerId,
-            resource.VehicleId,
-            resource.Description,
-            resource.Currency,
+            resource.WorkOrderId,
+            resource.BranchId,
             resource.SubtotalAmount,
-            resource.TaxPercentage
+            resource.DiscountPercentage
         );
     }
 }

@@ -9,15 +9,11 @@ public static class QuoteResourceFromEntityAssembler
     {
         return new QuoteResource(
             entity.Id,
-            entity.WorkshopId,
-            entity.CustomerId,
-            entity.VehicleId,
-            entity.Description,
-            entity.Currency,
-            entity.Subtotal.Amount,
-            entity.DiscountAmount.Amount,
-            entity.TaxRate.Percentage,
-            entity.Total.Amount,
+            entity.WorkOrderId,
+            entity.BranchId,
+            entity.SubtotalAmount,
+            entity.DiscountPercentage,
+            entity.TotalAmount,
             entity.Status.ToString()
         );
     }

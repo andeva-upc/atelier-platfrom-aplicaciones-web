@@ -4,7 +4,6 @@ using atelier_platform_aplicaciones_web.Operations.Infrastructure.Persistence.En
 using atelier_platform_aplicaciones_web.IAM.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
 using atelier_platform_aplicaciones_web.Core.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
 using atelier_platform_aplicaciones_web.Billing.Domain.Model.Aggregates;
-using atelier_platform_aplicaciones_web.Billing.Domain.Model.Entities;
 using atelier_platform_aplicaciones_web.Billing.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
 
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +16,6 @@ namespace atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.En
 public class AppDbContext(DbContextOptions options, AuditableEntityInterceptor auditableEntityInterceptor, DispatchDomainEventsInterceptor dispatchDomainEventsInterceptor) : DbContext(options)
 {
     public DbSet<Quote> Quotes { get; set; }
-    public DbSet<QuoteItem> QuoteItems { get; set; }
 
     /// <inheritdoc />
     protected override void OnConfiguring(DbContextOptionsBuilder builder)

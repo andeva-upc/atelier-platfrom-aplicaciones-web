@@ -28,18 +28,12 @@ public class QuoteCommandService : IQuoteCommandService
     {
         try
         {
-            var subtotal = new Money(command.SubtotalAmount, command.Currency);
-            var taxRate = new TaxRate(command.TaxPercentage);
-
             var quote = new Quote(
-                command.WorkshopId,
-                command.CustomerId,
-                command.VehicleId,
-                command.Description,
-                command.Currency,
-                subtotal,
-                taxRate
-            );
+            command.WorkOrderId,
+            command.BranchId,
+            command.SubtotalAmount,
+            command.DiscountPercentage
+        );
 
             await _quoteRepository.AddAsync(quote);
             await _unitOfWork.CompleteAsync();

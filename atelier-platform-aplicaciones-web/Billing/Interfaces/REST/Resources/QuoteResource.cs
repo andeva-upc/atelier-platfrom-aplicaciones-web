@@ -4,14 +4,10 @@ namespace atelier_platform_aplicaciones_web.Billing.Interfaces.REST.Resources;
 
 public record QuoteResource(
     Guid Id,
-    Guid WorkshopId,
-    Guid CustomerId,
-    Guid VehicleId,
-    string Description,
-    string Currency,
+    Guid WorkOrderId,
+    Guid BranchId,
     decimal SubtotalAmount,
-    decimal DiscountAmount,
-    decimal TaxPercentage,
+    decimal DiscountPercentage,
     decimal TotalAmount,
     string Status
 );
