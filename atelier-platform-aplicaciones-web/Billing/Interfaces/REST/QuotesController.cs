@@ -13,6 +13,9 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace atelier_platform_aplicaciones_web.Billing.Interfaces.REST;
 
+/// <summary>
+///     REST API Controller for managing Quotes in the Billing context.
+/// </summary>
 [ApiController]
 [Route("api/v1/[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
@@ -29,6 +32,11 @@ public class QuotesController : ControllerBase
         _localizer = localizer;
     }
 
+    /// <summary>
+    ///     Creates a new draft Quote for a specific work order.
+    /// </summary>
+    /// <param name="resource">The details of the quote to create.</param>
+    /// <returns>A 201 Created response with the generated Quote resource.</returns>
     [HttpPost]
     [SwaggerOperation(Summary = "Create a new quote", Description = "Creates a new draft quote for a specific work order and branch")]
     public async Task<IActionResult> CreateQuote([FromBody] CreateQuoteResource resource)
@@ -45,6 +53,11 @@ public class QuotesController : ControllerBase
         return ActionResultFromBillingCommandResultAssembler.MapFailureToActionResult(result.Error, result.Message, this, _localizer);
     }
 
+    /// <summary>
+    ///     Retrieves the details of a specific quote by its ID.
+    /// </summary>
+    /// <param name="quoteId">The unique identifier of the quote.</param>
+    /// <returns>The Quote resource if found; otherwise, 404 Not Found.</returns>
     [HttpGet("{quoteId}")]
     [SwaggerOperation(Summary = "Get a quote by ID", Description = "Retrieves the details of a specific quote")]
     public async Task<IActionResult> GetQuoteById(Guid quoteId)
@@ -59,6 +72,11 @@ public class QuotesController : ControllerBase
         return Ok(quoteResource);
     }
 
+    /// <summary>
+    ///     Retrieves all quotes associated with a specific branch.
+    /// </summary>
+    /// <param name="branchId">The branch identifier.</param>
+    /// <returns>A list of Quote resources for the given branch.</returns>
     [HttpGet("branch/{branchId}")]
     [SwaggerOperation(Summary = "Get quotes by branch ID", Description = "Retrieves all quotes associated with a specific branch")]
     public async Task<IActionResult> GetQuotesByBranchId(Guid branchId)
@@ -70,6 +88,12 @@ public class QuotesController : ControllerBase
         return Ok(quoteResources);
     }
 
+    /// <summary>
+    ///     Updates the subtotal amount and discount percentage of a draft quote.
+    /// </summary>
+    /// <param name="quoteId">The ID of the quote to update.</param>
+    /// <param name="resource">The updated subtotal and discount values.</param>
+    /// <returns>The updated Quote resource.</returns>
     [HttpPut("{quoteId}")]
     [SwaggerOperation(Summary = "Update quote details", Description = "Updates the subtotal and discount percentage of an existing quote")]
     public async Task<IActionResult> UpdateQuote(Guid quoteId, [FromBody] UpdateQuoteResource resource)
@@ -91,6 +115,11 @@ public class QuotesController : ControllerBase
         return ActionResultFromBillingCommandResultAssembler.MapFailureToActionResult(result.Error, result.Message, this, _localizer);
     }
 
+    /// <summary>
+    ///     Approves a draft quote so it can be used to generate a voucher.
+    /// </summary>
+    /// <param name="quoteId">The ID of the quote to approve.</param>
+    /// <returns>The approved Quote resource.</returns>
     [HttpPost("{quoteId}/approve")]
     [SwaggerOperation(Summary = "Approve a quote", Description = "Changes the status of a draft quote to APPROVED")]
     public async Task<IActionResult> ApproveQuote(Guid quoteId)
@@ -107,6 +136,11 @@ public class QuotesController : ControllerBase
         return ActionResultFromBillingCommandResultAssembler.MapFailureToActionResult(result.Error, result.Message, this, _localizer);
     }
 
+    /// <summary>
+    ///     Cancels a quote to prevent it from being processed.
+    /// </summary>
+    /// <param name="quoteId">The ID of the quote to cancel.</param>
+    /// <returns>The cancelled Quote resource.</returns>
     [HttpPost("{quoteId}/cancel")]
     [SwaggerOperation(Summary = "Cancel a quote", Description = "Changes the status of a quote to CANCELLED")]
     public async Task<IActionResult> CancelQuote(Guid quoteId)
