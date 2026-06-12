@@ -10,12 +10,14 @@ using atelier_platform_aplicaciones_web.IAM.Infrastructure.Pipeline.Middleware.A
 
 using atelier_platform_aplicaciones_web.Operations.Application.CommandServices;
 using atelier_platform_aplicaciones_web.Operations.Application.QueryServices;
+using atelier_platform_aplicaciones_web.Operations.Domain.Model.Aggregates;
 using atelier_platform_aplicaciones_web.Operations.Domain.Model.Commands;
 using atelier_platform_aplicaciones_web.Operations.Domain.Model.Queries;
 using atelier_platform_aplicaciones_web.Operations.Domain.Model.ValueObjects;
 using atelier_platform_aplicaciones_web.Operations.Interfaces.REST.Resources;
 using atelier_platform_aplicaciones_web.Operations.Interfaces.REST.Transform;
 using atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects;
+using atelier_platform_aplicaciones_web.Shared.Application.Model;
 using atelier_platform_aplicaciones_web.Operations.Resources;
 
 namespace atelier_platform_aplicaciones_web.Operations.Interfaces.REST;
@@ -38,11 +40,18 @@ public class WorkOrdersController(
         var command = WorkOrderCommandFromResourceAssembler.ToCommandFromResource(resource);
         var result = await workOrderCommandService.Handle(command);
         
+        string branchCode = "WO";
+        if (result.IsSuccess)
+        {
+            branchCode = workOrderQueryService.GetBranchCode(result.Value!.BranchId.Value);
+        }
+
         return ActionResultFromWorkOrderCommandResultAssembler.ToCreatedAtActionResult(
             result, 
             this, 
             localizer, 
-            nameof(GetWorkOrderById));
+            nameof(GetWorkOrderById),
+            branchCode);
     }
 
     [HttpPost("{id}/tasks")]
@@ -52,7 +61,7 @@ public class WorkOrdersController(
         var command = WorkOrderCommandFromResourceAssembler.ToCommandFromResource(id, resource);
         var result = await workOrderCommandService.Handle(command);
 
-        return ActionResultFromWorkOrderCommandResultAssembler.ToOkActionResult(result, this, localizer);
+        return ToResponse(result);
     }
 
     [HttpPut("{id}/tasks/{taskId}")]
@@ -62,7 +71,7 @@ public class WorkOrdersController(
         var command = WorkOrderCommandFromResourceAssembler.ToCommandFromResource(id, taskId, resource);
         var result = await workOrderCommandService.Handle(command);
 
-        return ActionResultFromWorkOrderCommandResultAssembler.ToOkActionResult(result, this, localizer);
+        return ToResponse(result);
     }
 
     [HttpPost("{id}/tasks/{taskId}/products")]
@@ -72,7 +81,7 @@ public class WorkOrdersController(
         var command = WorkOrderCommandFromResourceAssembler.ToCommandFromResource(id, taskId, resource);
         var result = await workOrderCommandService.Handle(command);
 
-        return ActionResultFromWorkOrderCommandResultAssembler.ToOkActionResult(result, this, localizer);
+        return ToResponse(result);
     }
 
     [HttpPut("{id}/tasks/{taskId}/products/{productId}")]
@@ -82,7 +91,7 @@ public class WorkOrdersController(
         var command = WorkOrderCommandFromResourceAssembler.ToCommandFromResource(id, taskId, productId, resource);
         var result = await workOrderCommandService.Handle(command);
 
-        return ActionResultFromWorkOrderCommandResultAssembler.ToOkActionResult(result, this, localizer);
+        return ToResponse(result);
     }
 
     [HttpDelete("{id}/tasks/{taskId}/products/{productId}")]
@@ -92,7 +101,7 @@ public class WorkOrdersController(
         var command = new RemoveProductFromTaskCommand(new WorkOrderId(id), new WorkOrderTaskId(taskId), new ProductId(productId));
         var result = await workOrderCommandService.Handle(command);
 
-        return ActionResultFromWorkOrderCommandResultAssembler.ToOkActionResult(result, this, localizer);
+        return ToResponse(result);
     }
 
     [HttpDelete("{id}/tasks/{taskId}")]
@@ -102,7 +111,7 @@ public class WorkOrdersController(
         var command = new RemoveTaskFromWorkOrderCommand(new WorkOrderId(id), new WorkOrderTaskId(taskId));
         var result = await workOrderCommandService.Handle(command);
 
-        return ActionResultFromWorkOrderCommandResultAssembler.ToOkActionResult(result, this, localizer);
+        return ToResponse(result);
     }
 
     [HttpDelete("{id}")]
@@ -122,7 +131,7 @@ public class WorkOrdersController(
         var command = new StartTaskCommand(new WorkOrderId(id), new WorkOrderTaskId(taskId));
         var result = await workOrderCommandService.Handle(command);
 
-        return ActionResultFromWorkOrderCommandResultAssembler.ToOkActionResult(result, this, localizer);
+        return ToResponse(result);
     }
 
     [HttpPost("{id}/tasks/{taskId}/complete")]
@@ -132,7 +141,7 @@ public class WorkOrdersController(
         var command = new CompleteTaskCommand(new WorkOrderId(id), new WorkOrderTaskId(taskId));
         var result = await workOrderCommandService.Handle(command);
 
-        return ActionResultFromWorkOrderCommandResultAssembler.ToOkActionResult(result, this, localizer);
+        return ToResponse(result);
     }
 
     [HttpPost("{id}/tasks/{taskId}/reopen")]
@@ -142,7 +151,7 @@ public class WorkOrdersController(
         var command = new ReopenTaskCommand(new WorkOrderId(id), new WorkOrderTaskId(taskId));
         var result = await workOrderCommandService.Handle(command);
 
-        return ActionResultFromWorkOrderCommandResultAssembler.ToOkActionResult(result, this, localizer);
+        return ToResponse(result);
     }
 
     [HttpGet("{id}")]
@@ -194,6 +203,16 @@ public class WorkOrdersController(
         var command = WorkOrderCommandFromResourceAssembler.ToCommandFromResource(id, resource);
         var result = await workOrderCommandService.Handle(command);
 
-        return ActionResultFromWorkOrderCommandResultAssembler.ToOkActionResult(result, this, localizer);
+        return ToResponse(result);
+    }
+
+    private ActionResult ToResponse(Result<WorkOrder> result)
+    {
+        string branchCode = "WO";
+        if (result.IsSuccess)
+        {
+            branchCode = workOrderQueryService.GetBranchCode(result.Value!.BranchId.Value);
+        }
+        return ActionResultFromWorkOrderCommandResultAssembler.ToOkActionResult(result, this, localizer, branchCode);
     }
 }
