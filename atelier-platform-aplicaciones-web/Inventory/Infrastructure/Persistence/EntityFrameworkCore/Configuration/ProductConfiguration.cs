@@ -15,21 +15,25 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
 
         builder.OwnsOne(p => p.BranchId, b =>
         {
+            b.Property("ProductId").HasColumnName("id");
             b.Property(b => b.Value).HasColumnName("BranchId").IsRequired();
         });
 
         builder.OwnsOne(p => p.Category, c =>
         {
+            c.Property("ProductId").HasColumnName("id");
             c.Property(c => c.Value).HasColumnName("Category").IsRequired();
         });
 
         builder.OwnsOne(p => p.Name, n =>
         {
+            n.Property("ProductId").HasColumnName("id");
             n.Property(n => n.Name).HasColumnName("Name").IsRequired();
         });
 
         builder.OwnsOne(p => p.Sku, s =>
         {
+            s.Property("ProductId").HasColumnName("id");
             s.Property(s => s.Value).HasColumnName("Sku").IsRequired();
         });
 
@@ -37,11 +41,13 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
 
         builder.OwnsOne(p => p.CurrentSellingPrice, m =>
         {
+            m.Property("ProductId").HasColumnName("id");
             m.Property(m => m.Amount).HasColumnName("CurrentSellingPrice").HasColumnType("decimal(18,2)").IsRequired();
         });
 
         builder.OwnsOne(p => p.CurrentStock, s =>
         {
+            s.Property("ProductId").HasColumnName("id");
             s.Property(s => s.Value).HasColumnName("CurrentStock").IsRequired();
         });
 
