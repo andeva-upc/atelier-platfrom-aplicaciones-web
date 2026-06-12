@@ -115,4 +115,23 @@ public class ProductsController(
         var resources = products.Select(ProductResourceFromEntityAssembler.ToResourceFromEntity);
         return Ok(resources);
     }
+
+    [HttpDelete("{id}")]
+    [SwaggerOperation(Summary = "Delete a Product")]
+    public async Task<ActionResult> DeleteProduct(System.Guid id)
+    {
+        var command = new atelier_platform_aplicaciones_web.Inventory.Domain.Model.Commands.DeleteProductCommand(id);
+        var result = await productCommandService.Handle(command);
+
+        if (!result.IsSuccess)
+        {
+            if (result.Error != null && result.Error.Equals(atelier_platform_aplicaciones_web.Inventory.Domain.Model.InventoryError.NotFound))
+            {
+                return NotFound();
+            }
+            return BadRequest(result.Message);
+        }
+
+        return NoContent();
+    }
 }
