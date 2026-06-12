@@ -23,6 +23,7 @@ public class ProductBatchConfiguration : IEntityTypeConfiguration<ProductBatch>
 
         builder.OwnsOne(b => b.Quantity, q =>
         {
+            q.Property("ProductBatchId").HasColumnName("id");
             q.Property(v => v.Value)
                 .IsRequired()
                 .HasColumnName("quantity");
@@ -30,6 +31,7 @@ public class ProductBatchConfiguration : IEntityTypeConfiguration<ProductBatch>
 
         builder.OwnsOne(b => b.ReservedQuantity, r =>
         {
+            r.Property("ProductBatchId").HasColumnName("id");
             r.Property(v => v.Value)
                 .IsRequired()
                 .HasColumnName("reserved_quantity");
