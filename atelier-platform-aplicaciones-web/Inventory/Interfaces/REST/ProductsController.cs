@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Net.Mime;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -103,5 +104,15 @@ public class ProductsController(
 
         var productResource = ProductDetailsResourceFromEntityAssembler.ToResourceFromEntity(result.Value);
         return Ok(productResource);
+    }
+
+    [HttpGet("branch/{branchId}")]
+    [SwaggerOperation(Summary = "Get Products by Branch ID")]
+    public async Task<ActionResult> GetProductsByBranchId(System.Guid branchId)
+    {
+        var query = new atelier_platform_aplicaciones_web.Inventory.Domain.Model.Queries.GetProductsByBranchIdQuery(branchId);
+        var products = await _productQueryService.Handle(query);
+        var resources = products.Select(ProductResourceFromEntityAssembler.ToResourceFromEntity);
+        return Ok(resources);
     }
 }

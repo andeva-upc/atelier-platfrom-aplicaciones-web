@@ -20,4 +20,9 @@ public class ProductQueryService : IProductQueryService
     {
         return await _productRepository.FindByIdAsync(query.ProductId, cancellationToken);
     }
+
+    public async Task<System.Collections.Generic.IEnumerable<Product>> Handle(GetProductsByBranchIdQuery query, CancellationToken cancellationToken = default)
+    {
+        return await _productRepository.FindAllByBranchIdAsync(query.BranchId);
+    }
 }
