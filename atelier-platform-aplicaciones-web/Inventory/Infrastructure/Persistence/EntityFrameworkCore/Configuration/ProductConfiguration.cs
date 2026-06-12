@@ -13,43 +13,38 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
         
         builder.Property(p => p.Id).IsRequired().ValueGeneratedNever().HasColumnName("id");
 
-        builder.OwnsOne(p => p.BranchId, b =>
-        {
-            b.Property("ProductId").HasColumnName("id");
-            b.Property(b => b.Value).HasColumnName("BranchId").IsRequired();
-        });
+        builder.Property(p => p.BranchId)
+            .HasConversion(v => v.Value, v => new atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects.BranchId(v))
+            .HasColumnName("branch_id")
+            .IsRequired();
 
-        builder.OwnsOne(p => p.Category, c =>
-        {
-            c.Property("ProductId").HasColumnName("id");
-            c.Property(c => c.Value).HasColumnName("Category").IsRequired();
-        });
+        builder.Property(p => p.Category)
+            .HasConversion(v => v.Value, v => new atelier_platform_aplicaciones_web.Inventory.Domain.Model.ValueObjects.ProductCategory(v))
+            .HasColumnName("category")
+            .IsRequired();
 
-        builder.OwnsOne(p => p.Name, n =>
-        {
-            n.Property("ProductId").HasColumnName("id");
-            n.Property(n => n.Name).HasColumnName("Name").IsRequired();
-        });
+        builder.Property(p => p.Name)
+            .HasConversion(v => v.Name, v => new atelier_platform_aplicaciones_web.Inventory.Domain.Model.ValueObjects.ProductName(v))
+            .HasColumnName("name")
+            .IsRequired();
 
-        builder.OwnsOne(p => p.Sku, s =>
-        {
-            s.Property("ProductId").HasColumnName("id");
-            s.Property(s => s.Value).HasColumnName("Sku").IsRequired();
-        });
+        builder.Property(p => p.Sku)
+            .HasConversion(v => v.Value, v => new atelier_platform_aplicaciones_web.Inventory.Domain.Model.ValueObjects.Sku(v))
+            .HasColumnName("sku")
+            .IsRequired();
 
         builder.Property(p => p.Description).IsRequired().HasColumnName("description");
 
-        builder.OwnsOne(p => p.CurrentSellingPrice, m =>
-        {
-            m.Property("ProductId").HasColumnName("id");
-            m.Property(m => m.Amount).HasColumnName("CurrentSellingPrice").HasColumnType("decimal(18,2)").IsRequired();
-        });
+        builder.Property(p => p.CurrentSellingPrice)
+            .HasConversion(v => v.Amount, v => new atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects.Money(v))
+            .HasColumnName("current_selling_price")
+            .HasColumnType("decimal(18,2)")
+            .IsRequired();
 
-        builder.OwnsOne(p => p.CurrentStock, s =>
-        {
-            s.Property("ProductId").HasColumnName("id");
-            s.Property(s => s.Value).HasColumnName("CurrentStock").IsRequired();
-        });
+        builder.Property(p => p.CurrentStock)
+            .HasConversion(v => v.Value, v => new atelier_platform_aplicaciones_web.Inventory.Domain.Model.ValueObjects.InventoryQuantity(v))
+            .HasColumnName("current_stock")
+            .IsRequired();
 
         builder.Property(p => p.MinimumStock)
             .IsRequired()
