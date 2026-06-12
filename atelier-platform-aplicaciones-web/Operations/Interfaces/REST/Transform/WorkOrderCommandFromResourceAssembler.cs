@@ -25,39 +25,36 @@ public static class WorkOrderCommandFromResourceAssembler
     public static AddTaskToWorkOrderCommand ToCommandFromResource(Guid workOrderId, AddTaskResource resource)
     {
         return new AddTaskToWorkOrderCommand(
-            workOrderId,
+            new WorkOrderId(workOrderId),
             new ServiceId(resource.ServiceId),
             new MechanicId(resource.MechanicId),
-            new TaskDescription(resource.Description),
-            new Money(resource.LaborPrice));
+            new TaskDescription(resource.Description));
     }
 
     public static UpdateWorkOrderTaskDetailsCommand ToCommandFromResource(Guid workOrderId, Guid taskId, UpdateWorkOrderTaskDetailsResource resource)
     {
         return new UpdateWorkOrderTaskDetailsCommand(
-            workOrderId,
-            taskId,
+            new WorkOrderId(workOrderId),
+            new WorkOrderTaskId(taskId),
             new ServiceId(resource.ServiceId),
             new MechanicId(resource.MechanicId),
-            new TaskDescription(resource.Description),
-            new Money(resource.LaborPrice));
+            new TaskDescription(resource.Description));
     }
 
     public static AddProductToTaskCommand ToCommandFromResource(Guid workOrderId, Guid taskId, AddProductResource resource)
     {
         return new AddProductToTaskCommand(
-            workOrderId,
-            taskId,
+            new WorkOrderId(workOrderId),
+            new WorkOrderTaskId(taskId),
             new ProductId(resource.ProductId),
-            new Quantity(resource.Quantity),
-            new Money(resource.UnitPrice));
+            new Quantity(resource.Quantity));
     }
 
     public static UpdateProductQuantityInTaskCommand ToCommandFromResource(Guid workOrderId, Guid taskId, Guid productId, UpdateProductQuantityInTaskResource resource)
     {
         return new UpdateProductQuantityInTaskCommand(
-            workOrderId,
-            taskId,
+            new WorkOrderId(workOrderId),
+            new WorkOrderTaskId(taskId),
             new ProductId(productId),
             new Quantity(resource.NewQuantity));
     }
@@ -65,7 +62,7 @@ public static class WorkOrderCommandFromResourceAssembler
     public static UpdateWorkOrderDetailsCommand ToCommandFromResource(Guid workOrderId, UpdateWorkOrderDetailsResource resource)
     {
         return new UpdateWorkOrderDetailsCommand(
-            workOrderId,
+            new WorkOrderId(workOrderId),
             new DiagnosticSummary(resource.DiagnosticSummary),
             new Mileage(resource.MileageIn));
     }

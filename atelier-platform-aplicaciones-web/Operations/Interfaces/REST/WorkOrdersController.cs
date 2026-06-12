@@ -89,7 +89,7 @@ public class WorkOrdersController(
     [SwaggerOperation(Summary = "Remove a product/part from a task (releases stock reservation)")]
     public async Task<ActionResult> RemoveProductFromTask(Guid id, Guid taskId, Guid productId)
     {
-        var command = new RemoveProductFromTaskCommand(id, taskId, new ProductId(productId));
+        var command = new RemoveProductFromTaskCommand(new WorkOrderId(id), new WorkOrderTaskId(taskId), new ProductId(productId));
         var result = await workOrderCommandService.Handle(command);
 
         return ActionResultFromWorkOrderCommandResultAssembler.ToOkActionResult(result, this, localizer);
@@ -99,7 +99,7 @@ public class WorkOrdersController(
     [SwaggerOperation(Summary = "Remove a task from the Work Order (releases all task's stock reservations)")]
     public async Task<ActionResult> RemoveTaskFromWorkOrder(Guid id, Guid taskId)
     {
-        var command = new RemoveTaskFromWorkOrderCommand(id, taskId);
+        var command = new RemoveTaskFromWorkOrderCommand(new WorkOrderId(id), new WorkOrderTaskId(taskId));
         var result = await workOrderCommandService.Handle(command);
 
         return ActionResultFromWorkOrderCommandResultAssembler.ToOkActionResult(result, this, localizer);
@@ -109,7 +109,7 @@ public class WorkOrdersController(
     [SwaggerOperation(Summary = "Soft delete a Work Order (releases all active stock reservations)")]
     public async Task<ActionResult> DeleteWorkOrder(Guid id)
     {
-        var command = new DeleteWorkOrderCommand(id);
+        var command = new DeleteWorkOrderCommand(new WorkOrderId(id));
         var result = await workOrderCommandService.Handle(command);
 
         return ActionResultFromWorkOrderCommandResultAssembler.ToNoContentActionResult(result, this, localizer);
@@ -119,7 +119,7 @@ public class WorkOrdersController(
     [SwaggerOperation(Summary = "Start executing a task (sets status to DOING and captures startedAt)")]
     public async Task<ActionResult> StartTask(Guid id, Guid taskId)
     {
-        var command = new StartTaskCommand(id, taskId);
+        var command = new StartTaskCommand(new WorkOrderId(id), new WorkOrderTaskId(taskId));
         var result = await workOrderCommandService.Handle(command);
 
         return ActionResultFromWorkOrderCommandResultAssembler.ToOkActionResult(result, this, localizer);
@@ -129,7 +129,7 @@ public class WorkOrdersController(
     [SwaggerOperation(Summary = "Complete a task (sets status to COMPLETED and captures completedAt)")]
     public async Task<ActionResult> CompleteTask(Guid id, Guid taskId)
     {
-        var command = new CompleteTaskCommand(id, taskId);
+        var command = new CompleteTaskCommand(new WorkOrderId(id), new WorkOrderTaskId(taskId));
         var result = await workOrderCommandService.Handle(command);
 
         return ActionResultFromWorkOrderCommandResultAssembler.ToOkActionResult(result, this, localizer);
@@ -139,7 +139,7 @@ public class WorkOrdersController(
     [SwaggerOperation(Summary = "Reopen a completed task (returns task to DOING, clears completedAt, keeps stock reserved)")]
     public async Task<ActionResult> ReopenTask(Guid id, Guid taskId)
     {
-        var command = new ReopenTaskCommand(id, taskId);
+        var command = new ReopenTaskCommand(new WorkOrderId(id), new WorkOrderTaskId(taskId));
         var result = await workOrderCommandService.Handle(command);
 
         return ActionResultFromWorkOrderCommandResultAssembler.ToOkActionResult(result, this, localizer);
@@ -150,7 +150,7 @@ public class WorkOrdersController(
     [SwaggerOperation(Summary = "Get a Work Order by ID")]
     public async Task<ActionResult> GetWorkOrderById(Guid id)
     {
-        var query = new GetWorkOrderByIdQuery(id);
+        var query = new GetWorkOrderByIdQuery(new WorkOrderId(id));
         var workOrder = await workOrderQueryService.Handle(query);
         if (workOrder == null) return NotFound();
         // Buscamos el código de la sucursal y lo inyectamos
