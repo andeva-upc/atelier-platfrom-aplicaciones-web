@@ -44,7 +44,8 @@ public class UsersController(
         if (!result.IsSuccess)
             return IamErrorToActionAssembler.ToActionResult(result.Error, result.Message, this, problemDetailsFactory, localizer);
 
-        return Ok(UserResourceFromEntityAssembler.ToResourceFromEntity(result.Value!));
+        var authenticatedUserResource = AuthenticatedUserResourceFromEntityAssembler.ToResourceFromEntity(result.Value!.User, result.Value.Token);
+        return Ok(authenticatedUserResource);
     }
 
     [HttpPut("{id}/password")]
