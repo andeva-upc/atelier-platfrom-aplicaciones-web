@@ -42,6 +42,8 @@ public static class ModelBuilderExtensions
             entity.Property(e => e.Phone)
                 .HasConversion(v => v.Value, v => new Phone(v))
                 .IsRequired();
+
+            entity.Property(e => e.Version).IsConcurrencyToken();
         });
 
         // 3. Customer Mapping
@@ -84,6 +86,8 @@ public static class ModelBuilderExtensions
                 .IsRequired();
 
             entity.HasIndex(e => e.UserId).IsUnique();
+
+            entity.Property(e => e.Version).IsConcurrencyToken();
         });
 
         // 4. Employee Mapping
@@ -123,6 +127,8 @@ public static class ModelBuilderExtensions
                 .IsRequired();
 
             entity.HasIndex(e => e.UserId).IsUnique();
+
+            entity.Property(e => e.Version).IsConcurrencyToken();
         });
 
         // 5. Owner Mapping
@@ -162,6 +168,8 @@ public static class ModelBuilderExtensions
                 .IsRequired();
 
             entity.HasIndex(e => e.UserId).IsUnique();
+
+            entity.Property(e => e.Version).IsConcurrencyToken();
         });
 
         // 6. Workshop Mapping
@@ -180,8 +188,13 @@ public static class ModelBuilderExtensions
 
             entity.Property(e => e.BusinessName).IsRequired().HasMaxLength(150);
             entity.Property(e => e.BrandName).IsRequired().HasMaxLength(100);
-            entity.Property(e => e.TaxId).IsRequired().HasMaxLength(20);
+            entity.Property(e => e.TaxId)
+                .HasConversion(v => v.Value, v => new TaxId(v))
+                .IsRequired()
+                .HasMaxLength(20);
             entity.Property(e => e.MileageIntervalConfig).IsRequired();
+
+            entity.Property(e => e.Version).IsConcurrencyToken();
         });
 
         // 7. SubscriptionPlan Mapping
