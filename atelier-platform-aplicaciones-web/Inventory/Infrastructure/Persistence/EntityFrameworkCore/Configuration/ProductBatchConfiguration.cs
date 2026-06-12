@@ -1,0 +1,48 @@
+using atelier_platform_aplicaciones_web.Inventory.Domain.Model.Entities;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace atelier_platform_aplicaciones_web.Inventory.Infrastructure.Persistence.EntityFrameworkCore.Configuration;
+
+public class ProductBatchConfiguration : IEntityTypeConfiguration<ProductBatch>
+{
+    public void Configure(EntityTypeBuilder<ProductBatch> builder)
+    {
+        builder.ToTable("product_batches");
+
+        builder.HasKey(b => b.Id);
+
+        builder.Property(b => b.Id)
+            .IsRequired()
+            .ValueGeneratedNever()
+            .HasColumnName("id");
+
+        builder.Property(b => b.ProductId)
+            .IsRequired()
+            .HasColumnName("product_id");
+
+        builder.OwnsOne(b => b.Quantity, q =>
+        {
+            q.Property(v => v.Value)
+                .IsRequired()
+                .HasColumnName("quantity");
+        });
+
+        builder.OwnsOne(b => b.ReservedQuantity, r =>
+        {
+            r.Property(v => v.Value)
+                .IsRequired()
+                .HasColumnName("reserved_quantity");
+        });
+
+        builder.Property(b => b.Description)
+            .HasMaxLength(250)
+            .HasColumnName("description");
+
+        builder.Property(b => b.CreatedAt)
+            .IsRequired()
+            .HasColumnName("created_at");
+
+        builder.Ignore(b => b.AvailableQuantity);
+    }
+}

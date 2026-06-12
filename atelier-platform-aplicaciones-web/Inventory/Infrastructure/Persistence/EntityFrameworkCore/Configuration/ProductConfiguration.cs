@@ -8,10 +8,10 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
 {
     public void Configure(EntityTypeBuilder<Product> builder)
     {
-        builder.ToTable("Products");
+        builder.ToTable("products");
         builder.HasKey(p => p.Id);
         
-        builder.Property(p => p.Id).IsRequired().ValueGeneratedNever();
+        builder.Property(p => p.Id).IsRequired().ValueGeneratedNever().HasColumnName("id");
 
         builder.OwnsOne(p => p.BranchId, b =>
         {
@@ -37,7 +37,7 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
             s.Property(s => s.Value).HasColumnName("Sku").IsRequired();
         });
 
-        builder.Property(p => p.Description).IsRequired();
+        builder.Property(p => p.Description).IsRequired().HasColumnName("description");
 
         builder.OwnsOne(p => p.CurrentSellingPrice, m =>
         {
@@ -51,6 +51,13 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
             s.Property(s => s.Value).HasColumnName("CurrentStock").IsRequired();
         });
 
-        builder.Property(p => p.MinimumStock).IsRequired();
+        builder.Property(p => p.MinimumStock)
+            .IsRequired()
+            .HasColumnName("minimum_stock");
+
+        builder.HasMany(p => p.Batches)
+            .WithOne()
+            .HasForeignKey(b => b.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

@@ -5,4 +5,5 @@ namespace atelier_platform_aplicaciones_web.Inventory.Domain.Repositories;
 
 public interface IProductRepository : IBaseRepository<Product>
 {
+    Task<IEnumerable<Product>> FindAllByBranchIdAsync(Guid branchId);
 }
