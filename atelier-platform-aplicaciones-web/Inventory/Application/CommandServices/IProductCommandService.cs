@@ -10,4 +10,5 @@ namespace atelier_platform_aplicaciones_web.Inventory.Application.CommandService
 public interface IProductCommandService
 {
     Task<Result<Product>> Handle(CreateProductCommand command, CancellationToken cancellationToken = default);
+    Task<Result<Product>> Handle(UpdateProductCommand command, CancellationToken cancellationToken = default);
 }
