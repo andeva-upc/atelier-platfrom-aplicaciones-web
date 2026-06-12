@@ -23,6 +23,9 @@ public static class ModelBuilderExtensions
                     v => (UserStatus)System.Enum.Parse(typeof(UserStatus), v, true)
                 );
 
+            entity.Property(e => e.Version).IsConcurrencyToken();
+            entity.HasQueryFilter(e => e.DeletedAt == null);
+
             entity.HasIndex(e => e.Email).IsUnique();
         });
 
