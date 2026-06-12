@@ -55,6 +55,31 @@ public class ProductsController(
         return Ok(productResource);
     }
 
+    [HttpPost("{id}/batches")]
+    [SwaggerOperation(Summary = "Add a Batch to a Product")]
+    public async Task<ActionResult> AddBatch(System.Guid id, [FromBody] AddBatchToProductResource resource)
+    {
+        var command = AddBatchToProductCommandFromResourceAssembler.ToCommandFromResource(id, resource);
+        var result = await productCommandService.Handle(command);
+
+        if (!result.IsSuccess)
+        {
+            if (result.Error != null && result.Error.Equals(atelier_platform_aplicaciones_web.Inventory.Domain.Model.InventoryError.NotFound))
+            {
+                return NotFound();
+            }
+            return BadRequest(result.Message);
+        }
+
+        if (result.Value == null)
+        {
+            return BadRequest("Batch could not be added.");
+        }
+
+        var productResource = ProductDetailsResourceFromEntityAssembler.ToResourceFromEntity(result.Value);
+        return Ok(productResource);
+    }
+
     [HttpPut("{id}")]
     [SwaggerOperation(Summary = "Update a Product")]
     public async Task<ActionResult> UpdateProduct(System.Guid id, [FromBody] UpdateProductResource resource)

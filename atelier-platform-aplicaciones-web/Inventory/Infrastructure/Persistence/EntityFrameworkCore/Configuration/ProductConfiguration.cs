@@ -45,6 +45,13 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
             s.Property(s => s.Value).HasColumnName("CurrentStock").IsRequired();
         });
 
-        builder.Property(p => p.MinimumStock).IsRequired();
+        builder.Property(p => p.MinimumStock)
+            .IsRequired()
+            .HasColumnName("minimum_stock");
+
+        builder.HasMany(p => p.Batches)
+            .WithOne()
+            .HasForeignKey(b => b.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

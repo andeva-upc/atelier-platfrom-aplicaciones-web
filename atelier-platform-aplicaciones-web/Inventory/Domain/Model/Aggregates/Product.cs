@@ -20,6 +20,9 @@ public partial class Product : IHasDomainEvents
     private readonly System.Collections.Generic.List<atelier_platform_aplicaciones_web.Shared.Domain.Model.Events.IEvent> _domainEvents = new();
     public System.Collections.Generic.IReadOnlyCollection<atelier_platform_aplicaciones_web.Shared.Domain.Model.Events.IEvent> DomainEvents => _domainEvents.AsReadOnly();
 
+    private readonly System.Collections.Generic.List<atelier_platform_aplicaciones_web.Inventory.Domain.Model.Entities.ProductBatch> _batches = new();
+    public System.Collections.Generic.IReadOnlyCollection<atelier_platform_aplicaciones_web.Inventory.Domain.Model.Entities.ProductBatch> Batches => _batches.AsReadOnly();
+
     protected void RegisterEvent(atelier_platform_aplicaciones_web.Shared.Domain.Model.Events.IEvent domainEvent) => _domainEvents.Add(domainEvent);
     public void ClearDomainEvents() => _domainEvents.Clear();
 
@@ -57,5 +60,24 @@ public partial class Product : IHasDomainEvents
         Description = description;
         CurrentSellingPrice = salePrice;
         MinimumStock = minimumStock;
+    }
+
+    public void AddBatch(int quantity, string description)
+    {
+        var batch = new atelier_platform_aplicaciones_web.Inventory.Domain.Model.Entities.ProductBatch(Id, quantity, description);
+        _batches.Add(batch);
+        CurrentStock = new InventoryQuantity(CurrentStock.Value + quantity);
+    }
+
+    public void ReserveStock(Guid batchId, int quantity)
+    {
+        var batch = _batches.Find(b => b.Id == batchId);
+        if (batch == null)
+            throw new InvalidOperationException("Batch not found.");
+
+        batch.ReserveStock(quantity);
+        CurrentStock = new InventoryQuantity(CurrentStock.Value - quantity);
+
+        RegisterEvent(new atelier_platform_aplicaciones_web.Inventory.Domain.Model.Events.ProductReservedEvent(Id, quantity, BranchId.Value));
     }
 }
