@@ -146,8 +146,11 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 // Operations Repositories and Services
 builder.Services.AddScoped<IWorkOrderRepository, WorkOrderRepository>();
+builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IWorkOrderCommandService, WorkOrderCommandService>();
 builder.Services.AddScoped<IWorkOrderQueryService, WorkOrderQueryService>();
+builder.Services.AddScoped<IServiceCommandService, ServiceCommandService>();
+builder.Services.AddScoped<IServiceQueryService, ServiceQueryService>();
 
 // Inventory Dependencies
 builder.Services.AddScoped<IProductRepository, ProductRepositoryAdapter>();
