@@ -62,4 +62,7 @@ public partial class User : IAuditableEntity
 
     public DateTimeOffset? CreatedAt { get; set; }
     public DateTimeOffset? UpdatedAt { get; set; }
+    public DateTimeOffset? DeletedAt { get; set; }
+    public long Version { get; set; }
 }
+
