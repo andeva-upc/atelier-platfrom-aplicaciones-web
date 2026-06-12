@@ -18,4 +18,9 @@ public class ProductRepositoryAdapter : BaseRepository<Product>, IProductReposit
     {
         await Context.Products.AddAsync(product, cancellationToken);
     }
+
+    public new async Task<Product?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await Context.Products.FindAsync(new object[] { id }, cancellationToken);
+    }
 }
