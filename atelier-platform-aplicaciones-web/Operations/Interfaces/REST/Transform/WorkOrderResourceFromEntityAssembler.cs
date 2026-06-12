@@ -1,5 +1,6 @@
-﻿using System.Linq;
+using System.Linq;
 using atelier_platform_aplicaciones_web.Operations.Domain.Model.Aggregates;
+using atelier_platform_aplicaciones_web.Operations.Domain.Model.Entities;
 using atelier_platform_aplicaciones_web.Operations.Interfaces.REST.Resources;
 
 namespace atelier_platform_aplicaciones_web.Operations.Interfaces.REST.Transform;
@@ -16,7 +17,7 @@ public static class WorkOrderResourceFromEntityAssembler
         string formattedNumber = $"{branchCode}-{entity.InternalNumber:D6}";
         
         return new WorkOrderResource(
-            entity.Id,
+            entity.Id.Value,
             entity.AppointmentId.Value,
             entity.BranchId.Value,
             entity.VehicleId.Value,
@@ -37,7 +38,7 @@ public static class WorkOrderResourceFromEntityAssembler
     {
         var products = task.Products.Select(ToProductResourceFromEntity);
         return new WorkOrderTaskResource(
-            task.Id,
+            task.Id.Value,
             task.ServiceId.Value,
             task.BranchId.Value,
             task.AssignedMechanicId.Value,
@@ -54,7 +55,7 @@ public static class WorkOrderResourceFromEntityAssembler
     private static WorkOrderTaskProductResource ToProductResourceFromEntity(WorkOrderTaskProduct product)
     {
         return new WorkOrderTaskProductResource(
-            product.Id,
+            product.Id.Value,
             product.ProductId.Value,
             product.BranchId.Value,
             product.Quantity.Value,

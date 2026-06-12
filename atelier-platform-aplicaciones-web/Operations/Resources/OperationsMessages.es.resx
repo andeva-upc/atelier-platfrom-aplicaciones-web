@@ -58,4 +58,8 @@
   <data name="operations.error.resource.unitPrice.required"><value>El precio unitario es obligatorio.</value></data>
   <data name="operations.error.address.notBlank"><value>La dirección es obligatoria y no puede estar en blanco.</value></data>
   <data name="operations.error.address.tooLong"><value>La dirección es demasiado larga.</value></data>
+  <data name="operations.error.workOrderId.required"><value>El ID de la orden de trabajo es obligatorio.</value></data>
+  <data name="operations.error.workOrderTaskId.required"><value>El ID de la tarea de la orden de trabajo es obligatorio.</value></data>
+  <data name="operations.error.workOrderTaskProductId.required"><value>El ID del producto de la tarea de la orden de trabajo es obligatorio.</value></data>
+  <data name="operations.error.service.notFound"><value>Servicio no encontrado.</value></data>
 </root>

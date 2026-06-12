@@ -58,4 +58,8 @@
   <data name="operations.error.resource.unitPrice.required"><value>Unit price is required.</value></data>
   <data name="operations.error.address.notBlank"><value>Address is required and cannot be blank.</value></data>
   <data name="operations.error.address.tooLong"><value>Address is too long.</value></data>
+  <data name="operations.error.workOrderId.required"><value>Work Order ID is required.</value></data>
+  <data name="operations.error.workOrderTaskId.required"><value>Work Order Task ID is required.</value></data>
+  <data name="operations.error.workOrderTaskProductId.required"><value>Work Order Task Product ID is required.</value></data>
+  <data name="operations.error.service.notFound"><value>Service not found.</value></data>
 </root>

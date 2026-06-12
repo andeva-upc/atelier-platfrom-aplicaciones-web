@@ -8,34 +8,42 @@ public class ProductBatch
     public Guid Id { get; private set; }
     public Guid ProductId { get; private set; }
     public InventoryQuantity Quantity { get; private set; }
-    public InventoryQuantity ReservedQuantity { get; private set; }
-    public string Description { get; private set; }
+    public InventoryQuantity AvailableQuantity { get; private set; }
+    public atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects.Money AcquisitionCost { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
-    public int AvailableQuantity => Quantity.Value - ReservedQuantity.Value;
+    public InventoryQuantity ReservedQuantity => new InventoryQuantity(Quantity.Value - AvailableQuantity.Value);
 
     protected ProductBatch()
     {
         Quantity = null!;
-        ReservedQuantity = null!;
-        Description = string.Empty;
+        AvailableQuantity = null!;
+        AcquisitionCost = null!;
     }
 
-    public ProductBatch(Guid productId, int quantity, string description)
+    public ProductBatch(Guid productId, int quantity, atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects.Money acquisitionCost)
     {
         Id = Guid.NewGuid();
         ProductId = productId;
         Quantity = new InventoryQuantity(quantity);
-        ReservedQuantity = new InventoryQuantity(0);
-        Description = description;
+        AvailableQuantity = new InventoryQuantity(quantity);
+        AcquisitionCost = acquisitionCost;
         CreatedAt = DateTime.UtcNow;
     }
 
     public void ReserveStock(int quantity)
     {
-        if (quantity > AvailableQuantity)
+        if (quantity > AvailableQuantity.Value)
             throw new InvalidOperationException("Not enough stock available in this batch.");
 
-        ReservedQuantity = new InventoryQuantity(ReservedQuantity.Value + quantity);
+        AvailableQuantity = new InventoryQuantity(AvailableQuantity.Value - quantity);
+    }
+
+    public void ReleaseStock(int quantity)
+    {
+        if (quantity > ReservedQuantity.Value)
+            throw new InvalidOperationException("Cannot release more stock than reserved.");
+
+        AvailableQuantity = new InventoryQuantity(AvailableQuantity.Value + quantity);
     }
 }

@@ -44,5 +44,7 @@ public class DispatchDomainEventsInterceptor(IMediator mediator) : SaveChangesIn
         {
             await mediator.PublishAsync(domainEvent);
         }
+
+        context.ChangeTracker.DetectChanges();
     }
 }

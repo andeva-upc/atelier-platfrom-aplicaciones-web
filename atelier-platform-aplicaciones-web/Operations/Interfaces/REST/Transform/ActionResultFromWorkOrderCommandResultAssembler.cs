@@ -16,14 +16,15 @@ public static class ActionResultFromWorkOrderCommandResultAssembler
         Result<WorkOrder> result,
         ControllerBase controller,
         IStringLocalizer<OperationsMessages> localizer,
-        string getActionName)
+        string getActionName,
+        string branchCode = "WO")
     {
         if (result.IsSuccess)
         {
             return controller.CreatedAtAction(
                 getActionName, 
-                new { id = result.Value!.Id },
-                WorkOrderResourceFromEntityAssembler.ToResourceFromEntity(result.Value));
+                new { id = result.Value!.Id.Value },
+                WorkOrderResourceFromEntityAssembler.ToResourceFromEntity(result.Value, branchCode));
         }
 
         return MapFailureToActionResult(result.Error, result.Message, controller, localizer);
@@ -32,11 +33,12 @@ public static class ActionResultFromWorkOrderCommandResultAssembler
     public static ActionResult ToOkActionResult(
         Result<WorkOrder> result,
         ControllerBase controller,
-        IStringLocalizer<OperationsMessages> localizer)
+        IStringLocalizer<OperationsMessages> localizer,
+        string branchCode = "WO")
     {
         if (result.IsSuccess)
         {
-            return controller.Ok(WorkOrderResourceFromEntityAssembler.ToResourceFromEntity(result.Value!));
+            return controller.Ok(WorkOrderResourceFromEntityAssembler.ToResourceFromEntity(result.Value!, branchCode));
         }
 
         return MapFailureToActionResult(result.Error, result.Message, controller, localizer);

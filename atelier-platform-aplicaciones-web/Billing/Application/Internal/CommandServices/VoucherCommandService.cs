@@ -10,6 +10,7 @@ using atelier_platform_aplicaciones_web.Billing.Domain.Repositories;
 using atelier_platform_aplicaciones_web.Billing.Infrastructure.ExternalServices.Facthub.Models;
 using atelier_platform_aplicaciones_web.Core.Domain.Repositories;
 using atelier_platform_aplicaciones_web.Operations.Domain.Repositories;
+using atelier_platform_aplicaciones_web.Operations.Domain.Model.ValueObjects;
 using atelier_platform_aplicaciones_web.Shared.Domain.Repositories;
 using atelier_platform_aplicaciones_web.Shared.Application.Model;
 using atelier_platform_aplicaciones_web.Billing.Domain.Model.ValueObjects;
@@ -65,7 +66,7 @@ public class VoucherCommandService : IVoucherCommandService
                 return Result<Voucher>.Failure(BillingErrorCodes.QuoteNotApproved, _localizer["billing.error.quote.notApproved"]);
             }
 
-            var workOrder = await _workOrderRepository.FindByIdWithTasksAndProductsAsync(quote.WorkOrderId);
+            var workOrder = await _workOrderRepository.FindByIdWithTasksAndProductsAsync(new WorkOrderId(quote.WorkOrderId));
             if (workOrder == null) return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, _localizer["billing.error.workOrder.notFound"]);
 
             var branch = await _branchRepository.FindByIdAsync(quote.BranchId);
@@ -189,7 +190,7 @@ public class VoucherCommandService : IVoucherCommandService
                 return Result<Voucher>.Failure(BillingErrorCodes.QuoteNotApproved, _localizer["billing.error.quote.notApproved"]);
             }
 
-            var workOrder = await _workOrderRepository.FindByIdWithTasksAndProductsAsync(quote.WorkOrderId);
+            var workOrder = await _workOrderRepository.FindByIdWithTasksAndProductsAsync(new WorkOrderId(quote.WorkOrderId));
             if (workOrder == null) return Result<Voucher>.Failure(BillingErrorCodes.VoucherGenerationFailed, _localizer["billing.error.workOrder.notFound"]);
 
             var branch = await _branchRepository.FindByIdAsync(quote.BranchId);

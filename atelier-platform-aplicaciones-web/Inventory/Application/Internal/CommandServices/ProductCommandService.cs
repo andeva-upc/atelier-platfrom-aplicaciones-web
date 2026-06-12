@@ -88,7 +88,7 @@ public class ProductCommandService : IProductCommandService
                 return Result<Product>.Failure(atelier_platform_aplicaciones_web.Inventory.Domain.Model.InventoryError.NotFound, "Product not found.");
             }
 
-            product.AddBatch(command.Quantity, command.Description);
+            product.AddBatch(command.Quantity, new Money(command.AcquisitionCost));
 
             _productRepository.Update(product);
             await _unitOfWork.CompleteAsync(cancellationToken);
