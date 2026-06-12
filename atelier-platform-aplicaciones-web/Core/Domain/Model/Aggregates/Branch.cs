@@ -59,4 +59,5 @@ public partial class Branch : IUserAuditableEntity
     public Guid? CreatedBy { get; set; }
     public Guid? UpdatedBy { get; set; }
     public DateTimeOffset? DeletedAt { get; set; }
+    public long Version { get; set; }
 }
