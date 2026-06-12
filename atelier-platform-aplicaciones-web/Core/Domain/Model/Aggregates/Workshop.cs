@@ -12,15 +12,14 @@ public partial class Workshop : IAuditableEntity
         OwnerId = null!;
         BusinessName = string.Empty;
         BrandName = string.Empty;
-        TaxId = string.Empty;
+        TaxId = null!;
         MileageIntervalConfig = 1;
     }
 
-    public Workshop(OwnerId ownerId, string businessName, string brandName, string taxId, int mileageIntervalConfig) : this()
+    public Workshop(OwnerId ownerId, string businessName, string brandName, TaxId taxId, int mileageIntervalConfig) : this()
     {
         if (string.IsNullOrWhiteSpace(businessName)) throw new ArgumentException("core.error.businessName.required");
         if (string.IsNullOrWhiteSpace(brandName)) throw new ArgumentException("core.error.brandName.required");
-        if (string.IsNullOrWhiteSpace(taxId)) throw new ArgumentException("core.error.taxId.required");
 
         Id = new WorkshopId(Guid.NewGuid());
         OwnerId = ownerId;
@@ -30,17 +29,16 @@ public partial class Workshop : IAuditableEntity
         MileageIntervalConfig = mileageIntervalConfig;
     }
 
-    public Workshop(WorkshopId id, OwnerId ownerId, string businessName, string brandName, string taxId, int mileageIntervalConfig)
+    public Workshop(WorkshopId id, OwnerId ownerId, string businessName, string brandName, TaxId taxId, int mileageIntervalConfig)
         : this(ownerId, businessName, brandName, taxId, mileageIntervalConfig)
     {
         Id = id;
     }
 
-    public void Update(string businessName, string brandName, string taxId, int mileageIntervalConfig)
+    public void Update(string businessName, string brandName, TaxId taxId, int mileageIntervalConfig)
     {
         if (string.IsNullOrWhiteSpace(businessName)) throw new ArgumentException("core.error.businessName.required");
         if (string.IsNullOrWhiteSpace(brandName)) throw new ArgumentException("core.error.brandName.required");
-        if (string.IsNullOrWhiteSpace(taxId)) throw new ArgumentException("core.error.taxId.required");
 
         BusinessName = businessName;
         BrandName = brandName;
@@ -52,10 +50,11 @@ public partial class Workshop : IAuditableEntity
     public OwnerId OwnerId { get; private set; }
     public string BusinessName { get; private set; }
     public string BrandName { get; private set; }
-    public string TaxId { get; private set; }
+    public TaxId TaxId { get; private set; }
     public int MileageIntervalConfig { get; private set; }
 
     public DateTimeOffset? CreatedAt { get; set; }
     public DateTimeOffset? UpdatedAt { get; set; }
     public DateTimeOffset? DeletedAt { get; set; }
+    public long Version { get; set; }
 }

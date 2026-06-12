@@ -23,6 +23,7 @@
   <data name="core.error.customer.corporateDocumentTypeImmutable"><value>El tipo de documento corporativo no se puede cambiar.</value></data>
   <data name="core.error.brandName.required"><value>El nombre de la marca es obligatorio.</value></data>
   <data name="core.error.taxId.required"><value>El RUC/identificación fiscal es obligatorio.</value></data>
+  <data name="core.error.taxId.invalid"><value>El RUC/identificación fiscal es inválido. Debe tener exactamente 11 dígitos.</value></data>
   <data name="core.error.startDate.required"><value>La fecha de inicio es obligatoria.</value></data>
   <data name="core.error.endDate.required"><value>La fecha de fin es obligatoria.</value></data>
   <data name="core.error.branchSubscriptionId.required"><value>El ID de la suscripción de sucursal es obligatorio.</value></data>

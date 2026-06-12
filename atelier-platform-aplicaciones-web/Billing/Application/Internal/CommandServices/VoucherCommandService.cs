@@ -84,7 +84,7 @@ public class VoucherCommandService : IVoucherCommandService
             // 2. Prepare Facthub Request
             var request = new FacthubIssueRequest
             {
-                IssuerRuc = workshop.TaxId,
+                IssuerRuc = workshop.TaxId.Value,
                 DocumentType = command.Type,
                 CustomerDocumentType = command.CustomerDocumentType,
                 CustomerDocumentNumber = command.CustomerDocumentNumber,
@@ -208,7 +208,7 @@ public class VoucherCommandService : IVoucherCommandService
             // 2. Issue Invoice via Facthub
             var request = new FacthubIssueRequest
             {
-                IssuerRuc = workshop.TaxId,
+                IssuerRuc = workshop.TaxId.Value,
                 DocumentType = command.Type,
                 CustomerDocumentType = command.CustomerDocumentType,
                 CustomerDocumentNumber = command.CustomerDocumentNumber,

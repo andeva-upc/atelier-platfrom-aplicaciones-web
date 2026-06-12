@@ -12,7 +12,7 @@ public static class WorkshopResourceFromEntityAssembler
             entity.OwnerId?.Value ?? System.Guid.Empty,
             entity.BusinessName,
             entity.BrandName,
-            entity.TaxId,
+            entity.TaxId.Value,
             entity.MileageIntervalConfig
         );
     }

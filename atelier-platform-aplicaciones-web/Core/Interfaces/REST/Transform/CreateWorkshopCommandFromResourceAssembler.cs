@@ -12,7 +12,7 @@ public static class CreateWorkshopCommandFromResourceAssembler
             new OwnerId(resource.OwnerId),
             resource.BusinessName,
             resource.BrandName,
-            resource.TaxId,
+            new TaxId(resource.TaxId),
             resource.MileageIntervalConfig
         );
     }

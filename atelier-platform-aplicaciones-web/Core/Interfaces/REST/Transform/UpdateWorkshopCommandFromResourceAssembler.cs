@@ -13,7 +13,7 @@ public static class UpdateWorkshopCommandFromResourceAssembler
             new WorkshopId(id),
             resource.BusinessName,
             resource.BrandName,
-            resource.TaxId,
+            new TaxId(resource.TaxId),
             resource.MileageIntervalConfig
         );
     }
