@@ -1,14 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using atelier_platform_aplicaciones_web.Operations.Domain.Model.ValueObjects;
 using atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects;
+using atelier_platform_aplicaciones_web.Shared.Domain.Model.Entities;
 
-namespace atelier_platform_aplicaciones_web.Operations.Domain.Model.Aggregates;
+namespace atelier_platform_aplicaciones_web.Operations.Domain.Model.Entities;
 
-public partial class WorkOrderTask
+public class WorkOrderTask : IUserAuditableEntity
 {
-    public Guid Id { get; private set; }
+    public WorkOrderTaskId Id { get; private set; }
     public ServiceId ServiceId { get; private set; }
     public BranchId BranchId { get; private set; }
     public MechanicId AssignedMechanicId { get; private set; }
@@ -18,11 +19,20 @@ public partial class WorkOrderTask
     public DateTimeOffset? StartedAt { get; private set; }
     public DateTimeOffset? CompletedAt { get; private set; }
     
+    // Campos de Auditoría y Concurrencia Integrados
+    public DateTimeOffset? CreatedAt { get; set; }
+    public DateTimeOffset? UpdatedAt { get; set; }
+    public DateTimeOffset? DeletedAt { get; set; }
+    public Guid? CreatedBy { get; set; }
+    public Guid? UpdatedBy { get; set; }
+    public long Version { get; set; }
+    
     private readonly List<WorkOrderTaskProduct> _products = new();
     public IReadOnlyCollection<WorkOrderTaskProduct> Products => _products.AsReadOnly();
 
     protected WorkOrderTask()
     {
+        Id = null!;
         ServiceId = null!;
         BranchId = null!;
         AssignedMechanicId = null!;
@@ -30,9 +40,9 @@ public partial class WorkOrderTask
         Price = null!;
     }
 
-    public WorkOrderTask(ServiceId serviceId, BranchId branchId, MechanicId mechanicId, TaskDescription description, Money laborPrice)
+    public WorkOrderTask(ServiceId serviceId, BranchId branchId, MechanicId mechanicId, TaskDescription description, Money laborPrice) : this()
     {
-        Id = Guid.NewGuid();
+        Id = new WorkOrderTaskId(Guid.NewGuid());
         ServiceId = serviceId;
         BranchId = branchId;
         AssignedMechanicId = mechanicId;

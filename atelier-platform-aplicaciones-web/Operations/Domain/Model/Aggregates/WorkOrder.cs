@@ -2,16 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using atelier_platform_aplicaciones_web.Operations.Domain.Model.ValueObjects;
-using atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects;
+using atelier_platform_aplicaciones_web.Operations.Domain.Model.Entities;
 using atelier_platform_aplicaciones_web.Operations.Domain.Model.Events;
+using atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects;
 using atelier_platform_aplicaciones_web.Shared.Domain.Model.Entities;
 using atelier_platform_aplicaciones_web.Shared.Domain.Model.Events;
 
 namespace atelier_platform_aplicaciones_web.Operations.Domain.Model.Aggregates;
 
-public partial class WorkOrder : IHasDomainEvents
+public class WorkOrder : IHasDomainEvents, IUserAuditableEntity
 {
-    public Guid Id { get; private set; }
+    public WorkOrderId Id { get; private set; }
     public AppointmentId AppointmentId { get; private set; }
     public BranchId BranchId { get; private set; }
     public VehicleId VehicleId { get; private set; }
@@ -22,10 +23,17 @@ public partial class WorkOrder : IHasDomainEvents
     public Mileage MileageIn { get; private set; }
     public Money TotalAmount { get; private set; }
     
+    // Campos de Auditoría y Concurrencia Integrados
+    public DateTimeOffset? CreatedAt { get; set; }
+    public DateTimeOffset? UpdatedAt { get; set; }
+    public DateTimeOffset? DeletedAt { get; set; }
+    public Guid? CreatedBy { get; set; }
+    public Guid? UpdatedBy { get; set; }
+    public long Version { get; set; }
+    
     private readonly List<WorkOrderTask> _tasks = new();
     public IReadOnlyCollection<WorkOrderTask> Tasks => _tasks.AsReadOnly();
 
-    // Soporte nativo para eventos de dominio en DDD C#
     private readonly List<IEvent> _domainEvents = new();
     public IReadOnlyCollection<IEvent> DomainEvents => _domainEvents.AsReadOnly();
 
@@ -34,6 +42,7 @@ public partial class WorkOrder : IHasDomainEvents
 
     protected WorkOrder()
     {
+        Id = null!;
         AppointmentId = null!;
         BranchId = null!;
         VehicleId = null!;
@@ -43,9 +52,9 @@ public partial class WorkOrder : IHasDomainEvents
         TotalAmount = null!;
     }
 
-    public WorkOrder(AppointmentId appointmentId, BranchId branchId, VehicleId vehicleId, CustomerId customerId, int internalNumber, DiagnosticSummary diagnosticSummary, Mileage mileageIn)
+    public WorkOrder(AppointmentId appointmentId, BranchId branchId, VehicleId vehicleId, CustomerId customerId, int internalNumber, DiagnosticSummary diagnosticSummary, Mileage mileageIn) : this()
     {
-        Id = Guid.NewGuid();
+        Id = new WorkOrderId(Guid.NewGuid());
         AppointmentId = appointmentId;
         BranchId = branchId;
         VehicleId = vehicleId;
@@ -68,7 +77,7 @@ public partial class WorkOrder : IHasDomainEvents
         RecalculateTotalAmount();
     }
 
-    public void AddProductToTask(Guid taskId, ProductId productId, Quantity quantity, Money unitPrice)
+    public void AddProductToTask(WorkOrderTaskId taskId, ProductId productId, Quantity quantity, Money unitPrice)
     {
         if (Status == WorkOrderStatus.Completed || Status == WorkOrderStatus.Paid)
         {
@@ -78,12 +87,10 @@ public partial class WorkOrder : IHasDomainEvents
         task.AddProduct(productId, quantity, unitPrice);
         RecalculateTotalAmount();
         
-        // Registramos el evento para ser procesado por infraestructura
-        // Nota: Los eventos (ProductReservedEvent) se crearán en un paso posterior
         RegisterEvent(new ProductReservedEvent(Id, BranchId, productId, quantity));
     }
 
-    public void RemoveProductFromTask(Guid taskId, ProductId productId)
+    public void RemoveProductFromTask(WorkOrderTaskId taskId, ProductId productId)
     {
         if (Status == WorkOrderStatus.Completed || Status == WorkOrderStatus.Paid)
         {
@@ -100,7 +107,7 @@ public partial class WorkOrder : IHasDomainEvents
         RegisterEvent(new ProductReservationCanceledEvent(Id, BranchId, product.ProductId, product.Quantity));
     }
 
-    public void RemoveTask(Guid taskId)
+    public void RemoveTask(WorkOrderTaskId taskId)
     {
         if (Status == WorkOrderStatus.Completed || Status == WorkOrderStatus.Paid)
         {
@@ -143,7 +150,7 @@ public partial class WorkOrder : IHasDomainEvents
         }
     }
 
-    public void StartTask(Guid taskId)
+    public void StartTask(WorkOrderTaskId taskId)
     {
         if (Status == WorkOrderStatus.Completed || Status == WorkOrderStatus.Paid)
         {
@@ -156,7 +163,7 @@ public partial class WorkOrder : IHasDomainEvents
         CheckAutoCompletion();
     }
 
-    public void CompleteTask(Guid taskId)
+    public void CompleteTask(WorkOrderTaskId taskId)
     {
         var task = FindTaskOrThrow(taskId);
         if (task.Complete())
@@ -174,7 +181,7 @@ public partial class WorkOrder : IHasDomainEvents
         }
     }
 
-    public void ReopenTask(Guid taskId)
+    public void ReopenTask(WorkOrderTaskId taskId)
     {
         if (Status == WorkOrderStatus.Paid)
         {
@@ -223,7 +230,7 @@ public partial class WorkOrder : IHasDomainEvents
         MileageIn = mileageIn;
     }
 
-    public void UpdateTaskDetails(Guid taskId, ServiceId serviceId, MechanicId mechanicId, TaskDescription description, Money laborPrice)
+    public void UpdateTaskDetails(WorkOrderTaskId taskId, ServiceId serviceId, MechanicId mechanicId, TaskDescription description, Money laborPrice)
     {
         if (Status == WorkOrderStatus.Completed || Status == WorkOrderStatus.Paid)
         {
@@ -234,7 +241,7 @@ public partial class WorkOrder : IHasDomainEvents
         RecalculateTotalAmount();
     }
 
-    public void UpdateProductQuantityInTask(Guid taskId, ProductId productId, Quantity newQuantity)
+    public void UpdateProductQuantityInTask(WorkOrderTaskId taskId, ProductId productId, Quantity newQuantity)
     {
         if (Status == WorkOrderStatus.Completed || Status == WorkOrderStatus.Paid)
         {
@@ -261,7 +268,7 @@ public partial class WorkOrder : IHasDomainEvents
         TotalAmount = _tasks.Aggregate(Money.Zero, (sum, t) => sum.Plus(t.Price));
     }
 
-    private WorkOrderTask FindTaskOrThrow(Guid taskId)
+    private WorkOrderTask FindTaskOrThrow(WorkOrderTaskId taskId)
     {
         return _tasks.FirstOrDefault(t => t.Id == taskId)
             ?? throw new ArgumentException("operations.error.task.notFound");
