@@ -31,8 +31,9 @@ public class ProductRepositoryAdapter : BaseRepository<Product>, IProductReposit
 
     public async Task<IEnumerable<Product>> FindAllByBranchIdAsync(Guid branchId)
     {
+        var branchIdObj = new atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects.BranchId(branchId);
         return await Context.Products
-            .Where(p => p.BranchId.Value == branchId)
+            .Where(p => p.BranchId == branchIdObj)
             .ToListAsync();
     }
 }

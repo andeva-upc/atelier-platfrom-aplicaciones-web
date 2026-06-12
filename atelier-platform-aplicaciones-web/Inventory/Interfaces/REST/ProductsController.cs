@@ -77,8 +77,14 @@ public class ProductsController(
             return BadRequest("Batch could not be added.");
         }
 
-        var productResource = ProductDetailsResourceFromEntityAssembler.ToResourceFromEntity(result.Value);
-        return Ok(productResource);
+        var addedBatch = result.Value.Batches.LastOrDefault();
+        if (addedBatch == null)
+        {
+            return BadRequest("Batch could not be added.");
+        }
+
+        var batchResource = atelier_platform_aplicaciones_web.Inventory.Interfaces.REST.Transform.ProductBatchResourceFromEntityAssembler.ToResourceFromEntity(addedBatch);
+        return Ok(batchResource);
     }
 
     [HttpPut("{id}")]
