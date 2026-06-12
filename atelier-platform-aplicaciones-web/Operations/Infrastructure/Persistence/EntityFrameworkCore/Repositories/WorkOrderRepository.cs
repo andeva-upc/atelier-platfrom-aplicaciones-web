@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -20,7 +20,7 @@ public class WorkOrderRepository : BaseRepository<WorkOrder>, IWorkOrderReposito
     }
 
     // Eager Loading: Carga la Orden de Trabajo con sus Tareas y los Productos de cada Tarea
-    public async Task<WorkOrder?> FindByIdWithTasksAndProductsAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<WorkOrder?> FindByIdWithTasksAndProductsAsync(WorkOrderId id, CancellationToken cancellationToken = default)
     {
         return await Context.Set<WorkOrder>()
             .Include(w => w.Tasks)
@@ -28,10 +28,21 @@ public class WorkOrderRepository : BaseRepository<WorkOrder>, IWorkOrderReposito
             .FirstOrDefaultAsync(w => w.Id == id, cancellationToken);
     }
 
+    public async Task<WorkOrder?> FindWorkOrderByIdAsync(WorkOrderId id, CancellationToken cancellationToken = default)
+    {
+        return await FindByIdWithTasksAndProductsAsync(id, cancellationToken);
+    }
+
     public async Task<bool> ExistsByAppointmentIdAsync(AppointmentId appointmentId, CancellationToken cancellationToken = default)
     {
         return await Context.Set<WorkOrder>()
             .AnyAsync(w => w.AppointmentId == appointmentId, cancellationToken);
+    }
+
+    public async Task<bool> ExistsByIdAsync(WorkOrderId id, CancellationToken cancellationToken = default)
+    {
+        return await Context.Set<WorkOrder>()
+            .AnyAsync(w => w.Id == id, cancellationToken);
     }
 
     public async Task<int> FindMaxInternalNumberByBranchIdAsync(BranchId branchId, CancellationToken cancellationToken = default)

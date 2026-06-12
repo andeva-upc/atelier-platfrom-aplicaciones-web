@@ -1,4 +1,6 @@
+using System;
 using atelier_platform_aplicaciones_web.Operations.Domain.Model.Aggregates;
+using atelier_platform_aplicaciones_web.Operations.Domain.Model.Entities;
 using atelier_platform_aplicaciones_web.Operations.Domain.Model.ValueObjects;
 using atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects;
 using Microsoft.EntityFrameworkCore;
@@ -9,14 +11,41 @@ public static class ModelBuilderExtensions
 {
     public static void ApplyOperationsConfiguration(this ModelBuilder builder)
     {
+        builder.Entity<Service>().HasQueryFilter(s => s.DeletedAt == null);
         builder.Entity<WorkOrder>().HasQueryFilter(w => w.DeletedAt == null);
         builder.Entity<WorkOrderTask>().HasQueryFilter(t => t.DeletedAt == null);
         builder.Entity<WorkOrderTaskProduct>().HasQueryFilter(p => p.DeletedAt == null);
 
+        builder.Entity<Service>(entity =>
+        {
+            entity.ToTable("services");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id)
+                .HasConversion(v => v.Value, v => new ServiceId(v))
+                .IsRequired()
+                .ValueGeneratedNever();
+
+            entity.Property(e => e.BranchId)
+                .HasConversion(v => v.Value, v => new BranchId(v))
+                .IsRequired();
+
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(150);
+
+            entity.Property(e => e.Price)
+                .HasConversion(v => v.Amount, v => new Money(v))
+                .IsRequired();
+
+            entity.Property(e => e.Version).IsConcurrencyToken();
+        });
+
         builder.Entity<WorkOrderTaskProduct>(entity =>
         {
+            entity.ToTable("work_order_task_products");
             entity.HasKey(p => p.Id);
-            entity.Property(p => p.Id).ValueGeneratedNever();
+            entity.Property(p => p.Id)
+                .HasConversion(vo => vo.Value, value => new WorkOrderTaskProductId(value))
+                .IsRequired()
+                .ValueGeneratedNever();
             entity.Property(p => p.ProductId)
                 .HasConversion(vo => vo.Value, value => new ProductId(value))
                 .IsRequired();
@@ -37,8 +66,12 @@ public static class ModelBuilderExtensions
         
         builder.Entity<WorkOrderTask>(entity =>
         {
+            entity.ToTable("work_order_tasks");
             entity.HasKey(t => t.Id);
-            entity.Property(t => t.Id).ValueGeneratedNever();
+            entity.Property(t => t.Id)
+                .HasConversion(vo => vo.Value, value => new WorkOrderTaskId(value))
+                .IsRequired()
+                .ValueGeneratedNever();
             entity.Property(t => t.ServiceId)
                 .HasConversion(vo => vo.Value, value => new ServiceId(value))
                 .IsRequired();
@@ -73,8 +106,12 @@ public static class ModelBuilderExtensions
         
         builder.Entity<WorkOrder>(entity =>
         {
+            entity.ToTable("work_orders");
             entity.HasKey(w => w.Id);
-            entity.Property(w => w.Id).ValueGeneratedNever();
+            entity.Property(w => w.Id)
+                .HasConversion(vo => vo.Value, value => new WorkOrderId(value))
+                .IsRequired()
+                .ValueGeneratedNever();
             entity.Property(w => w.AppointmentId)
                 .HasConversion(vo => vo.Value, value => new AppointmentId(value))
                 .IsRequired();
