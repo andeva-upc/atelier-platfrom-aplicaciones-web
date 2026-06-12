@@ -55,6 +55,9 @@ using System.Text;
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 var builder = WebApplication.CreateBuilder(args);
 
+// Cargar variables de entorno y resolver placeholders en appsettings.json estilo Spring Boot (${VAR})
+ExpandConfigurationPlaceholders(builder.Configuration);
+
 // 1. Configuración de URLs en minúsculas y convención Kebab-Case
 builder.Services.AddRouting(options => options.LowercaseUrls = true);
 
@@ -185,7 +188,12 @@ builder.Services.AddScoped<IVoucherQueryService, VoucherQueryService>();
 builder.Services.AddHttpClient<atelier_platform_aplicaciones_web.Billing.Application.OutboundServices.IFacthubService, 
     atelier_platform_aplicaciones_web.Billing.Infrastructure.ExternalServices.Facthub.FacthubService>(client => 
 {
-    client.BaseAddress = new Uri("https://facthub-service.onrender.com/");
+    var facthubUrl = builder.Configuration["Facthub:ApiUrl"];
+    if (string.IsNullOrEmpty(facthubUrl))
+    {
+        facthubUrl = "https://facthub-service.onrender.com/";
+    }
+    client.BaseAddress = new Uri(facthubUrl);
 });
 
 // TokenSettings Configuration
@@ -248,3 +256,31 @@ app.UseRequestAuthorization();
 app.MapControllers();
 
 app.Run();
+
+// Helper para expandir placeholders de variables de entorno estilo Spring Boot (${VAR_NAME})
+void ExpandConfigurationPlaceholders(IConfiguration config)
+{
+    foreach (var child in config.GetChildren())
+    {
+        if (child.Value is { } value)
+        {
+            var expanded = Environment.ExpandEnvironmentVariables(value);
+            foreach (System.Collections.DictionaryEntry env in Environment.GetEnvironmentVariables())
+            {
+                var key = env.Key?.ToString();
+                var val = env.Value?.ToString();
+                if (key != null && val != null)
+                {
+                    expanded = expanded.Replace($"${{{key}}}", val)
+                                       .Replace($"${key}", val);
+                }
+            }
+            
+            if (expanded != value)
+            {
+                config[child.Path] = expanded;
+            }
+        }
+        ExpandConfigurationPlaceholders(child);
+    }
+}
