@@ -23,6 +23,7 @@
   <data name="core.error.customer.corporateDocumentTypeImmutable"><value>Corporate document type is immutable.</value></data>
   <data name="core.error.brandName.required"><value>Brand name is required.</value></data>
   <data name="core.error.taxId.required"><value>Tax ID is required.</value></data>
+  <data name="core.error.taxId.invalid"><value>Tax ID is invalid. It must be exactly 11 digits.</value></data>
   <data name="core.error.startDate.required"><value>Start date is required.</value></data>
   <data name="core.error.endDate.required"><value>End date is required.</value></data>
   <data name="core.error.branchSubscriptionId.required"><value>Branch subscription ID is required.</value></data>
