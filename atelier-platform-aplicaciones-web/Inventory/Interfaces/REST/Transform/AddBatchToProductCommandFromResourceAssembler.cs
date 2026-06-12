@@ -8,6 +8,6 @@ public static class AddBatchToProductCommandFromResourceAssembler
 {
     public static AddBatchToProductCommand ToCommandFromResource(Guid productId, AddBatchToProductResource resource)
     {
-        return new AddBatchToProductCommand(productId, resource.Quantity, resource.Description);
+        return new AddBatchToProductCommand(productId, resource.Quantity, resource.AcquisitionCost);
     }
 }

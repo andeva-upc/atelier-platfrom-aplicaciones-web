@@ -23,6 +23,11 @@ public class GlobalExceptionHandlerMiddleware(
             logger.LogWarning(ex, "A database update exception occurred: {Message}", ex.Message);
             await HandleDbUpdateExceptionAsync(context, ex);
         }
+        catch (ArgumentException ex)
+        {
+            logger.LogWarning(ex, "An argument/validation exception occurred: {Message}", ex.Message);
+            await HandleArgumentExceptionAsync(context, ex);
+        }
         catch (Exception ex)
         {
             logger.LogError(ex, "An unhandled exception occurred: {Message}", ex.Message);
@@ -40,6 +45,31 @@ public class GlobalExceptionHandlerMiddleware(
             Status = StatusCodes.Status409Conflict,
             Title = localizer["DatabaseConflict"].Value,
             Detail = localizer["DatabaseConflictDetail"].Value,
+            Instance = context.Request.Path
+        };
+
+        var jsonOptions = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+        var result = JsonSerializer.Serialize(problemDetails, jsonOptions);
+
+        await context.Response.WriteAsync(result);
+    }
+
+    private async Task HandleArgumentExceptionAsync(HttpContext context, ArgumentException exception)
+    {
+        context.Response.ContentType = MediaTypeNames.Application.Json;
+        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+
+        var messageKey = exception.Message;
+        if (messageKey.Contains(" (Parameter '"))
+        {
+            messageKey = messageKey.Substring(0, messageKey.IndexOf(" (Parameter '"));
+        }
+
+        var problemDetails = new ProblemDetails
+        {
+            Status = StatusCodes.Status400BadRequest,
+            Title = "Bad Request",
+            Detail = messageKey,
             Instance = context.Request.Path
         };
 

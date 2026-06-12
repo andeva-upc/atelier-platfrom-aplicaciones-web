@@ -26,25 +26,30 @@ public class ProductBatchConfiguration : IEntityTypeConfiguration<ProductBatch>
             q.Property("ProductBatchId").HasColumnName("id");
             q.Property(v => v.Value)
                 .IsRequired()
-                .HasColumnName("quantity");
+                .HasColumnName("initial_quantity");
         });
 
-        builder.OwnsOne(b => b.ReservedQuantity, r =>
+        builder.OwnsOne(b => b.AvailableQuantity, a =>
         {
-            r.Property("ProductBatchId").HasColumnName("id");
-            r.Property(v => v.Value)
+            a.Property("ProductBatchId").HasColumnName("id");
+            a.Property(v => v.Value)
                 .IsRequired()
-                .HasColumnName("reserved_quantity");
+                .HasColumnName("available_quantity");
         });
 
-        builder.Property(b => b.Description)
-            .HasMaxLength(250)
-            .HasColumnName("description");
+        builder.OwnsOne(b => b.AcquisitionCost, c =>
+        {
+            c.Property("ProductBatchId").HasColumnName("id");
+            c.Property(v => v.Amount)
+                .IsRequired()
+                .HasColumnName("acquisition_cost")
+                .HasColumnType("decimal(10,2)");
+        });
 
         builder.Property(b => b.CreatedAt)
             .IsRequired()
             .HasColumnName("created_at");
 
-        builder.Ignore(b => b.AvailableQuantity);
+        builder.Ignore(b => b.ReservedQuantity);
     }
 }

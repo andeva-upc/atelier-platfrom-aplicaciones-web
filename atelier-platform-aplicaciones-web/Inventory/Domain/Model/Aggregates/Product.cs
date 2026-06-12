@@ -62,9 +62,9 @@ public partial class Product : IHasDomainEvents
         MinimumStock = minimumStock;
     }
 
-    public void AddBatch(int quantity, string description)
+    public void AddBatch(int quantity, atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects.Money acquisitionCost)
     {
-        var batch = new atelier_platform_aplicaciones_web.Inventory.Domain.Model.Entities.ProductBatch(Id, quantity, description);
+        var batch = new atelier_platform_aplicaciones_web.Inventory.Domain.Model.Entities.ProductBatch(Id, quantity, acquisitionCost);
         _batches.Add(batch);
         CurrentStock = new InventoryQuantity(CurrentStock.Value + quantity);
     }
@@ -79,5 +79,42 @@ public partial class Product : IHasDomainEvents
         CurrentStock = new InventoryQuantity(CurrentStock.Value - quantity);
 
         RegisterEvent(new atelier_platform_aplicaciones_web.Inventory.Domain.Model.Events.ProductReservedEvent(Id, quantity, BranchId.Value));
+    }
+
+    public void ReserveStock(int quantity)
+    {
+        if (CurrentStock.Value < quantity)
+            throw new InvalidOperationException("Not enough stock available.");
+
+        int remainingToReserve = quantity;
+        foreach (var batch in _batches)
+        {
+            if (remainingToReserve <= 0) break;
+            int batchAvail = batch.AvailableQuantity.Value;
+            if (batchAvail > 0)
+            {
+                int deduct = Math.Min(batchAvail, remainingToReserve);
+                batch.ReserveStock(deduct);
+                remainingToReserve -= deduct;
+            }
+        }
+        CurrentStock = new InventoryQuantity(CurrentStock.Value - quantity);
+    }
+
+    public void ReleaseStock(int quantity)
+    {
+        int remainingToRelease = quantity;
+        foreach (var batch in _batches)
+        {
+            if (remainingToRelease <= 0) break;
+            int batchReserved = batch.ReservedQuantity.Value;
+            if (batchReserved > 0)
+            {
+                int release = Math.Min(batchReserved, remainingToRelease);
+                batch.ReleaseStock(release);
+                remainingToRelease -= release;
+            }
+        }
+        CurrentStock = new InventoryQuantity(CurrentStock.Value + quantity);
     }
 }

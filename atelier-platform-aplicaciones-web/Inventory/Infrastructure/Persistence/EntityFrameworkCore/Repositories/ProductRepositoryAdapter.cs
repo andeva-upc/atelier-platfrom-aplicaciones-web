@@ -24,7 +24,9 @@ public class ProductRepositoryAdapter : BaseRepository<Product>, IProductReposit
 
     public new async Task<Product?> FindByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await Context.Products.FindAsync(new object[] { id }, cancellationToken);
+        return await Context.Products
+            .Include(p => p.Batches)
+            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
     }
 
     public async Task<IEnumerable<Product>> FindAllByBranchIdAsync(Guid branchId)
