@@ -57,20 +57,21 @@ public class UserCommandService(
         return Result.Success();
     }
 
-    public async Task<Result<User>> Handle(UpdateUserEmailCommand command, CancellationToken cancellationToken)
+    public async Task<Result<AuthenticatedUser>> Handle(UpdateUserEmailCommand command, CancellationToken cancellationToken)
     {
         var user = await userRepository.FindByIdAsync(command.UserId.Value, cancellationToken);
         if (user == null)
-            return Result<User>.Failure(IamError.UserNotFound, "iam.error.user.notFound");
+            return Result<AuthenticatedUser>.Failure(IamError.UserNotFound, "iam.error.user.notFound");
 
         if (user.Email.Value != command.NewEmail.Value && await userRepository.ExistsByEmailAsync(command.NewEmail, cancellationToken))
-            return Result<User>.Failure(IamError.EmailAlreadyInUse, "iam.error.email.alreadyInUse");
+            return Result<AuthenticatedUser>.Failure(IamError.EmailAlreadyInUse, "iam.error.email.alreadyInUse");
 
         user.ChangeEmail(command.NewEmail);
         userRepository.Update(user);
         await unitOfWork.CompleteAsync();
 
-        return Result<User>.Success(user);
+        var token = tokenService.GenerateToken(user.Email.Value);
+        return Result<AuthenticatedUser>.Success(new AuthenticatedUser(user, token));
     }
 
     public async Task<Result<User>> Handle(UpdateUserPasswordCommand command, CancellationToken cancellationToken)
