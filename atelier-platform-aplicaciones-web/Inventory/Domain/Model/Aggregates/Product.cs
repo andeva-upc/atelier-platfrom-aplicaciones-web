@@ -64,7 +64,7 @@ public partial class Product : IHasDomainEvents
 
     public void AddBatch(int quantity, atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects.Money acquisitionCost)
     {
-        var batch = new atelier_platform_aplicaciones_web.Inventory.Domain.Model.Entities.ProductBatch(Id, quantity, acquisitionCost);
+        var batch = new atelier_platform_aplicaciones_web.Inventory.Domain.Model.Entities.ProductBatch(Id, BranchId.Value, quantity, acquisitionCost);
         _batches.Add(batch);
         CurrentStock = new InventoryQuantity(CurrentStock.Value + quantity);
     }
