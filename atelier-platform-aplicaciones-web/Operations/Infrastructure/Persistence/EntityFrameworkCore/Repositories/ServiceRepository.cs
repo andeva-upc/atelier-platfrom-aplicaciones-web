@@ -7,6 +7,7 @@ using atelier_platform_aplicaciones_web.Operations.Domain.Model.Aggregates;
 using atelier_platform_aplicaciones_web.Operations.Domain.Model.ValueObjects;
 using atelier_platform_aplicaciones_web.Operations.Domain.Repositories;
 using atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects;
+using atelier_platform_aplicaciones_web.Shared.Domain.Repositories;
 using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EntityFrameworkCore.Configuration;
 using atelier_platform_aplicaciones_web.Shared.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
 
@@ -29,5 +30,12 @@ public class ServiceRepository(AppDbContext context) : BaseRepository<Service>(c
     public async Task<bool> ExistsByIdAsync(ServiceId id, CancellationToken cancellationToken = default)
     {
         return await Context.Set<Service>().AnyAsync(s => s.Id == id, cancellationToken);
+    }
+
+    // Explicit Soft Delete implementation
+    void IBaseRepository<Service>.Remove(Service entity)
+    {
+        entity.DeletedAt = DateTimeOffset.UtcNow;
+        Update(entity);
     }
 }

@@ -100,6 +100,7 @@ public static class ModelBuilderExtensions
             entity.HasMany(t => t.Products)
                 .WithOne()
                 .HasForeignKey("WorkOrderTaskId")
+                .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
             entity.Property(p => p.Version).IsConcurrencyToken();
         });
@@ -150,6 +151,7 @@ public static class ModelBuilderExtensions
             entity.HasMany(w => w.Tasks)
                 .WithOne()
                 .HasForeignKey("WorkOrderId")
+                .IsRequired()
                 .OnDelete(DeleteBehavior.Cascade);
             entity.Property(p => p.Version).IsConcurrencyToken();
         });
