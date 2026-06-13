@@ -56,7 +56,7 @@ public static class WorkOrderCommandFromResourceAssembler
             new WorkOrderId(workOrderId),
             new WorkOrderTaskId(taskId),
             new ProductId(productId),
-            new Quantity(resource.NewQuantity));
+            new Quantity(resource.Quantity));
     }
 
     public static UpdateWorkOrderDetailsCommand ToCommandFromResource(Guid workOrderId, UpdateWorkOrderDetailsResource resource)
