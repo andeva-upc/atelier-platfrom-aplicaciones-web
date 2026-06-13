@@ -3,7 +3,9 @@ using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
 using atelier_platform_aplicaciones_web.IoT.Application.CommandServices;
+using atelier_platform_aplicaciones_web.IoT.Application.QueryServices;
 using atelier_platform_aplicaciones_web.IoT.Domain.Model.Commands;
+using atelier_platform_aplicaciones_web.IoT.Domain.Model.Queries;
 using atelier_platform_aplicaciones_web.IoT.Domain.Model.ValueObjects;
 using atelier_platform_aplicaciones_web.IoT.Interfaces.REST.Resources;
 using atelier_platform_aplicaciones_web.IoT.Interfaces.REST.Transform;
@@ -22,6 +24,7 @@ namespace atelier_platform_aplicaciones_web.IoT.Interfaces.REST;
 [Authorize]
 public class Obd2DevicesController(
     IObd2DeviceCommandService obd2DeviceCommandService,
+    IObd2DeviceQueryService obd2DeviceQueryService,
     IStringLocalizer<IoTMessages> localizer) : ControllerBase
 {
     [HttpPost]
@@ -66,5 +69,21 @@ public class Obd2DevicesController(
             this,
             localizer
         );
+    }
+
+    [HttpGet("{id}")]
+    [SwaggerOperation(Summary = "Get an OBD2 device by ID", Description = "Retrieves the details of a specific OBD2 device by its primary key")]
+    public async Task<ActionResult> GetObd2DeviceById(Guid id, CancellationToken cancellationToken)
+    {
+        var query = new GetObd2DeviceByIdQuery(new Obd2DeviceId(id));
+        var obd2Device = await obd2DeviceQueryService.Handle(query, cancellationToken);
+
+        if (obd2Device == null)
+        {
+            return NotFound();
+        }
+
+        var resource = Obd2DeviceResourceFromEntityAssembler.ToResourceFromEntity(obd2Device);
+        return Ok(resource);
     }
 }
