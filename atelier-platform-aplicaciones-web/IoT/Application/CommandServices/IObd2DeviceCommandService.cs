@@ -9,4 +9,5 @@ namespace atelier_platform_aplicaciones_web.IoT.Application.CommandServices;
 public interface IObd2DeviceCommandService
 {
     Task<Result<Obd2Device>> Handle(CreateObd2DeviceCommand command, CancellationToken cancellationToken = default);
+    Task<Result<Obd2Device>> Handle(UpdateObd2DeviceCommand command, CancellationToken cancellationToken = default);
 }
