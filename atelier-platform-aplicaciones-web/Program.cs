@@ -18,6 +18,10 @@ using atelier_platform_aplicaciones_web.Inventory.Application.Internal.QueryServ
 
 using atelier_platform_aplicaciones_web.Core.Domain.Repositories;
 using atelier_platform_aplicaciones_web.Core.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
+using atelier_platform_aplicaciones_web.IoT.Domain.Repositories;
+using atelier_platform_aplicaciones_web.IoT.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
+using atelier_platform_aplicaciones_web.IoT.Application.CommandServices;
+using atelier_platform_aplicaciones_web.IoT.Application.Internal.CommandServices;
 
 using atelier_platform_aplicaciones_web.Billing.Domain.Repositories;
 using atelier_platform_aplicaciones_web.Billing.Infrastructure.Persistence.EntityFrameworkCore.Repositories;
@@ -199,6 +203,10 @@ builder.Services.AddScoped<IQuoteQueryService, QuoteQueryService>();
 builder.Services.AddScoped<IVoucherRepository, VoucherRepository>();
 builder.Services.AddScoped<IVoucherCommandService, VoucherCommandService>();
 builder.Services.AddScoped<IVoucherQueryService, VoucherQueryService>();
+
+// IoT Dependencies
+builder.Services.AddScoped<IObd2DeviceRepository, Obd2DeviceRepository>();
+builder.Services.AddScoped<IObd2DeviceCommandService, Obd2DeviceCommandService>();
 
 builder.Services.AddHttpClient<atelier_platform_aplicaciones_web.Billing.Application.OutboundServices.IFacthubService, 
     atelier_platform_aplicaciones_web.Billing.Infrastructure.ExternalServices.Facthub.FacthubService>(client => 
