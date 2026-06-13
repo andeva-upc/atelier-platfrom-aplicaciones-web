@@ -23,6 +23,7 @@ public class AppDbContext(DbContextOptions options, AuditableEntityInterceptor a
     public DbSet<Voucher> Vouchers { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<Obd2Device> Obd2Devices { get; set; }
+    public DbSet<Obd2DeviceRegistration> Obd2DeviceRegistrations { get; set; }
 
     /// <inheritdoc />
     protected override void OnConfiguring(DbContextOptionsBuilder builder)
