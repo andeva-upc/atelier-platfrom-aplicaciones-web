@@ -10,4 +10,5 @@ public interface IObd2DeviceCommandService
 {
     Task<Result<Obd2Device>> Handle(CreateObd2DeviceCommand command, CancellationToken cancellationToken = default);
     Task<Result<Obd2Device>> Handle(UpdateObd2DeviceCommand command, CancellationToken cancellationToken = default);
+    Task<Result> Handle(DeleteObd2DeviceCommand command, CancellationToken cancellationToken = default);
 }

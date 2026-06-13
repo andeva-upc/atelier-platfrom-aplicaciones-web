@@ -56,4 +56,23 @@ public class Obd2DeviceCommandService(
 
         return Result<Obd2Device>.Success(obd2Device);
     }
+
+    public async Task<Result> Handle(DeleteObd2DeviceCommand command, CancellationToken cancellationToken = default)
+    {
+        var obd2Device = await obd2DeviceRepository.FindObd2DeviceByIdAsync(command.Id, cancellationToken);
+        if (obd2Device == null)
+        {
+            return Result.Failure(IoTError.Obd2DeviceNotFound, "iot.error.obd2Device.notFound");
+        }
+
+        if (obd2Device.Status != Obd2DeviceStatus.Available)
+        {
+            return Result.Failure(IoTError.Obd2DeviceAlreadyLinked, "iot.error.obd2Device.cannotDeleteLinkedDevice");
+        }
+
+        obd2DeviceRepository.Remove(obd2Device);
+        await unitOfWork.CompleteAsync(cancellationToken);
+
+        return Result.Success();
+    }
 }

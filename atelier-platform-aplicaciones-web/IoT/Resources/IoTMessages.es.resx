@@ -10,4 +10,5 @@
   <data name="iot.error.unexpected"><value>Ocurrió un error inesperado.</value></data>
   <data name="iot.error.obd2Device.notFound"><value>Dispositivo OBD2 no encontrado.</value></data>
   <data name="iot.error.obd2Device.cannotUpdateLinkedDevice"><value>No se puede modificar la dirección MAC de un dispositivo enlazado.</value></data>
+  <data name="iot.error.obd2Device.cannotDeleteLinkedDevice"><value>No se puede eliminar un dispositivo OBD2 enlazado.</value></data>
 </root>
