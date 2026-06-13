@@ -3,6 +3,8 @@ using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
 using atelier_platform_aplicaciones_web.IoT.Application.CommandServices;
+using atelier_platform_aplicaciones_web.IoT.Domain.Model.Commands;
+using atelier_platform_aplicaciones_web.IoT.Domain.Model.ValueObjects;
 using atelier_platform_aplicaciones_web.IoT.Interfaces.REST.Resources;
 using atelier_platform_aplicaciones_web.IoT.Interfaces.REST.Transform;
 using atelier_platform_aplicaciones_web.IoT.Resources;
@@ -47,6 +49,20 @@ public class Obd2DevicesController(
         return ActionResultFromIoTCommandResultAssembler.ToOkActionResult(
             result,
             Obd2DeviceResourceFromEntityAssembler.ToResourceFromEntity,
+            this,
+            localizer
+        );
+    }
+
+    [HttpDelete("{id}")]
+    [SwaggerOperation(Summary = "Delete an OBD2 device", Description = "Performs a soft delete on an existing OBD2 device if it is not linked to a vehicle")]
+    public async Task<ActionResult> DeleteObd2Device(Guid id, CancellationToken cancellationToken)
+    {
+        var command = new DeleteObd2DeviceCommand(new Obd2DeviceId(id));
+        var result = await obd2DeviceCommandService.Handle(command, cancellationToken);
+
+        return ActionResultFromIoTCommandResultAssembler.ToNoContentActionResult(
+            result,
             this,
             localizer
         );
