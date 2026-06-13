@@ -210,6 +210,8 @@ builder.Services.AddScoped<IVoucherQueryService, VoucherQueryService>();
 builder.Services.AddScoped<IObd2DeviceRepository, Obd2DeviceRepository>();
 builder.Services.AddScoped<IObd2DeviceCommandService, Obd2DeviceCommandService>();
 builder.Services.AddScoped<IObd2DeviceQueryService, Obd2DeviceQueryService>();
+builder.Services.AddScoped<IObd2DeviceRegistrationRepository, Obd2DeviceRegistrationRepository>();
+builder.Services.AddScoped<IObd2DeviceRegistrationCommandService, Obd2DeviceRegistrationCommandService>();
 
 builder.Services.AddHttpClient<atelier_platform_aplicaciones_web.Billing.Application.OutboundServices.IFacthubService, 
     atelier_platform_aplicaciones_web.Billing.Infrastructure.ExternalServices.Facthub.FacthubService>(client => 

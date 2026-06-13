@@ -36,5 +36,35 @@ public static class ModelBuilderExtensions
 
             entity.Property(e => e.Version).IsConcurrencyToken();
         });
+
+        builder.Entity<Obd2DeviceRegistration>().HasQueryFilter(r => r.DeletedAt == null);
+
+        builder.Entity<Obd2DeviceRegistration>(entity =>
+        {
+            entity.ToTable("obd2_device_registrations");
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id)
+                .HasConversion(v => v.Value, v => new Obd2DeviceRegistrationId(v))
+                .IsRequired();
+
+            entity.Property(e => e.Obd2DeviceId)
+                .HasConversion(v => v.Value, v => new Obd2DeviceId(v))
+                .IsRequired();
+
+            entity.Property(e => e.BranchId)
+                .HasConversion(v => v.Value, v => new BranchId(v))
+                .IsRequired();
+
+            entity.Property(e => e.VehicleId)
+                .HasConversion(v => v.Value, v => new VehicleId(v))
+                .IsRequired();
+
+            entity.Property(e => e.Status)
+                .HasConversion(v => v.Value, v => new Obd2RegistrationStatus(v))
+                .IsRequired().HasMaxLength(20);
+
+            entity.Property(e => e.CreatedAt).IsRequired();
+            entity.Property(e => e.DeletedAt);
+        });
     }
 }

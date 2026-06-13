@@ -10,5 +10,6 @@ public enum IoTError
     VehicleRegistrationNotFound,
     VinAlreadyRegistered,
     PlateNumberAlreadyRegistered,
-    DuplicateMacAddress
+    DuplicateMacAddress,
+    VehicleAlreadyLinked
 }
