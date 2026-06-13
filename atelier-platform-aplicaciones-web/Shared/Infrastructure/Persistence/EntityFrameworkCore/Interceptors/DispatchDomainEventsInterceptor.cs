@@ -42,7 +42,7 @@ public class DispatchDomainEventsInterceptor(IMediator mediator) : SaveChangesIn
 
         foreach (var domainEvent in domainEvents)
         {
-            await mediator.PublishAsync(domainEvent);
+            await mediator.PublishAsync((dynamic)domainEvent);
         }
 
         context.ChangeTracker.DetectChanges();
