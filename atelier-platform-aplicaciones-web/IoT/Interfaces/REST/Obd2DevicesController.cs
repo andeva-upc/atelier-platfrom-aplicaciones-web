@@ -1,3 +1,4 @@
+using System;
 using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
@@ -29,6 +30,21 @@ public class Obd2DevicesController(
         var result = await obd2DeviceCommandService.Handle(command, cancellationToken);
 
         return ActionResultFromIoTCommandResultAssembler.ToCreatedActionResult(
+            result,
+            Obd2DeviceResourceFromEntityAssembler.ToResourceFromEntity,
+            this,
+            localizer
+        );
+    }
+
+    [HttpPut("{id}")]
+    [SwaggerOperation(Summary = "Update an OBD2 device details", Description = "Updates the MAC address of an existing OBD2 device")]
+    public async Task<ActionResult> UpdateObd2Device(Guid id, [FromBody] UpdateObd2DeviceResource resource, CancellationToken cancellationToken)
+    {
+        var command = UpdateObd2DeviceCommandFromResourceAssembler.ToCommandFromResource(id, resource);
+        var result = await obd2DeviceCommandService.Handle(command, cancellationToken);
+
+        return ActionResultFromIoTCommandResultAssembler.ToOkActionResult(
             result,
             Obd2DeviceResourceFromEntityAssembler.ToResourceFromEntity,
             this,
