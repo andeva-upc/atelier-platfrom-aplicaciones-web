@@ -7,6 +7,8 @@ using atelier_platform_aplicaciones_web.Billing.Domain.Model.Aggregates;
 using atelier_platform_aplicaciones_web.Billing.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
 using atelier_platform_aplicaciones_web.Inventory.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
 using atelier_platform_aplicaciones_web.Inventory.Domain.Model.Aggregates;
+using atelier_platform_aplicaciones_web.IoT.Infrastructure.Persistence.EntityFrameworkCore.Configuration.Extensions;
+using atelier_platform_aplicaciones_web.IoT.Domain.Model.Aggregates;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -20,6 +22,7 @@ public class AppDbContext(DbContextOptions options, AuditableEntityInterceptor a
     public DbSet<Quote> Quotes { get; set; }
     public DbSet<Voucher> Vouchers { get; set; }
     public DbSet<Product> Products { get; set; }
+    public DbSet<Obd2Device> Obd2Devices { get; set; }
 
     /// <inheritdoc />
     protected override void OnConfiguring(DbContextOptionsBuilder builder)
@@ -49,6 +52,9 @@ public class AppDbContext(DbContextOptions options, AuditableEntityInterceptor a
         
         // Apply Inventory Context Configuration
         builder.ApplyInventoryConfiguration();
+
+        // Apply IoT Bounded Context Configuration
+        builder.ApplyIotConfiguration();
         
         builder.UseSnakeCaseNamingConvention();
         
