@@ -11,4 +11,6 @@
   <data name="iot.error.obd2Device.notFound"><value>OBD2 device not found.</value></data>
   <data name="iot.error.obd2Device.cannotUpdateLinkedDevice"><value>Cannot update MAC address of a linked OBD2 device.</value></data>
   <data name="iot.error.obd2Device.cannotDeleteLinkedDevice"><value>Cannot delete a linked OBD2 device.</value></data>
+  <data name="iot.error.obd2DeviceRegistration.deviceAlreadyLinked"><value>This OBD2 device is already linked to a vehicle.</value></data>
+  <data name="iot.error.obd2DeviceRegistration.vehicleAlreadyLinked"><value>This vehicle is already linked to an active OBD2 device.</value></data>
 </root>

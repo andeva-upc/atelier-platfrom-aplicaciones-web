@@ -46,7 +46,7 @@ public class Obd2DeviceRegistrationCommandService(
         }
 
         // 5. Actualizar el estado del OBD2 a LINKED
-        obd2Device.MarkAsLinked();
+        obd2Device.Link();
         obd2DeviceRepository.Update(obd2Device);
 
         // 6. Crear la vinculación

@@ -96,7 +96,8 @@ public static class ActionResultFromIoTCommandResultAssembler
                 IoTError.DuplicateMacAddress or
                 IoTError.VinAlreadyRegistered or
                 IoTError.PlateNumberAlreadyRegistered or
-                IoTError.Obd2DeviceAlreadyLinked =>
+                IoTError.Obd2DeviceAlreadyLinked or
+                IoTError.VehicleAlreadyLinked =>
                     controller.Problem(
                         statusCode: 409,
                         title: "Conflict",
