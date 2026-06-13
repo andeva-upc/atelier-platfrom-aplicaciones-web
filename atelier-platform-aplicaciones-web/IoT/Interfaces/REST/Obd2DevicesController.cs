@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
@@ -85,5 +86,16 @@ public class Obd2DevicesController(
 
         var resource = Obd2DeviceResourceFromEntityAssembler.ToResourceFromEntity(obd2Device);
         return Ok(resource);
+    }
+
+    [HttpGet]
+    [SwaggerOperation(Summary = "Get OBD2 devices by branch ID", Description = "Retrieves all physical OBD2 devices associated with a specific branch")]
+    public async Task<ActionResult> GetObd2DevicesByBranchId([FromQuery] Guid branchId, CancellationToken cancellationToken)
+    {
+        var query = new GetObd2DevicesByBranchIdQuery(new atelier_platform_aplicaciones_web.Shared.Domain.Model.ValueObjects.BranchId(branchId));
+        var devices = await obd2DeviceQueryService.Handle(query, cancellationToken);
+
+        var resources = devices.Select(Obd2DeviceResourceFromEntityAssembler.ToResourceFromEntity);
+        return Ok(resources);
     }
 }
