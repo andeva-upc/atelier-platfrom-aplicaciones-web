@@ -9,4 +9,5 @@
   <data name="iot.error.macAddress.required"><value>La dirección MAC es obligatoria.</value></data>
   <data name="iot.error.unexpected"><value>Ocurrió un error inesperado.</value></data>
   <data name="iot.error.obd2Device.notFound"><value>Dispositivo OBD2 no encontrado.</value></data>
+  <data name="iot.error.obd2Device.cannotUpdateLinkedDevice"><value>No se puede modificar la dirección MAC de un dispositivo enlazado.</value></data>
 </root>
